@@ -12,29 +12,31 @@
       --gold: #b38b22; --frames: 6; 
     }
 
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
     body {
-      margin: 0; padding: 0; width: 308px; height: 632px;
+      margin: 0; padding: 0; max-width: 308px; min-height: 632px;
       background: var(--bg) url('https://www.transparenttextures.com/patterns/dark-matter.png');
       color: var(--label); font: 12px/1.4 -apple-system, "Segoe UI", sans-serif;
       overflow: hidden; box-sizing: border-box; user-select: none;
     }
 
-    #game-container { width: 100%; height: 100%; position: relative; padding: 44px 0 32px 0; box-sizing: border-box; }
+    #game-container { width: 100%; height: 632px; position: relative; padding: 0 0 32px; overflow: hidden; }
 
     .tab-content { display: none; } 
     .tab-content.active { display: block; animation: fadeIn 0.15s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     #battle-stage {
-      position: absolute; top: 44px; left: 0; width: 100%; height: 160px;
+      position: absolute; top: 0; left: 0; width: 100%; height: 154px;
       background-color: #111; background-size: cover; background-position: center bottom; background-repeat: no-repeat;
       z-index: 5; overflow: hidden; border-bottom: 2px solid var(--bordo-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.8);
       transition: background-image 0.5s ease-in-out, opacity 0.3s ease; image-rendering: pixelated;
     }
 
     body.hide-battle #battle-stage { opacity: 0; pointer-events: none; }
-    body.hide-battle #stats-bar { top: 50px; }
-    body.hide-battle #content-scroll { top: 116px; }
+    body.hide-battle #stats-bar { top: 8px; }
+    body.hide-battle #content-scroll { top: 74px; }
 
     #top-hud { position: absolute; top: 8px; left: 10px; width: calc(100% - 20px); z-index: 20; }
     
@@ -90,11 +92,11 @@
     
     @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 100% { transform: translateY(-40px) scale(1.2); opacity: 0; } }
 
-    #stats-bar { position: absolute; top: 204px; left: 0; width: 100%; height: 60px; padding: 0 10px; box-sizing: border-box; z-index: 10; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    #stats-bar { position: absolute; top: 160px; left: 0; width: 100%; height: 60px; padding: 0 10px; box-sizing: border-box; z-index: 10; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }
     .stat-box { background: rgba(0,0,0,0.8); padding: 4px 0; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-    #content-scroll { position: absolute; top: 270px; bottom: 80px; width: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 0 10px 20px 10px; box-sizing: border-box; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    #content-scroll { position: absolute; top: 226px; bottom: 80px; width: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 0 8px 20px; box-sizing: border-box; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
     #bottom-nav { position: absolute; bottom: 32px; left: 0; width: 100%; height: 48px; background: rgba(5, 0, 2, 0.98); border-top: 1px solid var(--bordo-dark); display: flex; justify-content: space-around; align-items: center; z-index: 10; box-shadow: 0 -5px 15px rgba(0,0,0,0.9); }
     .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--label-2); font-size: 9px; font-weight: bold; flex: 1; height: 100%; cursor: pointer;}
@@ -103,8 +105,8 @@
     .icon { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; display: inline-block; image-rendering: pixelated; }
     .icon-sm { width: 16px; height: 16px; }
     .icon-lg { transform: scale(2); transform-origin: center; margin: 8px; }
-    .nav-btn .icon { width: 20px; height: 20px; filter: grayscale(100%); transition: filter 0.2s; margin-bottom: 2px; }
-    .nav-btn.active .icon { filter: grayscale(0%); drop-shadow(0 0 4px var(--bordo-light));}
+    .nav-btn .icon { width: 16px; height: 16px; opacity: 0.58; transition: opacity 0.2s, filter 0.2s; margin-bottom: 2px; }
+    .nav-btn.active .icon { opacity: 1; filter: drop-shadow(0 0 3px var(--bordo-light)); }
 
     .panel { background: rgba(12, 0, 4, 0.85); width: 100%; margin: 0 auto 12px auto; border: 1px solid var(--bordo-dark); border-radius: 6px; padding: 10px; box-sizing: border-box; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); position: relative;}
     .panel.purple-border { border-color: var(--mor-dark); background: rgba(8, 0, 12, 0.85); }
@@ -116,7 +118,7 @@
     .badge.rare { color: #d1b3ff; border: 1px solid var(--mor-dark); }
     .badge.active { color: #fff; background: var(--bordo); }
 
-    button { background: linear-gradient(180deg, #170005 0%, #0a0002 100%); color: #fff; border: 1px solid var(--bordo-dark); border-radius: 4px; min-height: 40px; padding: 0 10px; font-weight: bold; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: all 0.1s ease; font-size: 11px; text-transform: uppercase; }
+    button { background: linear-gradient(180deg, #170005 0%, #0a0002 100%); color: #fff; border: 1px solid var(--bordo-dark); border-radius: 6px; min-height: 44px; padding: 0 10px; font-weight: bold; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: all 0.1s ease; font-size: 11px; text-transform: uppercase; }
     button:hover { border-color: var(--bordo-light); background: linear-gradient(180deg, #24000d 0%, #120006 100%); }
     button.primary { background: linear-gradient(180deg, var(--bordo) 0%, var(--bordo-dark) 100%); border-color: var(--bordo-light); }
     button.special { background: linear-gradient(180deg, var(--mor) 0%, var(--mor-dark) 100%); border-color: var(--mor-light); }
@@ -126,7 +128,7 @@
     .shop-item { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.05); }
     .eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
     .eq-box { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 6px; padding: 10px; text-align: center; }
-    .eq-icon { width: 48px; height: 48px; margin: 0 auto 5px auto; background-size: contain; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));}
+    .eq-icon { width: 48px; height: 48px; margin: 0 auto 5px auto; background-size: contain; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; filter: drop-shadow(0 0 3px rgba(179,139,34,0.25));}
     
     .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
     .key-btn { position: relative; height: 40px; background: rgba(20,0,5,0.9); border: 1px solid var(--bordo); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
@@ -269,10 +271,10 @@
 
     <div id="stats-bar">
       <div class="stats-grid">
-        <div class="stat-box"><div class="icon" data-bg="rZ2HD2E.png" style="width: 20px; height: 20px;"></div><span id="res-soul" style="color: #d1b3ff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XWcKSug.png" style="width: 20px; height: 20px;"></div><span id="res-blood" style="color: #ff4d4d;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XaP5VtJ.png" style="width: 20px; height: 20px;"></div><span id="res-dark" style="color: #b84dff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="KND00E1.png" style="width: 20px; height: 20px;"></div><span id="res-rune" style="color: var(--bordo-light);">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="rZ2HD2E.png" style="width: 16px; height: 16px;"></div><span id="res-soul" style="color: #d1b3ff;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="XWcKSug.png" style="width: 16px; height: 16px;"></div><span id="res-blood" style="color: #ff4d4d;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="XaP5VtJ.png" style="width: 16px; height: 16px;"></div><span id="res-dark" style="color: #b84dff;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="KND00E1.png" style="width: 16px; height: 16px;"></div><span id="res-rune" style="color: var(--bordo-light);">0</span></div>
       </div>
     </div>
 
@@ -459,7 +461,6 @@
         if(isAFK) { isAFK = false; document.getElementById('player-afk').style.display = 'none'; document.getElementById('enemy-afk').style.display = 'none'; }
       })
     );
-    document.body.addEventListener('click', () => { if (state.gender && sfx.bg.paused) sfx.bg.play().catch(()=>{}); }, { once: true });
 
     const enemyList = ['r34x4rk.png', 'aeUE8LY.png', 'Ki45LLY.png', '6ngSd4q.png', 'DXl76oM.png', 'qU1GVNc.png', 'aRqvjwr.png', 'L8VJXGB.png', 'BMntBV6.png', '9JCM4k5.png', '5wxpNCA.png', 'z85mIc5.png', 'zc8veBt.png', 'k8j34JO.png', 'Epfg5AR.png'];
     const hitEffects = ['pLFDbUS.gif', 'ekys4GI.gif', 'skpvZ1K.gif', '0pI60Ow.gif', 'ZzB4n3j.gif', 'JcPZP40.gif'];
@@ -486,11 +487,11 @@
     const roman = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "MAKS"];
 
     const marketItems = [
-      { name: "Küçük Bilgi Tomarı", desc: "+100 XP", icon: "3xcyzvh.png", price: 25, action: () => addXP(100) },
-      { name: "Bilge Tomarı", desc: "+500 XP", icon: "0O2SqwA.png", price: 100, action: () => addXP(500) },
-      { name: "Kadim Tomar", desc: "+2000 XP", icon: "dqc0ybc.png", price: 350, action: () => addXP(2000) },
-      { name: "Efsanevi Tomar", desc: "+5000 XP", icon: "EdOIbwE.png", price: 800, action: () => addXP(5000) },
-      { name: "Tanrısal Tomar", desc: "+15000 XP", icon: "CneQ9wH.png", price: 2000, action: () => addXP(15000) },
+      { name: "Küçük Bilgi Tomarı", desc: "+100 XP · 2,4 dk emek", icon: "3xcyzvh.png", price: 40, action: () => addXP(100) },
+      { name: "Bilge Tomarı", desc: "+500 XP · 9,6 dk emek", icon: "0O2SqwA.png", price: 160, action: () => addXP(500) },
+      { name: "Kadim Tomar", desc: "+2000 XP · 31 dk emek", icon: "dqc0ybc.png", price: 520, action: () => addXP(2000) },
+      { name: "Efsanevi Tomar", desc: "+5000 XP · 1,1 sa emek", icon: "EdOIbwE.png", price: 1100, action: () => addXP(5000) },
+      { name: "Tanrısal Tomar", desc: "+15000 XP · 2,7 sa emek", icon: "CneQ9wH.png", price: 2700, action: () => addXP(15000) },
       { name: "Sıradan Ruh", desc: "+250 Ruh", icon: "72DNCNJ.png", price: 50, action: () => { state.soul+=250; } },
       { name: "Zengin Ruh", desc: "+1000 Ruh", icon: "xpRIjnf.png", price: 180, action: () => { state.soul+=1000; } },
       { name: "Kadim Ruh Kümesi", desc: "+5000 Ruh", icon: "GIrbWTa.png", price: 800, action: () => { state.soul+=5000; } },
@@ -499,13 +500,13 @@
       { name: "Kan Kadehi", desc: "+2000 Kan", icon: "VDmfS8Z.png", price: 800, action: () => { state.blood+=2000; } },
       { name: "Kan Havuzu", desc: "+5000 Kan", icon: "wBPrZad.png", price: 1800, action: () => { state.blood+=5000; } },
       { name: "Karanlık Taş", desc: "+10 Öz", icon: "uXvTGJC.png", price: 150, action: () => { state.dark+=10; } },
-      { name: "Karanlık Kristal", desc: "+50 Öz", icon: "jUC5lFz.png", price: 600, action: () => { state.dark+=50; } },
-      { name: "Karanlık Yürek", desc: "+200 Öz", icon: "v8b6RUf.png", price: 2000, action: () => { state.dark+=200; } },
-      { name: "Karanlık Küp", desc: "+1000 Öz", icon: "o7eQsNh.png", price: 8000, action: () => { state.dark+=1000; } },
-      { name: "Karanlık Göz", desc: "+5000 Öz", icon: "AgrVJ1H.png", price: 30000, action: () => { state.dark+=5000; } },
-      { name: "Rün Kırığı", desc: "+1 Rün", icon: "UwxjWcn.png", price: 200, action: () => { state.rune+=1; } },
-      { name: "Rün Kesesi", desc: "+3 Rün", icon: "Pipa3Ag.png", price: 550, action: () => { state.rune+=3; } },
-      { name: "Rün Sandığı", desc: "+10 Rün", icon: "TT7vr06.png", price: 1700, action: () => { state.rune+=10; } }
+      { name: "Karanlık Kristal", desc: "+50 Öz · toplu %20 indirim", icon: "jUC5lFz.png", price: 600, action: () => { state.dark+=50; } },
+      { name: "Karanlık Yürek", desc: "+200 Öz · toplu %33 indirim", icon: "v8b6RUf.png", price: 2000, action: () => { state.dark+=200; } },
+      { name: "Karanlık Küp", desc: "+750 Öz · 6 sa emek", icon: "o7eQsNh.png", price: 6000, action: () => { state.dark+=750; } },
+      { name: "Karanlık Göz", desc: "+2000 Öz · 12 sa emek", icon: "AgrVJ1H.png", price: 12000, action: () => { state.dark+=2000; } },
+      { name: "Rün Kırığı", desc: "+1 Rün · 15 dk emek", icon: "UwxjWcn.png", price: 250, action: () => { state.rune+=1; } },
+      { name: "Rün Kesesi", desc: "+3 Rün · toplu %13 indirim", icon: "Pipa3Ag.png", price: 650, action: () => { state.rune+=3; } },
+      { name: "Rün Sandığı", desc: "+10 Rün · toplu %28 indirim", icon: "TT7vr06.png", price: 1800, action: () => { state.rune+=10; } }
     ];
 
     const achievements = [
@@ -585,11 +586,33 @@
     }
 
     function getTier() { return levelTiers.slice().reverse().find(t => state.level >= t.min) || levelTiers[0]; }
+
+    function cumulativeLevel(tiers, tier, level, startTier = 0) {
+      let total = 0;
+      for (let i = startTier; i < tier; i++) total += tiers[i].length;
+      return total + level;
+    }
+
+    function equipmentUpgradeCost(type, eq) {
+      if (type === 'armor') {
+        if (eq.t === 0) return [80, 120, 150][eq.l] || 150;
+        const effective = cumulativeLevel(armTiers, eq.t, eq.l, 1);
+        return Math.floor(150 * Math.pow(1.4, effective + 1));
+      }
+      const effective = cumulativeLevel(wepTiers, eq.t, eq.l);
+      return Math.floor(150 * Math.pow(1.45, effective));
+    }
+
+    function armorDefense(eq) {
+      if (eq.isUnique) return 50 + (eq.idx * 15);
+      if (eq.t === 0) return 0;
+      return (cumulativeLevel(armTiers, eq.t, eq.l, 1) + 1) * 5;
+    }
     
     function updateCombatStats() {
       currentEnemyMaxHp = state.level * 18; enemyAttack = state.level * 4;
       let w = state.equippedWeapon; playerAtk = w.isUnique ? 100 + (w.idx * 25) + (state.level * 3) : 5 + (w.t * 20) + (w.l * 5) + (state.level * 2);
-      let a = state.equippedArmor; playerDef = a.isUnique ? 50 + (a.idx * 15) : (a.t * 15) + (a.l * 3);
+      let a = state.equippedArmor; playerDef = armorDefense(a);
       playerMaxHp = 50 + (state.level * 10) + ((state.upgrades.potion || 0) * 30);
       if(playerHp > playerMaxHp) playerHp = playerMaxHp;
       playerMaxShield = playerDef * 15;
@@ -643,7 +666,7 @@
       let isWeapon = type === 'weapon'; let eq = isWeapon ? state.equippedWeapon : state.equippedArmor; if(eq.isUnique) return;
       let maxT = isWeapon ? wepTiers.length - 1 : armTiers.length - 1; let maxL = isWeapon ? wepTiers[eq.t].length - 1 : armTiers[eq.t].length - 1;
       if(eq.t === maxT && eq.l === maxL) return;
-      let cost = Math.floor(150 * Math.pow(1.5, (eq.t * 5) + eq.l));
+      let cost = equipmentUpgradeCost(type, eq);
       if(state.soul < cost) { showToast("Yetersiz Ruh!"); return; }
       state.soul -= cost;
       if(eq.l < maxL) { eq.l++; showToast("Eşya Güçlendirildi!");} else if(eq.t < maxT) { eq.t++; eq.l = 0; showToast("Eşya Evrimleşti!");}
@@ -655,7 +678,7 @@
       let w = state.equippedWeapon; let wImg = w.isUnique ? wepUniques[w.idx] : (wepTiers[w.t] ? wepTiers[w.t][w.l] : wepTiers[0][0]);
       let wName = w.isUnique ? wepUniqueNames[w.idx] : "Asa S" + (w.t+1) + "-" + (w.l+1);
       let wMaxT = wepTiers.length - 1; let wMaxL = wepTiers[w.t] ? wepTiers[w.t].length - 1 : 0;
-      let wCost = Math.floor(150 * Math.pow(1.5, (w.t * 5) + w.l));
+      let wCost = equipmentUpgradeCost('weapon', w);
       let wBtnHtml = w.isUnique ? `<button disabled style="margin-top:5px; height:24px; font-size:9px; background:var(--gold); border-color:#fff; color:#000;">YADİGÂR</button>` : (w.t === wMaxT && w.l === wMaxL ? `<button disabled style="margin-top:5px; height:24px; font-size:9px;">MAX</button>` : `<button class="primary" onclick="upgradeEquipment('weapon')" style="margin-top:5px; height:24px; font-size:9px;">${wCost} RUH</button>`);
       document.getElementById('eq-weapon-img').style.backgroundImage = "url('" + CDN_URL + wImg + "')"; 
       document.getElementById('eq-weapon-name').textContent = wName; 
@@ -666,7 +689,7 @@
       let a = state.equippedArmor; let aImg = a.isUnique ? armUniques[a.idx] : (armTiers[a.t] ? armTiers[a.t][a.l] : armTiers[0][0]);
       let aName = a.isUnique ? armUniqueNames[a.idx] : "Cübbe S" + (a.t+1) + "-" + (a.l+1);
       let aMaxT = armTiers.length - 1; let aMaxL = armTiers[a.t] ? armTiers[a.t].length - 1 : 0;
-      let aCost = Math.floor(150 * Math.pow(1.5, (a.t * 5) + a.l));
+      let aCost = equipmentUpgradeCost('armor', a);
       let aBtnHtml = a.isUnique ? `<button disabled style="margin-top:5px; height:24px; font-size:9px; background:var(--gold); border-color:#fff; color:#000;">YADİGÂR</button>` : (a.t === aMaxT && a.l === aMaxL ? `<button disabled style="margin-top:5px; height:24px; font-size:9px;">MAX</button>` : `<button class="primary" onclick="upgradeEquipment('armor')" style="margin-top:5px; height:24px; font-size:9px;">${aCost} RUH</button>`);
       document.getElementById('eq-armor-img').style.backgroundImage = "url('" + CDN_URL + aImg + "')"; 
       document.getElementById('eq-armor-name').textContent = aName; 
@@ -687,7 +710,8 @@
     window.openChest = async function(keyIndex) {
       if(state.keys[keyIndex] <= 0) { showToast("Bu anahtardan yok!"); return; }
       playSound('chest', 0.6); state.keys[keyIndex]--; state.stats.chests++;
-      let isWeapon = Math.random() > 0.5; let gotUnique = Math.random() < (keyIndex > 2 ? (keyIndex * 0.05) : 0);
+      const uniqueChances = [0.01, 0.02, 0.03, 0.15, 0.20, 0.25, 0.30, 0.35];
+      let isWeapon = Math.random() > 0.5; let gotUnique = Math.random() < uniqueChances[keyIndex];
       if(gotUnique) {
         state.stats.uniques++;
         let uArr = isWeapon ? wepUniques : armUniques; let uStateArr = isWeapon ? state.unlockedWeapons : state.unlockedArmors;
@@ -730,7 +754,7 @@
       let target = document.getElementById(targetId); if(!target) return;
       let eff = document.createElement('img'); 
       eff.src = CDN_URL + hitEffects[Math.floor(Math.random() * hitEffects.length)];
-      eff.style.position = 'absolute'; eff.style.width = '80px'; eff.style.height = '80px'; eff.style.left = '50%'; eff.style.top = '50%'; eff.style.transform = 'translate(-50%, -50%)'; eff.style.zIndex = '30'; eff.style.imageRendering = 'pixelated'; eff.style.pointerEvents = 'none'; target.appendChild(eff); setTimeout(() => eff.remove(), 400);
+      eff.style.position = 'absolute'; eff.style.width = '32px'; eff.style.height = '32px'; eff.style.left = '50%'; eff.style.top = '50%'; eff.style.transform = 'translate(-50%, -50%)'; eff.style.zIndex = '30'; eff.style.imageRendering = 'pixelated'; eff.style.opacity = '0.85'; eff.style.pointerEvents = 'none'; target.appendChild(eff); setTimeout(() => eff.remove(), 300);
     }
 
     function playEffectAt(targetId, gifName, scale = 1, offsetY = 0) {
@@ -763,13 +787,20 @@
     }
 
     function addXP(amount) {
-      if (isMapChanging) return false;
-      let oldTier = getTier(); state.xp += amount; var nextXP = state.level * state.level * 100;
-      if (state.xp >= nextXP) { 
-        state.level++; state.xp = 0; playerHp = playerMaxHp; updateCombatStats();
-        playSound('lvlup', 0.7); playEffectAt('player-sprite', 'UbY50AM.gif'); applyCharacterSprite('jump');
+      let oldTier = getTier();
+      state.xp += Math.max(0, Number(amount) || 0);
+      let levelsGained = 0;
+      while (state.xp >= state.level * state.level * 100) {
+        state.xp -= state.level * state.level * 100;
+        state.level++;
+        levelsGained++;
       }
-      let newTier = getTier(); updateUI(false); 
+      if (levelsGained > 0) {
+        updateCombatStats(); playerHp = playerMaxHp; playerShield = playerMaxShield;
+        playSound('lvlup', 0.7); playEffectAt('player-sprite', 'UbY50AM.gif'); applyCharacterSprite('jump');
+        showToast(levelsGained > 1 ? `${levelsGained} seviye yükseldin!` : "Seviye yükseldin!");
+      }
+      let newTier = getTier(); updateUI(false);
       if (oldTier.bg !== newTier.bg && !isMapChanging) {
           document.getElementById("battle-stage").style.backgroundImage = "url('" + CDN_URL + oldTier.bg + "')";
           isMapChanging = true; document.getElementById("enemy-sprite").style.opacity = 0; currentEnemyHp = 0;
@@ -868,7 +899,26 @@
         }
     }
 
-    async function saveState() { await phone.storage.set("kadim_rpg_v51", state); }
+    let saveChain = Promise.resolve();
+    function saveState() {
+      const snapshot = JSON.parse(JSON.stringify(state));
+      try { localStorage.setItem("kadim_rpg_v51_backup", JSON.stringify(snapshot)); } catch (_) {}
+      saveChain = saveChain.catch(() => {}).then(async () => {
+        let lastError;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try { await phone.storage.set("kadim_rpg_v51", snapshot); return true; }
+          catch (error) { lastError = error; await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1))); }
+        }
+        throw lastError;
+      });
+      return saveChain;
+    }
+
+    const uiCache = { upgrades: '', inventory: '' };
+
+    function inventorySignature() {
+      return JSON.stringify([state.equippedWeapon, state.equippedArmor, state.keys, state.unlockedWeapons, state.unlockedArmors, Math.floor(state.soul), playerAtk, playerDef]);
+    }
 
     function updateUI(updateBg = true) {
       if(!state.gender) document.getElementById('modal-creation').style.display = 'flex';
@@ -889,8 +939,11 @@
           else { mgBtn.textContent = "Rün Yetersiz"; mgBtn.disabled = true; mgBtn.className = ""; }
       }
 
-      var upgHtml = ""; 
-      altarUpgrades.forEach(def => {
+      const upgradeSignature = JSON.stringify([state.upgrades, Math.floor(state.soul), Math.floor(state.blood), Math.floor(state.dark)]);
+      if (uiCache.upgrades !== upgradeSignature) {
+        uiCache.upgrades = upgradeSignature;
+        var upgHtml = "";
+        altarUpgrades.forEach(def => {
         var lvl = state.upgrades[def.id] || 0; var isMax = lvl >= def.imgs.length - 1;
         var cost = Math.floor(def.baseCost * Math.pow(def.mult, lvl));
         upgHtml += `
@@ -901,33 +954,69 @@
             </div>
             <button onclick="buyAltarUpgrade('${def.id}')" style="min-width: 80px;" ${isMax ? 'disabled' : ''}>${isMax ? "MAX" : cost + (def.type==='soul'?' Ruh':(def.type==='blood'?' Kan':' Öz'))}</button>
           </div>`;
-      });
-      document.getElementById("upgrades-container").innerHTML = upgHtml;
+        });
+        document.getElementById("upgrades-container").innerHTML = upgHtml;
+      }
 
       let reqLvl = (state.prestige + 1) * 10;
       let btnPrestige = document.getElementById("btn-prestige"); btnPrestige.textContent = "Gereksinim: Seviye " + reqLvl;
       if(state.level >= reqLvl) { btnPrestige.disabled = false; btnPrestige.style.borderColor = "var(--gold)"; btnPrestige.style.color = "#fff"; } 
       else { btnPrestige.disabled = true; btnPrestige.style.borderColor = "#5c4711"; btnPrestige.style.color = "#b38b22"; }
       document.getElementById("res-prestige").textContent = state.prestige;
-      updateInventoryUI();
+      const invSignature = inventorySignature();
+      if (uiCache.inventory !== invSignature) {
+        uiCache.inventory = invSignature;
+        updateInventoryUI();
+      }
     }
 
     function renderMarket() {
       let mHtml = "";
       marketItems.forEach((item, idx) => {
-        mHtml += `<div class="shop-item"><div style="display: flex; align-items: center; gap: 12px;"><div class="icon icon-lg" style="background-image: url('${CDN_URL}${item.icon}'); background-size:contain;"></div><div><div style="font-weight: bold; font-size: 13px;">${item.name}</div><div style="font-size: 9px; color: var(--label-2);">${item.desc}</div></div></div><button class="primary" onclick="buyMarketItem(${idx})">$${item.price}</button></div>`;
+        mHtml += `<div class="shop-item"><div style="display: flex; align-items: center; gap: 12px;"><div class="icon icon-lg" style="background-image: url('${CDN_URL}${item.icon}'); background-size:contain;"></div><div><div style="font-weight: bold; font-size: 13px;">${item.name}</div><div style="font-size: 9px; color: var(--label-2);">${item.desc}</div></div></div><button class="primary market-buy" data-market-index="${idx}" onclick="buyMarketItem(${idx})">$${item.price}</button></div>`;
       });
       document.getElementById("black-market-items").innerHTML = mHtml;
     }
     
+    let marketPurchasePending = false;
+    const bankErrorMessages = {
+      USER_DENIED: "Ödeme iptal edildi.",
+      INSUFFICIENT_FUNDS: "IC banka bakiyen yetersiz.",
+      NO_LINKED_BANK_ACCOUNT: "Uygulamaya şirket banka hesabı bağlanmamış.",
+      PERMISSION_DENIED: "bank.charge izni verilmemiş.",
+      PROTOCOL_MISMATCH: "Telefon SDK sürümü uyumsuz.",
+      UNKNOWN_ACTION: "Telefon bu ödeme işlemini desteklemiyor."
+    };
+
+    function lockMarket(locked) {
+      document.querySelectorAll('.market-buy').forEach(button => {
+        button.disabled = locked;
+        if (locked) button.setAttribute('aria-busy', 'true'); else button.removeAttribute('aria-busy');
+      });
+    }
+
     window.buyMarketItem = async function(idx) {
-      let item = marketItems[idx];
-      try { 
-        await phone.bank.charge({ amount: item.price, note: "Karaborsa: " + item.name }); playSound('buy', 0.5);
-        if (item.name.includes("Tomar")) { let xpMatch = item.desc.match(/\+(\d+)/); if(xpMatch) addXP(parseInt(xpMatch[1])); } 
-        else item.action();
-        state.stats.shop++; await saveState(); updateUI(); showToast("Satın alım başarılı!"); 
-      } catch(e) { showToast("Banka Hatası veya Yetersiz Bakiye!"); }
+      if (marketPurchasePending) return;
+      const item = marketItems[idx];
+      if (!item) return;
+      marketPurchasePending = true;
+      lockMarket(true);
+      let charged = false;
+      try {
+        await phone.bank.charge({ amount: item.price, note: "Karaborsa: " + item.name });
+        charged = true;
+        item.action();
+        state.stats.shop++;
+        playSound('buy', 0.5);
+        await saveState();
+        updateUI();
+        showToast("Satın alım başarılı!");
+      } catch(e) {
+        showToast(charged ? "Ödeme alındı; ödül cihazda korundu, bulut kayıt bekliyor." : (bankErrorMessages[e && e.code] || "Ödeme gerçekleştirilemedi. Tekrar deneyin."));
+      } finally {
+        marketPurchasePending = false;
+        lockMarket(false);
+      }
     }
 
     var mgPos = 0, mgDir = 1, mgSpeed = 2, mgAnim, mgActive = false;
@@ -982,7 +1071,11 @@
 
     phone.whenReady().then(async function (ctx) {
       renderMarket();
-      var saved = await phone.storage.get("kadim_rpg_v51");
+      let saved = null;
+      try { saved = await phone.storage.get("kadim_rpg_v51"); } catch (_) {}
+      if (!saved) {
+        try { saved = JSON.parse(localStorage.getItem("kadim_rpg_v51_backup") || "null"); } catch (_) {}
+      }
       if (saved) { state = sanitizeState({...defaultState, ...saved}); } 
       else { state = sanitizeState(JSON.parse(JSON.stringify(defaultState))); }
       
@@ -991,7 +1084,7 @@
       sfx.bg.volume = userSettings.music;
 
       if(state.gender) { applyCharacterSprite('idle'); spawnEnemy(); updateCombatStats(); playerHp = playerMaxHp; playerShield = playerMaxShield; }
-      updateUI(); setInterval(saveState, 10000); 
+      updateUI(); setInterval(() => saveState().catch(() => {}), 10000);
     });
 
     document.getElementById("btn-farm").onclick = function () {
