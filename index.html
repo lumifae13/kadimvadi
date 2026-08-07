@@ -77,7 +77,7 @@
     #enemy-hp-container { position: absolute; bottom: -8px; left: 10%; width: 80%; height: 4px; background: #000; border: 1px solid #333; border-radius: 2px; overflow: hidden; }
     #enemy-hp-bar { height: 100%; width: 100%; background: #ff3366; transition: width 0.2s; }
 
-    .combat-effect-img { position: absolute; bottom: 35px; height: 48px; width: auto; z-index: 30; image-rendering: pixelated; pointer-events: none; }
+    .combat-effect-img { position: absolute; bottom: 42px; height: 32px; width: auto; z-index: 30; image-rendering: pixelated; pointer-events: none; }
     .combat-effect-img.flip { transform: scaleX(-1); }
     
     .afk-icon { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; image-rendering: pixelated; z-index: 50; display: none; }
@@ -102,10 +102,10 @@
     .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--label-2); font-size: 9px; font-weight: bold; flex: 1; height: 100%; cursor: pointer;}
     .nav-btn.active { color: #fff; border-top: 2px solid var(--bordo-light); margin-top: -1px; background: rgba(255,255,255,0.02);}
 
-    .icon { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; display: inline-block; image-rendering: pixelated; }
-    .icon-sm { width: 16px; height: 16px; }
-    .icon-lg { transform: scale(2); transform-origin: center; margin: 8px; }
-    .nav-btn .icon { width: 16px; height: 16px; opacity: 0.58; transition: opacity 0.2s, filter 0.2s; margin-bottom: 2px; }
+    .icon { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; display: inline-block; image-rendering: auto; }
+    .icon-sm { width: 20px; height: 20px; }
+    .icon-lg { width: 32px; height: 32px; transform: none; margin: 8px; }
+    .nav-btn .icon { width: 24px; height: 24px; opacity: 0.68; transition: opacity 0.2s, filter 0.2s; margin-bottom: 1px; }
     .nav-btn.active .icon { opacity: 1; filter: drop-shadow(0 0 3px var(--bordo-light)); }
 
     .panel { background: rgba(12, 0, 4, 0.85); width: 100%; margin: 0 auto 12px auto; border: 1px solid var(--bordo-dark); border-radius: 6px; padding: 10px; box-sizing: border-box; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); position: relative;}
@@ -271,10 +271,10 @@
 
     <div id="stats-bar">
       <div class="stats-grid">
-        <div class="stat-box"><div class="icon" data-bg="rZ2HD2E.png" style="width: 16px; height: 16px;"></div><span id="res-soul" style="color: #d1b3ff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XWcKSug.png" style="width: 16px; height: 16px;"></div><span id="res-blood" style="color: #ff4d4d;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XaP5VtJ.png" style="width: 16px; height: 16px;"></div><span id="res-dark" style="color: #b84dff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="KND00E1.png" style="width: 16px; height: 16px;"></div><span id="res-rune" style="color: var(--bordo-light);">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="rZ2HD2E.png"></div><span id="res-soul" style="color: #d1b3ff;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="XWcKSug.png"></div><span id="res-blood" style="color: #ff4d4d;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="XaP5VtJ.png"></div><span id="res-dark" style="color: #b84dff;">0</span></div>
+        <div class="stat-box"><div class="icon" data-bg="KND00E1.png"></div><span id="res-rune" style="color: var(--bordo-light);">0</span></div>
       </div>
     </div>
 
@@ -396,7 +396,7 @@
     </div>
   </div>
 
-  <script src="/api/sdk/0.2/child.umd.js"></script>
+  <script src="https://phone-gw.downtownrpg.com/api/sdk/0.2/child.umd.js"></script>
   <script>
     // DİKKAT: BURAYA KENDİ NETLİFY LİNKİNİ YAZ! (Sonunda /img/ olmasına dikkat et)
     // Örnek: "https://oyun-adim.netlify.app/img/"
@@ -414,6 +414,7 @@
       whenReady: async () => ({ theme: { background: '#000', label: '#d8c8c8', secondaryLabel: '#8f7a7a', accent: '#6e0019'}, characterId: "RP" }),
       storage: { get: async () => null, set: async () => {} },
       bank: { charge: async () => true },
+      identity: { token: async () => ({ token: "local-preview", expiresAt: Math.floor(Date.now() / 1000) + 900 }) },
       phone: { notify: async () => {} }
     };
     
@@ -751,10 +752,12 @@
     }
 
     function playHitEffect(targetId) {
-      let target = document.getElementById(targetId); if(!target) return;
-      let eff = document.createElement('img'); 
-      eff.src = CDN_URL + hitEffects[Math.floor(Math.random() * hitEffects.length)];
-      eff.style.position = 'absolute'; eff.style.width = '32px'; eff.style.height = '32px'; eff.style.left = '50%'; eff.style.top = '50%'; eff.style.transform = 'translate(-50%, -50%)'; eff.style.zIndex = '30'; eff.style.imageRendering = 'pixelated'; eff.style.opacity = '0.85'; eff.style.pointerEvents = 'none'; target.appendChild(eff); setTimeout(() => eff.remove(), 300);
+      const target = document.getElementById(targetId);
+      if(!target || typeof target.animate !== 'function') return;
+      target.animate(
+        [{ opacity: 1 }, { opacity: 0.48 }, { opacity: 1 }],
+        { duration: 160, easing: 'steps(2, end)' }
+      );
     }
 
     function playEffectAt(targetId, gifName, scale = 1, offsetY = 0) {
@@ -979,14 +982,64 @@
     }
     
     let marketPurchasePending = false;
+    let verifiedIdentityCache = null;
     const bankErrorMessages = {
       USER_DENIED: "Ödeme iptal edildi.",
       INSUFFICIENT_FUNDS: "IC banka bakiyen yetersiz.",
       NO_LINKED_BANK_ACCOUNT: "Uygulamaya şirket banka hesabı bağlanmamış.",
       PERMISSION_DENIED: "bank.charge izni verilmemiş.",
       PROTOCOL_MISMATCH: "Telefon SDK sürümü uyumsuz.",
-      UNKNOWN_ACTION: "Telefon bu ödeme işlemini desteklemiyor."
+      UNKNOWN_ACTION: "Telefon bu ödeme işlemini desteklemiyor.",
+      IDENTITY_FAILED: "Karakter kimliği doğrulanamadı. Uygulamayı kapatıp tekrar açın.",
+      IDENTITY_TIMEOUT: "Kimlik sunucusu yanıt vermedi. Tekrar deneyin."
     };
+
+    async function getVerifiedIdentity() {
+      if (!isEnvPhone) return { valid: true, characterId: "LOCAL" };
+
+      const now = Date.now();
+      if (verifiedIdentityCache && verifiedIdentityCache.expiresAt * 1000 > now + 30000) {
+        return verifiedIdentityCache;
+      }
+
+      const identity = await phone.identity.token();
+      if (!identity || !identity.token) {
+        const error = new Error("Kimlik tokenı alınamadı.");
+        error.code = "IDENTITY_FAILED";
+        throw error;
+      }
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
+      try {
+        const response = await fetch("/.netlify/functions/verify-identity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: identity.token }),
+          signal: controller.signal
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.valid) {
+          const error = new Error(result.code || "Kimlik doğrulanamadı.");
+          error.code = "IDENTITY_FAILED";
+          throw error;
+        }
+
+        verifiedIdentityCache = result;
+        return result;
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          error.code = "IDENTITY_TIMEOUT";
+        } else if (!error.code) {
+          error.code = "IDENTITY_FAILED";
+        }
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
 
     function lockMarket(locked) {
       document.querySelectorAll('.market-buy').forEach(button => {
@@ -1003,6 +1056,7 @@
       lockMarket(true);
       let charged = false;
       try {
+        await getVerifiedIdentity();
         await phone.bank.charge({ amount: item.price, note: "Karaborsa: " + item.name });
         charged = true;
         item.action();
