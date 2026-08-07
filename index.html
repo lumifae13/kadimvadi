@@ -896,10 +896,24 @@
       else { document.body.classList.add('hide-battle'); isCombatActive = false; }
     };
 
+    let resetArmedUntil = 0;
     window.hardResetGame = async function() {
-        if(confirm("Tüm kayıt dosyanız silinecek ve oyuna SIFIRDAN başlayacaksınız. Bu işlem geri alınamaz! Onaylıyor musunuz?")) {
-            state = sanitizeState(JSON.parse(JSON.stringify(defaultState))); await saveState(); location.reload();
-        }
+      const now = Date.now();
+      if (now > resetArmedUntil) {
+        resetArmedUntil = now + 4000;
+        showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");
+        return;
+      }
+
+      resetArmedUntil = 0;
+      state = sanitizeState(JSON.parse(JSON.stringify(defaultState)));
+      verifiedIdentityCache = null;
+      try { localStorage.removeItem("kadim_rpg_v51_backup"); } catch (_) {}
+
+      try { await saveState(); }
+      catch (_) { try { localStorage.setItem("kadim_rpg_v51_backup", JSON.stringify(state)); } catch (_) {} }
+
+      location.reload();
     }
 
     let saveChain = Promise.resolve();
@@ -983,6 +997,7 @@
     
     let marketPurchasePending = false;
     let verifiedIdentityCache = null;
+    const sdkPreviewMode = new URLSearchParams(window.location.search).get("sdkPreview") === "1";
     const bankErrorMessages = {
       USER_DENIED: "Ödeme iptal edildi.",
       INSUFFICIENT_FUNDS: "IC banka bakiyen yetersiz.",
@@ -1007,6 +1022,17 @@
         const error = new Error("Kimlik tokenı alınamadı.");
         error.code = "IDENTITY_FAILED";
         throw error;
+      }
+
+      // Telefon Önizleme sahte token üretir; gerçek gateway bu tokenı doğrulamaz.
+      // Bu atlama yalnız URL'de açıkça sdkPreview=1 varken etkinleşir.
+      if (sdkPreviewMode) {
+        verifiedIdentityCache = {
+          valid: true,
+          characterId: "SDK_PREVIEW",
+          expiresAt: identity.expiresAt || Math.floor(Date.now() / 1000) + 900
+        };
+        return verifiedIdentityCache;
       }
 
       const controller = new AbortController();
