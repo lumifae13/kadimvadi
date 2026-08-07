@@ -1082,7 +1082,6 @@
       lockMarket(true);
       let charged = false;
       try {
-        await getVerifiedIdentity();
         await phone.bank.charge({ amount: item.price, note: "Karaborsa: " + item.name });
         charged = true;
         item.action();
