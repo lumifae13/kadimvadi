@@ -1516,10 +1516,10 @@
         damageEnemy(true);
         updateUI(false);
       }
-      startAutoAttack(); // Döngüyü tekrarla
+      startAutoAttack(); 
     }, attackSpeed);
+  } 
   
-  // Oyuna başlarken gecikmeli tetikle
   setTimeout(startAutoAttack, 1000);
 
   setInterval(()=>{
