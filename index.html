@@ -63,6 +63,10 @@
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
     .combat-impact{position:absolute;right:40px;bottom:35px;border-radius:50%;pointer-events:none;z-index:41;animation:combatImpact .32s ease-out forwards;mix-blend-mode:screen}
     @keyframes combatImpact{0%{transform:scale(.3);opacity:1}70%{transform:scale(1.15);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+    .enemy-hit-impact{position:absolute;left:31px;bottom:31px;border-radius:50%;pointer-events:none;z-index:41;animation:enemyHitImpact .38s ease-out forwards;mix-blend-mode:screen}
+    @keyframes enemyHitImpact{0%{transform:scale(.25);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.45);opacity:0}}
+    .enemy-death-impact{position:absolute;border-radius:50%;pointer-events:none;z-index:42;animation:enemyDeathImpact .65s ease-out forwards;mix-blend-mode:screen}
+    @keyframes enemyDeathImpact{0%{transform:scale(.2) rotate(0);opacity:1}55%{transform:scale(1.05) rotate(90deg);opacity:1}100%{transform:scale(1.55) rotate(180deg);opacity:0}}
     .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
     .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
     .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
@@ -751,11 +755,25 @@
     Object.assign(eff.style,{position:"absolute",width:(100*scale)+"px",height:(100*scale)+"px",left:"50%",top:`calc(50% + ${offsetY}px)`,transform:"translate(-50%,-50%)",zIndex:"100",pointerEvents:"none"});
     target.appendChild(eff); setTimeout(()=>eff.remove(),800);
   }
+  function elementColors(element,stage=0){
+    const palettes={fire:["#fff09a","#ff3b16"],poison:["#dfff79","#49cf38"],arcane:["#b7f8ff","#3e78ff"],dark:["#f1b5ff","#8a25d9"],physical:["#fff1ca","#d96c42"]};
+    return palettes[element]||[["#ffdb75","#ff5a28"],["#eaff75","#65d63e"],["#79fff2","#238cff"],["#e1a4ff","#763cff"],["#fff","#ff2f91"]][stage]||palettes.physical;
+  }
   function spawnPlayerImpact(stage){
-    const colors=[["#ffdb75","#ff5a28"],["#eaff75","#65d63e"],["#79fff2","#238cff"],["#e1a4ff","#763cff"],["#fff","#ff2f91"]][stage]||["#fff","#ff5a28"],impact=document.createElement("div"),size=54+stage*10;
+    const colors=elementColors(currentEnemyProfile?.element,stage),impact=document.createElement("div"),size=54+stage*10;
     impact.className="combat-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 10%,${colors[1]} 28%,transparent 68%)`;impact.style.boxShadow=`0 0 ${10+stage*5}px ${colors[1]}`;
     impact.style.bottom=(currentEnemyProfile?.kind==="boss"?35:20)+"px";
     $("battle").appendChild(impact);setTimeout(()=>impact.remove(),350);
+  }
+  function spawnEnemyHitImpact(isBoss){
+    const impact=document.createElement("div"),size=isBoss?72:44,colors=isBoss?["#ffd0ff","#9b28dc"]:["#ffd2bd","#d52d34"];
+    impact.className="enemy-hit-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.left=(isBoss?18:31)+"px";impact.style.bottom=(isBoss?22:31)+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 8%,${colors[1]} 30%,transparent 68%)`;impact.style.boxShadow=`0 0 ${isBoss?20:9}px ${colors[1]}`;
+    $("battle").appendChild(impact);setTimeout(()=>impact.remove(),400);
+  }
+  function spawnEnemyDeathImpact(){
+    const isBoss=currentEnemyProfile?.kind==="boss",colors=elementColors(currentEnemyProfile?.element),impact=document.createElement("div"),size=isBoss?112:76;
+    impact.className="enemy-death-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.right=(isBoss?6:24)+"px";impact.style.bottom=(isBoss?8:7)+"px";impact.style.background=`radial-gradient(circle,white 0 6%,${colors[0]} 14%,${colors[1]} 35%,transparent 68%)`;impact.style.boxShadow=`0 0 ${isBoss?28:14}px ${colors[1]}`;
+    $("battle").appendChild(impact);setTimeout(()=>impact.remove(),680);
   }
   function shootProjectile(type){
     const p=document.createElement("img"); p.src=CDN_URL+(type==="player"?"mZbPRLE.gif":enemyAttackGif);p.style.position="absolute";p.style.bottom="42px";p.style.zIndex="40";p.style.transition=".3s linear";
@@ -764,7 +782,7 @@
       const stage=Math.min(4,Math.floor(effective/3)),size=52+Math.min(40,effective*3),hues=[0,55,125,205,285],glow=8+stage*4;
       p.dataset.weaponEffectStage=String(stage);p.style.width=size+"px";p.style.filter=`hue-rotate(${hues[stage]}deg) saturate(${1.1+stage*.35}) brightness(${1+stage*.12}) drop-shadow(0 0 ${glow}px ${stage>=3?"#d8a8ff":"#ff784d"})`;
       p.style.bottom=(35-stage*2)+"px";p.style.left="55px";setTimeout(()=>p.style.left="205px",10);setTimeout(()=>spawnPlayerImpact(stage),245);playSound("p_atk",Math.min(.35,.15+stage*.04));
-    }else{p.style.width="32px";p.style.right="60px";p.style.transform="scaleX(-1)";setTimeout(()=>p.style.right="200px",10);playSound("e_atk",.15)}
+    }else{const isBoss=currentEnemyProfile?.kind==="boss";p.style.width=(isBoss?62:32)+"px";p.style.bottom=(isBoss?32:42)+"px";p.style.right="60px";p.style.transform="scaleX(-1)";if(isBoss)p.style.filter="hue-rotate(235deg) saturate(2) brightness(1.25) drop-shadow(0 0 12px #a52ad8)";setTimeout(()=>p.style.right="200px",10);setTimeout(()=>spawnEnemyHitImpact(isBoss),245);playSound("e_atk",isBoss ? .26 : .15)}
     $("battle").appendChild(p);setTimeout(()=>p.remove(),320);
   }
 
@@ -793,7 +811,7 @@
     state.stats.clicks++; currentEnemyHp-=playerAtk;applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",playerAtk,"hp");
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
-      state.stats.kills++;$("enemy-sprite").style.opacity="0";playSound("e_death",.5);
+      state.stats.kills++;spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0";playSound("e_death",.5);
       const bossMult=currentEnemyProfile?.kind==="boss"?5:1,pm=getPrestigeMultiplier(); state.soul+=Math.floor((10+state.level*2*pm)*bossMult); if(currentEnemyProfile?.kind==="boss"||Math.random()>.5) state.blood+=Math.floor((5+state.level*pm*.5)*bossMult);
       const changed=addXP(10*state.level*bossMult); if(!changed)setTimeout(spawnEnemy,currentEnemyProfile?.kind==="boss"?1300:900); queueSave();
     }
