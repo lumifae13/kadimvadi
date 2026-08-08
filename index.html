@@ -1235,7 +1235,7 @@
   function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
 
   function damageEnemy(isAuto = false){
-    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
+    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive)return;
     const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));
     if(!isAuto) state.stats.clicks++; 
     currentEnemyHp-=dealt;if(loot.lifesteal){playerHp=Math.min(playerMaxHp,playerHp+Math.max(1,Math.floor(dealt*loot.lifesteal)));updatePlayerBars()}applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",dealt,"hp");if(critical)showAbilityCallout("KRİTİK!");else if(execute)showAbilityCallout("BOŞLUK İNFAZI!");else if(proc)showAbilityCallout(trait.name+"!");else if(elemental&&Math.random()<.35)showAbilityCallout(loot.burn?"YANMA!":"ZEHİR!");
@@ -1253,7 +1253,7 @@
     setTimeout(()=>{isDead=false;playerHp=playerMaxHp;playerShield=playerMaxShield;$("player-sprite").style.opacity="1";applyCharacterSprite("idle");updatePlayerBars()},5000);
   }
   function enemyStrike(){
-    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
+    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive)return;
     enemyStrikeCount++;const ability=currentEnemyProfile?.ability,usesAbility=ability&&enemyStrikeCount%ability.every===0;if(usesAbility)showAbilityCallout(ability.name);
     let dmg=Math.max(1,Math.floor(enemyAttack*(usesAbility?ability.damage:1)*(1-getDamageMitigation())));
     if(playerShield>0){const absorbed=Math.min(playerShield,dmg);playerShield-=absorbed;dmg-=absorbed;if(absorbed)showDamage("player-sprite",absorbed,"shield")}
@@ -1414,10 +1414,6 @@
     isCombatActive=id==="main"&&!!state.gender&&introStarted;
     document.body.classList.toggle("hide-battle",id!=="main");
     if(id==="main"){
-      isAFK=false;
-      lastInteractTime=Date.now();
-      $("player-afk").style.display="none";
-      $("enemy-afk").style.display="none";
       checkQuestStatus(); // Macera sekmesine dönüldüğünde kalıntıları tazeler
     }
   }
@@ -1504,11 +1500,8 @@
     }
   };
 
-  ["click","touchstart"].forEach(evt=>document.addEventListener(evt,()=>{lastInteractTime=Date.now();if(isAFK){isAFK=false;$("player-afk").style.display="none";$("enemy-afk").style.display="none"}}));
-
   setInterval(()=>{
-    if(isCombatActive&&!isAFK&&Date.now()-lastInteractTime>15000){isAFK=true;$("player-afk").style.display="block";$("enemy-afk").style.display="block"}
-    if(isCombatActive&&!isMapChanging&&!isAFK)enemyStrike()
+    if(isCombatActive&&!isMapChanging) enemyStrike();
   },2000);
 
 
@@ -1519,13 +1512,12 @@
     let attackSpeed = Math.max(800, 2000 - ((state.upgrades.speed || 0) * 200)); 
     
     autoAttackTimer = setTimeout(() => {
-      if(isCombatActive && !isMapChanging && !isAFK && !isDead && currentEnemyHp > 0){
+      if(isCombatActive && !isMapChanging && !isDead && currentEnemyHp > 0){
         damageEnemy(true);
         updateUI(false);
       }
       startAutoAttack(); // Döngüyü tekrarla
     }, attackSpeed);
-  }
   
   // Oyuna başlarken gecikmeli tetikle
   setTimeout(startAutoAttack, 1000);
