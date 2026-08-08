@@ -753,7 +753,7 @@
     const bossScale=currentEnemyProfile?.kind==="boss"?5:1;
     const region=currentRegion||getCombatRegion(),hpMult=(currentEnemyProfile?.hpMult||1)*(region?.hp||1),atkMult=(currentEnemyProfile?.atkMult||1)*(region?.atk||1);
     currentEnemyMaxHp=Math.floor(state.level*18*bossScale*hpMult);
-    enemyAttack=Math.ceil(state.level*4*(bossScale>1 ? .95 : 1)*atkMult);
+    enemyAttack=Math.ceil(state.level*4*(bossScale>1 ? .8 : 1)*atkMult);
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
     playerMaxHp=50+(state.level*10)+((state.upgrades.potion||0)*30);
