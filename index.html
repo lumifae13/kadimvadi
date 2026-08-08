@@ -1191,9 +1191,11 @@
   }
   function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
 
-  function damageEnemy(){
+  function damageEnemy(isAuto = false){
     if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
-    const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));state.stats.clicks++;currentEnemyHp-=dealt;if(loot.lifesteal){playerHp=Math.min(playerMaxHp,playerHp+Math.max(1,Math.floor(dealt*loot.lifesteal)));updatePlayerBars()}applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",dealt,"hp");if(critical)showAbilityCallout("KRİTİK!");else if(execute)showAbilityCallout("BOŞLUK İNFAZI!");else if(proc)showAbilityCallout(trait.name+"!");else if(elemental&&Math.random()<.35)showAbilityCallout(loot.burn?"YANMA!":"ZEHİR!");
+    const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));
+    if(!isAuto) state.stats.clicks++; 
+    currentEnemyHp-=dealt;if(loot.lifesteal){playerHp=Math.min(playerMaxHp,playerHp+Math.max(1,Math.floor(dealt*loot.lifesteal)));updatePlayerBars()}applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",dealt,"hp");if(critical)showAbilityCallout("KRİTİK!");else if(execute)showAbilityCallout("BOŞLUK İNFAZI!");else if(proc)showAbilityCallout(trait.name+"!");else if(elemental&&Math.random()<.35)showAbilityCallout(loot.burn?"YANMA!":"ZEHİR!");
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;if(isAnimatedBoss())playBossAnimation("death",{onDone:()=>{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}});else{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}playSound("e_death",.5);
@@ -1406,6 +1408,16 @@
     if(isCombatActive&&!isAFK&&Date.now()-lastInteractTime>15000){isAFK=true;$("player-afk").style.display="block";$("enemy-afk").style.display="block"}
     if(isCombatActive&&!isMapChanging&&!isAFK)enemyStrike()
   },2000);
+
+
+  setTimeout(() => {
+    setInterval(() => {
+      if(isCombatActive&&!isMapChanging&&!isAFK&&!isDead&&currentEnemyHp>0){
+        damageEnemy(true); 
+        updateUI(false);
+      }
+    }, 2000); 
+  }, 1000);
 
   setInterval(()=>{
     if((state.upgrades.dust||0)>0&&!isDead)state.soul+=(state.upgrades.dust||0)*5;
