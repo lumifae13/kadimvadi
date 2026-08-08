@@ -315,7 +315,7 @@
     if(characterAssets.length!==182)console.warn("Unexpected character asset count",characterAssets.length);
   }
 
-  const isPhone = typeof PhoneSDK !== "undefined";
+  const isPhone = typeof PhoneSDK !== "undefined" && window.parent !== window;
   const phone = isPhone ? PhoneSDK.createPhoneSDK() : {
     whenReady: async () => ({characterId:"LOCAL"}),
     storage: { get: async()=>null, set: async()=>true },
