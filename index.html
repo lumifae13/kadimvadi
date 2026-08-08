@@ -65,8 +65,7 @@
     @keyframes combatImpact{0%{transform:scale(.3);opacity:1}70%{transform:scale(1.15);opacity:.9}100%{transform:scale(1.5);opacity:0}}
     .enemy-hit-impact{position:absolute;left:31px;bottom:31px;border-radius:50%;pointer-events:none;z-index:41;animation:enemyHitImpact .38s ease-out forwards;mix-blend-mode:screen}
     @keyframes enemyHitImpact{0%{transform:scale(.25);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.45);opacity:0}}
-    .enemy-death-impact{position:absolute;border-radius:50%;pointer-events:none;z-index:42;animation:enemyDeathImpact .65s ease-out forwards;mix-blend-mode:screen}
-    @keyframes enemyDeathImpact{0%{transform:scale(.2) rotate(0);opacity:1}55%{transform:scale(1.05) rotate(90deg);opacity:1}100%{transform:scale(1.55) rotate(180deg);opacity:0}}
+    .sheet-fx{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:43;image-rendering:pixelated}
     .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
     .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
     .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
@@ -770,10 +769,16 @@
     impact.className="enemy-hit-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.left=(isBoss?18:31)+"px";impact.style.bottom=(isBoss?22:31)+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 8%,${colors[1]} 30%,transparent 68%)`;impact.style.boxShadow=`0 0 ${isBoss?20:9}px ${colors[1]}`;
     $("battle").appendChild(impact);setTimeout(()=>impact.remove(),400);
   }
+  function playSheetFX({file,frameWidth,frameHeight,frames,scale=1,left,right,bottom,duration=650}){
+    const fx=document.createElement("div"),width=frameWidth*scale,height=frameHeight*scale,sheetWidth=frameWidth*frames*scale;
+    fx.className="sheet-fx";fx.style.width=width+"px";fx.style.height=height+"px";fx.style.backgroundImage=`url("${V55_RAW_URL}${file}")`;fx.style.backgroundSize=`${sheetWidth}px ${height}px`;if(left!=null)fx.style.left=left+"px";if(right!=null)fx.style.right=right+"px";fx.style.bottom=bottom+"px";
+    $("battle").appendChild(fx);let frame=0;const timer=setInterval(()=>{frame++;if(frame>=frames){clearInterval(timer);fx.remove();return}fx.style.backgroundPosition=`-${frame*width}px 0`},duration/frames);setTimeout(()=>{clearInterval(timer);fx.remove()},duration+80);
+  }
   function spawnEnemyDeathImpact(){
-    const isBoss=currentEnemyProfile?.kind==="boss",colors=elementColors(currentEnemyProfile?.element),impact=document.createElement("div"),size=isBoss?112:76;
-    impact.className="enemy-death-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.right=(isBoss?6:24)+"px";impact.style.bottom=(isBoss?8:7)+"px";impact.style.background=`radial-gradient(circle,white 0 6%,${colors[0]} 14%,${colors[1]} 35%,transparent 68%)`;impact.style.boxShadow=`0 0 ${isBoss?28:14}px ${colors[1]}`;
-    $("battle").appendChild(impact);setTimeout(()=>impact.remove(),680);
+    const isBoss=currentEnemyProfile?.kind==="boss";playSheetFX({file:"legacy-enemy-explosion.png",frameWidth:48,frameHeight:48,frames:8,scale:isBoss?2:1.6,right:isBoss?14:23,bottom:isBoss?16:18,duration:isBoss?760:620});
+  }
+  function spawnPlayerDeathImpact(){
+    playSheetFX({file:"legacy-player-death.png",frameWidth:64,frameHeight:64,frames:7,scale:1.25,left:14,bottom:17,duration:720});
   }
   function shootProjectile(type){
     const p=document.createElement("img"); p.src=CDN_URL+(type==="player"?"mZbPRLE.gif":enemyAttackGif);p.style.position="absolute";p.style.bottom="42px";p.style.zIndex="40";p.style.transition=".3s linear";
@@ -818,7 +823,7 @@
   }
 
   function killPlayer(message="ÖLDÜN!"){
-    if(isDead)return;isDead=true;state.stats.deaths++;playerHp=0;playSound("p_death",.8);showToast(message);$("player-sprite").style.opacity="0";updatePlayerBars();
+    if(isDead)return;isDead=true;state.stats.deaths++;playerHp=0;playSound("p_death",.8);spawnPlayerDeathImpact();showToast(message);$("player-sprite").style.opacity="0";updatePlayerBars();
     setTimeout(()=>{isDead=false;playerHp=playerMaxHp;playerShield=playerMaxShield;$("player-sprite").style.opacity="1";applyCharacterSprite("idle");updatePlayerBars()},5000);
   }
   function enemyStrike(){
