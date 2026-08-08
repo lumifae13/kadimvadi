@@ -57,6 +57,7 @@
     #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(-1.5,1.5);transform-origin:center bottom}
     #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
     #enemy-sprite.slime-v55{background-size:512px 192px;animation:slimeIdle .8s linear infinite}
+    #enemy-sprite.boss-v55{right:22px;bottom:24px;width:80px;height:80px;background-size:80px 80px;background-position:center;animation:none;filter:drop-shadow(0 0 7px #b72054)}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
@@ -393,7 +394,8 @@
     tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
     ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
     rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
-    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
+    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav"),
+    boss:new Audio(CDN_URL+"boss-warning.wav")
   };
   sfx.bg.loop = true;
 
@@ -414,9 +416,15 @@
     {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"slime-green.png"},
     {id:"slime-red",name:"Ateş Slime",element:"fire",sprite:"slime-red.png"}
   ];
+  const V55_BOSS_ENEMIES = [
+    ["blinded-grimlock","Kör Grimlock"],["bloodshot-eye","Kanlı Göz"],["brawny-ogre","Kaba Ogre"],["crimson-slaad","Kızıl Slaad"],["crushing-cyclops","Ezici Tepegöz"],
+    ["death-slime","Ölüm Slime'ı"],["fungal-myconid","Mantar Myconid"],["humongous-ettin","Dev Ettin"],["murky-slaad","Bataklık Slaad"],["ochre-jelly","Toprak Jölesi"],
+    ["ocular-watcher","Gözcü"],["red-cap","Kızıl Başlık"],["shrieker-mushroom","Çığlık Mantarı"],["stone-troll","Taş Trol"],["swamp-troll","Bataklık Trolü"]
+  ].map(([id,name])=>({id,name,kind:"boss",element:"dark",sprite:id+".gif"}));
   const V55_RAW_URL="https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
-  let v55SlimesReady=false,currentEnemyProfile=null;
-  function preloadV55Enemies(){Promise.all(V55_SLIME_ENEMIES.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=V55_RAW_URL+enemy.sprite}))).then(()=>{v55SlimesReady=true}).catch(()=>{v55SlimesReady=false})}
+  let v55SlimesReady=false,v55BossesReady=false,currentEnemyProfile=null;
+  function preloadEnemySet(list,onReady){Promise.all(list.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=V55_RAW_URL+enemy.sprite}))).then(()=>onReady(true)).catch(()=>onReady(false))}
+  function preloadV55Enemies(){preloadEnemySet(V55_SLIME_ENEMIES,ready=>v55SlimesReady=ready);preloadEnemySet(V55_BOSS_ENEMIES,ready=>v55BossesReady=ready)}
   const enemyAttackGif = "Yku2dxV.gif";
   const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
   const frameCounts = {idle:6,dash:4,jump:8,death:6};
@@ -586,8 +594,9 @@
     $("player-shield-bar").style.width=clamp(playerMaxShield?playerShield/playerMaxShield*100:0,0,100)+"%";
   }
   function updateCombatStats(){
-    currentEnemyMaxHp=Math.floor(state.level*18);
-    enemyAttack=Math.floor(state.level*4);
+    const bossScale=currentEnemyProfile?.kind==="boss"?5:1;
+    currentEnemyMaxHp=Math.floor(state.level*18*bossScale);
+    enemyAttack=Math.ceil(state.level*4*(bossScale>1?1.75:1));
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
     playerMaxHp=50+(state.level*10)+((state.upgrades.potion||0)*30);
@@ -752,10 +761,13 @@
 
   function spawnEnemy(){
     const el=$("enemy-sprite");
-    if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
-    else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.classList.remove("slime-v55");el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    const isBoss=v55BossesReady&&state.stats.kills%10===9;
+    el.classList.remove("slime-v55","boss-v55");
+    if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.45);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    else if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
+    else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
     el.style.backgroundPosition="0 0";el.style.opacity="1";
-    updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
+    updateCombatStats();currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
   }
 
   function addXP(amount){
@@ -773,8 +785,8 @@
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;$("enemy-sprite").style.opacity="0";playSound("e_death",.5);
-      const pm=getPrestigeMultiplier(); state.soul+=Math.floor(10+state.level*2*pm); if(Math.random()>.5) state.blood+=Math.floor(5+state.level*pm*.5);
-      const changed=addXP(10*state.level); if(!changed)setTimeout(spawnEnemy,900); queueSave();
+      const bossMult=currentEnemyProfile?.kind==="boss"?5:1,pm=getPrestigeMultiplier(); state.soul+=Math.floor((10+state.level*2*pm)*bossMult); if(currentEnemyProfile?.kind==="boss"||Math.random()>.5) state.blood+=Math.floor((5+state.level*pm*.5)*bossMult);
+      const changed=addXP(10*state.level*bossMult); if(!changed)setTimeout(spawnEnemy,currentEnemyProfile?.kind==="boss"?1300:900); queueSave();
     }
   }
 
