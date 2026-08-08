@@ -115,38 +115,38 @@
 
   <div id="intro">
     <img id="intro-logo" data-src="5uCOUOu.png" alt="Kadim Vadi">
-    <div class="tiny">KaranlÄ±k seni bekliyor.</div>
-    <button id="intro-start" class="primary" onclick="startGameIntro()">BaÅŸla</button>
+    <div class="tiny">Karanlık seni bekliyor.</div>
+    <button id="intro-start" class="primary" onclick="startGameIntro()">Başla</button>
     <div class="intro-progress"><div id="intro-progress-bar"></div></div>
-    <div id="intro-progress-text" class="tiny" style="margin-top:6px">Dokun ve kadere adÄ±m at.</div>
+    <div id="intro-progress-text" class="tiny" style="margin-top:6px">Dokun ve kadere adım at.</div>
   </div>
 
   <div id="creation">
-    <h2 class="creator-title">KanÄ±n Sahibine BiÃ§im Ver</h2>
-    <div class="tiny">Kadim Vadi seni bu suretle hatÄ±rlayacak.</div>
+    <h2 class="creator-title">Kanın Sahibine Biçim Ver</h2>
+    <div class="tiny">Kadim Vadi seni bu suretle hatırlayacak.</div>
     <div class="gender-switch">
-      <button id="gender-female" onclick="setCreatorGender('female')">KadÄ±n</button>
+      <button id="gender-female" onclick="setCreatorGender('female')">Kadın</button>
       <button id="gender-male" onclick="setCreatorGender('male')">Erkek</button>
     </div>
     <div class="creator-stage"><canvas id="creator-canvas" width="80" height="64"></canvas></div>
     <div class="creator-tabs">
       <button class="creator-tab active" data-category="skin" onclick="setCreatorCategory('skin')">Ten</button>
-      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">SaÃ§</button>
-      <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">Ä°Ã§lik</button>
-      <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Ãœst</button>
+      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">Saç</button>
+      <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">İçlik</button>
+      <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Üst</button>
       <button class="creator-tab" data-category="bottom" onclick="setCreatorCategory('bottom')">Alt</button>
       <button class="creator-tab" data-category="footwear" onclick="setCreatorCategory('footwear')">Ayak</button>
       <button class="creator-tab" data-category="outfit" onclick="setCreatorCategory('outfit')">Tam</button>
-      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Ã–zel</button>
+      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
     </div>
     <div class="creator-picker">
-      <button onclick="cycleCreator(-1)" aria-label="Ã–nceki">â€¹</button>
-      <div class="creator-choice"><b id="creator-choice-name">YÃ¼kleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
-      <button onclick="cycleCreator(1)" aria-label="Sonraki">â€º</button>
+      <button onclick="cycleCreator(-1)" aria-label="Önceki">‹</button>
+      <div class="creator-choice"><b id="creator-choice-name">Yükleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
+      <button onclick="cycleCreator(1)" aria-label="Sonraki">›</button>
     </div>
     <div class="creator-actions">
       <button onclick="randomizeCreator()">Rastgele</button>
-      <button class="primary" onclick="finishCharacterCreation()">Karakteri OluÅŸtur</button>
+      <button class="primary" onclick="finishCharacterCreation()">Karakteri Oluştur</button>
     </div>
   </div>
 
@@ -154,19 +154,19 @@
     <div class="panel modal" style="position:relative">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('settings')"></div>
       <h3 class="center" style="margin-top:0">Ayarlar</h3>
-      <label>MÃ¼zik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
+      <label>Müzik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
       <label>Efekt</label><input id="vol-sfx" type="range" min="0" max="1" step="0.1" value="1" onchange="updateVolumes()">
-      <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri DÃ¼zenle</button>
-      <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu SÄ±fÄ±rla</button>
-      <div class="tiny center" style="margin-top:18px">SYLEX entertainment Â· demo build</div>
+      <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri Düzenle</button>
+      <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu Sıfırla</button>
+      <div class="tiny center" style="margin-top:18px">SYLEX entertainment · demo build</div>
     </div>
   </div>
 
   <div id="achievements" class="overlay">
     <div class="panel modal" style="position:relative">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('achievements')"></div>
-      <h3 class="center" style="margin:0;color:var(--gold)">BaÅŸarÄ±mlar</h3>
-      <div class="tiny center" style="margin-bottom:12px">AÃ§Ä±lan: <span id="ach-count">0 / 15</span></div>
+      <h3 class="center" style="margin:0;color:var(--gold)">Başarımlar</h3>
+      <div class="tiny center" style="margin-bottom:12px">Açılan: <span id="ach-count">0 / 15</span></div>
       <div id="ach-list" style="display:grid;gap:8px"></div>
     </div>
   </div>
@@ -175,8 +175,8 @@
     <div class="panel gold modal" style="position:relative;text-align:center">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('prestige-confirm')"></div>
       <h3 style="color:var(--gold)">Reenkarnasyon</h3>
-      <p>Ã–z, RÃ¼n, baÅŸarÄ±mlar ve istatistikler korunur; diÄŸer ilerleme sÄ±fÄ±rlanÄ±r. Her Kadim Ruh Ã¼retimi +%25 artÄ±rÄ±r.</p>
-      <div style="display:flex;gap:8px"><button onclick="closeModal('prestige-confirm')">Ä°ptal</button><button class="gold" onclick="executePrestige()">Onayla</button></div>
+      <p>Öz, Rün, başarımlar ve istatistikler korunur; diğer ilerleme sıfırlanır. Her Kadim Ruh üretimi +%25 artırır.</p>
+      <div style="display:flex;gap:8px"><button onclick="closeModal('prestige-confirm')">İptal</button><button class="gold" onclick="executePrestige()">Onayla</button></div>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
 
   <div class="battle" id="battle">
     <div id="hud">
-      <div class="hud-row"><h3 id="player-title">Ã‡Ä±rak BÃ¼yÃ¼cÃ¼</h3><span class="badge">SV <span id="level-display">1</span></span></div>
+      <div class="hud-row"><h3 id="player-title">Çırak Büyücü</h3><span class="badge">SV <span id="level-display">1</span></span></div>
       <div class="bar"><div id="xp-bar" class="bar-fill"></div><div class="bar-label">XP</div></div>
     </div>
     <div id="player-sprite">
@@ -216,19 +216,23 @@
 
   <div id="content">
     <section id="tab-main" class="tab active">
-      <div class="panel"><div class="head"><span>KaranlÄ±k Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh HasadÄ±</button></div>
-      <div class="panel"><div class="head"><span>Eski KalÄ±ntÄ±lar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
-      <div class="panel purple"><div class="head"><span>Kan RitÃ¼eli</span><span class="badge">Åans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>RitÃ¼el Yap</button></div>
+      <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
+      <div class="panel"><div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
+      <div class="panel purple"><div class="head"><span>Kan Ritüeli</span><span class="badge">Şans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>Ritüel Yap</button></div>
     </section>
 
     <section id="tab-chest" class="tab">
       <div class="panel">
-        <div class="head"><span>KuÅŸanÄ±lan Ekipman</span><span class="badge">GÃ¼Ã§</span></div>
+        <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
         <div class="eq-grid">
-          <div class="eq"><div class="tiny">SÄ°LAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" styl…17759 tokens truncated…  function addXP(amount){
+          <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-wea…17563 tokens truncated…gth)]}")`; el.style.opacity="1";
+    updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
+  }
+
+  function addXP(amount){
     const oldTier=getTier(); state.xp+=Math.max(0,Number(amount)||0); let gained=0;
     while(state.xp>=xpNeeded()){state.xp-=xpNeeded();state.level++;gained++}
-    if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yÃ¼kseldin!`:"Seviye yÃ¼kseldin!")}
+    if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yükseldin!`:"Seviye yükseldin!")}
     const newTier=getTier(); updateUI(false);
     if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{ $("battle").style.backgroundImage=`url("${CDN_URL}${newTier.bg}")`;isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
     return false;
@@ -245,7 +249,7 @@
     }
   }
 
-  function killPlayer(message="Ã–LDÃœN!"){
+  function killPlayer(message="ÖLDÜN!"){
     if(isDead)return;isDead=true;state.stats.deaths++;playerHp=0;playSound("p_death",.8);showToast(message);$("player-sprite").style.opacity="0";updatePlayerBars();
     setTimeout(()=>{isDead=false;playerHp=playerMaxHp;playerShield=playerMaxShield;$("player-sprite").style.opacity="1";applyCharacterSprite("idle");updatePlayerBars()},5000);
   }
@@ -261,11 +265,11 @@
     const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"); $("quest-duration").textContent=q.duration+" SN";
     if(state.questEndTime>now){
       const total=Math.max(1000,(state.questEndTime-(state.questStartedAt||now)));const rem=state.questEndTime-now;const pct=clamp(100-rem/total*100,0,100);
-      btn.disabled=true;btn.className="";btn.textContent=`AraÅŸtÄ±rÄ±lÄ±yor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
+      btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
     }else if(state.questEndTime>0){
       btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
     }else{
-      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>GÃ¶lgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>Gölgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
   async function questAction(){
@@ -274,37 +278,37 @@
       state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html="";
       if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
       else{state.soul+=q.soul;state.blood+=q.blood;html=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
-      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="KalÄ±ntÄ± Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="Kalıntı Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
     }else if(state.questEndTime<=0){playSound("quest_start",.5);state.questStartedAt=now;state.questEndTime=now+q.duration*1000}
     checkQuestStatus();await saveState();updateUI();
   }
 
   function checkRitualStatus(){
     const btn=$("btn-ritual"),now=Date.now();
-    if(state.ritualEndTime>now){btn.disabled=true;btn.className="";btn.textContent="RitÃ¼el sÃ¼rÃ¼yor..."}
+    if(state.ritualEndTime>now){btn.disabled=true;btn.className="";btn.textContent="Ritüel sürüyor..."}
     else if(state.ritualEndTime>0){btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!"}
     else if(state.ritualNextAvailable>now){btn.disabled=true;btn.className="";btn.textContent=`Bekleniyor (${Math.ceil((state.ritualNextAvailable-now)/1000)}s)`}
-    else{btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}XWcKSug.png')"></span>RitÃ¼el Yap`}
+    else{btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}XWcKSug.png')"></span>Ritüel Yap`}
   }
   async function ritualAction(){
     if(isDead)return;const now=Date.now(),r=getRitualStats();
     if(state.ritualEndTime>0&&state.ritualEndTime<=now){
       state.ritualEndTime=0;state.stats.rituals++;const roll=state.pendingRitualRoll;let html="";
-      if(roll<.12){state.rune++;html=`<b style="color:#ff7a98">+1 RÃ¼n KÄ±rÄ±ÄŸÄ±</b>`}
-      else if(roll<.40){const d=Math.max(1,Math.floor(3*r.rewardMult));state.dark+=d;html=`<b style="color:#b84dff">+${d} KaranlÄ±k Ã–z</b>`}
+      if(roll<.12){state.rune++;html=`<b style="color:#ff7a98">+1 Rün Kırığı</b>`}
+      else if(roll<.40){const d=Math.max(1,Math.floor(3*r.rewardMult));state.dark+=d;html=`<b style="color:#b84dff">+${d} Karanlık Öz</b>`}
       else{const s=Math.floor((180+state.level*8)*r.rewardMult);state.soul+=s;html=`<b style="color:#d1b3ff">+${s} Ruh</b>`}
-      $("loot-title").textContent="Kan RitÃ¼eli Sonucu";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);await saveState();updateUI();return;
+      $("loot-title").textContent="Kan Ritüeli Sonucu";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);await saveState();updateUI();return;
     }
     if(state.ritualNextAvailable>now)return;
     if(state.blood<r.bloodCost){showToast("Yetersiz Kan!");return}
     state.blood-=r.bloodCost;const hpCost=Math.max(10,Math.floor(playerMaxHp*r.hpCostPercent/100));playerHp-=hpCost;showDamage("player-sprite",hpCost,"hp");updatePlayerBars();
-    if(playerHp<=0){killPlayer("RitÃ¼el seni tÃ¼ketti...");await saveState();updateUI();return}
+    if(playerHp<=0){killPlayer("Ritüel seni tüketti...");await saveState();updateUI();return}
     state.ritualNextAvailable=now+r.cooldownMS;state.ritualEndTime=now+3000;state.pendingRitualRoll=Math.random();playSound("ritual",.7);playEffectAt("player-sprite","BvKsn1n.gif",1.4,-10);await saveState();updateUI();
   }
 
   function renderUpgrades(){
     const sig=JSON.stringify([state.upgrades,money(state.soul),money(state.blood),money(state.dark)]);if(uiCache.upgrades===sig)return;uiCache.upgrades=sig;
-    $("upgrades").innerHTML=altarUpgrades.map(def=>{const lvl=state.upgrades[def.id]||0,max=lvl>=def.imgs.length-1,cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl)),unit=def.type==="soul"?"Ruh":def.type==="blood"?"Kan":"Ã–z";
+    $("upgrades").innerHTML=altarUpgrades.map(def=>{const lvl=state.upgrades[def.id]||0,max=lvl>=def.imgs.length-1,cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl)),unit=def.type==="soul"?"Ruh":def.type==="blood"?"Kan":"Öz";
       return `<div class="shop-item"><div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${def.imgs[Math.min(lvl,def.imgs.length-1)]}')"></span><div><div class="shop-name">${def.name} <span style="color:var(--gold)">${max?"MAKS":roman[lvl]||lvl}</span></div><div class="shop-desc">${def.desc}</div></div></div><button onclick="buyAltarUpgrade('${def.id}')" ${max?"disabled":""}>${max?"MAX":cost+" "+unit}</button></div>`}).join("");
   }
   async function buyAltarUpgrade(id){
@@ -318,18 +322,18 @@
     const s=state.stats;return ({kill:s.kills,click:s.clicks,death:s.deaths,quest:s.quests,ritual:s.rituals,shop:s.shop,chest:s.chests,mg_win:s.mg_win,upg_w:s.weapon_upg,upg_a:s.armor_upg,unique:s.uniques,level:state.level})[a.type]||0;
   }
   function checkAchievements(){
-    let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);const reward=SPECIAL_SKIN_REWARDS[a.id];showToast(reward?`ğŸ† ${a.name} Â· ${reward} aÃ§Ä±ldÄ±!`:"ğŸ† "+a.name);playSound("equip",.8);changed=true}}
+    let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);const reward=SPECIAL_SKIN_REWARDS[a.id];showToast(reward?`🏆 ${a.name} · ${reward} açıldı!`:"🏆 "+a.name);playSound("equip",.8);changed=true}}
     if(changed){queueSave();renderAchievements()}
   }
   function renderAchievements(){
     $("ach-count").textContent=`${state.unlockedAchievements.length} / ${achievements.length}`;
-    $("ach-list").innerHTML=achievements.map(a=>{const u=state.unlockedAchievements.includes(a.id),reward=SPECIAL_SKIN_REWARDS[a.id];return `<div class="ach ${u?"unlocked":""}"><img src="${CDN_URL}${a.icon}"><div><b>${a.name}</b><div class="tiny">${u?a.desc:"SÄ±rrÄ±nÄ± Ã¶ÄŸrenmek iÃ§in oynamaya devam et."}${reward?` Â· Ã–dÃ¼l: ${reward}`:""}</div></div></div>`}).join("");
+    $("ach-list").innerHTML=achievements.map(a=>{const u=state.unlockedAchievements.includes(a.id),reward=SPECIAL_SKIN_REWARDS[a.id];return `<div class="ach ${u?"unlocked":""}"><img src="${CDN_URL}${a.icon}"><div><b>${a.name}</b><div class="tiny">${u?a.desc:"Sırrını öğrenmek için oynamaya devam et."}${reward?` · Ödül: ${reward}`:""}</div></div></div>`}).join("");
   }
   window.renderAchievements=renderAchievements;
 
   async function executePrestige(){
     closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements]};
-    state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim GÃ¼Ã§ uyandÄ±.")
+    state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
   }
   window.executePrestige=executePrestige;
 
@@ -345,7 +349,7 @@
   }
   function queueSave(){if(saveQueued)return;saveQueued=true;setTimeout(()=>{saveQueued=false;saveState().catch(()=>{})},400)}
   async function hardResetGame(){
-    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("SÄ±fÄ±rlamak iÃ§in 4 saniye iÃ§inde tekrar bas.");return}
+    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");return}
     state=sanitizeState(clone(defaultState));try{localStorage.removeItem(BACKUP_KEY)}catch{};await saveState().catch(()=>{});location.reload()
   }
   window.hardResetGame=hardResetGame;
@@ -357,7 +361,7 @@
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
     const invSig=JSON.stringify([state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();checkRitualStatus();
-    if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 RÃ¼n)":"RÃ¼n Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
+    if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
 
   function initCharacterSystem(){
@@ -393,7 +397,7 @@
   function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
     if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=true;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
-    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazÄ±r.":"Karakter gÃ¶rÃ¼nÃ¼mÃ¼ gÃ¼ncellendi.");
+    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
   }
   Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
 
@@ -402,12 +406,12 @@
   $("btn-ritual").onclick=ritualAction;
   $("btn-mg").onclick=async function(){
     if(!mgActive){
-      if(state.rune<1){showToast("Yeterli RÃ¼n Yok!");return}
+      if(state.rune<1){showToast("Yeterli Rün Yok!");return}
       state.rune--;await saveState();mgActive=true;mgPos=0;mgDir=1;mgSpeed=1.8+Math.random();this.textContent="KIR!";this.className="primary";$("mg-result").textContent="";
       const loop=()=>{if(!mgActive)return;mgPos+=mgDir*mgSpeed;if(mgPos>=96){mgPos=96;mgDir=-1}if(mgPos<=0){mgPos=0;mgDir=1}$("mg-cursor").style.left=mgPos+"%";mgAnim=requestAnimationFrame(loop)};loop();
     }else{
       mgActive=false;cancelAnimationFrame(mgAnim);const win=mgPos>=42.5&&mgPos<=57.5;
-      if(win){const d=getDimensionReward();state.dark+=d;state.stats.mg_win++;addXP(300);$("mg-result").textContent=`BAÅARILI! +${d} Ã–z`;$("mg-result").style.color="var(--mor2)";playEffectAt("player-sprite","UbY50AM.gif")}
+      if(win){const d=getDimensionReward();state.dark+=d;state.stats.mg_win++;addXP(300);$("mg-result").textContent=`BAŞARILI! +${d} Öz`;$("mg-result").style.color="var(--mor2)";playEffectAt("player-sprite","UbY50AM.gif")}
       else{$("mg-result").textContent="ISKALADIN!";$("mg-result").style.color="var(--muted)"}
       await saveState();updateUI();
     }
@@ -439,7 +443,7 @@
       if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
       updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
     }catch(e){
-      console.error("Phone SDK init error",e);showToast("Telefon SDK baÅŸlatÄ±lamadÄ±.");state=sanitizeState(clone(defaultState));updateUI();
+      console.error("Phone SDK init error",e);showToast("Telefon SDK başlatılamadı.");state=sanitizeState(clone(defaultState));updateUI();
     }
   }
   boot();
