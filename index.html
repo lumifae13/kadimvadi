@@ -220,7 +220,7 @@
     <div class="panel purple modal center">
       <h3 id="loot-title" style="color:var(--gold);margin-top:0">Ganimet</h3>
       <div id="loot-items" style="display:grid;gap:10px;justify-items:center;margin:14px 0"></div>
-      <button class="primary" onclick="closeModal('loot')">Kabul Et</button>
+      <button class="primary" onclick="closeRewardModal()">Kabul Et</button>
     </div>
   </div>
 
@@ -699,7 +699,8 @@
   window.openModal=openModal; window.closeModal=closeModal;
   function openGoddessHub(){isCombatActive=false;renderGoddessHub();openModal("goddess-hub")}
   function closeGoddessHub(){closeModal("goddess-hub");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
-  Object.assign(window,{openGoddessHub,closeGoddessHub});
+  function closeRewardModal(){closeModal("loot");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
+  Object.assign(window,{openGoddessHub,closeGoddessHub,closeRewardModal});
 
   function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
   function getPrestigeMultiplier(){return 1+state.prestige*0.25}
@@ -1074,7 +1075,7 @@
       const completedType=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html=`<span class="atlas-icon" style="${atlasIconStyle(completedType.atlas,completedType.index,2)}"></span>`;
       if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html+=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
       else{state.soul+=q.soul;state.blood+=q.blood;html+=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
-      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent=completedType.name+" Ganimeti";$("loot-items").innerHTML=html;state.questType=null;state.questRisk=null;closeGoddessHub();openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent=completedType.name+" Ganimeti";$("loot-items").innerHTML=html;state.questType=null;state.questRisk=null;closeModal("goddess-hub");openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
     }
     checkQuestStatus();await saveState();renderGoddessHub();updateUI();
   }
@@ -1086,7 +1087,7 @@
     if(type==="vitality"){const cost=Math.max(1,Math.floor(playerMaxHp*.25));if(playerHp<=cost){showToast("Bu adak seni öldürür.");return}playerHp-=cost;const gain=250+state.level*20;state.soul+=gain;html=`<b style="color:#d1b3ff">+${gain} Ruh</b>`}
     else if(type==="blood"){if(state.blood<30){showToast("30 Kan gerekli.");return}state.blood-=30;if(Math.random()<.35){state.rune++;html='<b style="color:#ff7a98">+1 Rün Kırığı</b>'}else{const gain=4+Math.floor(state.level/8);state.dark+=gain;html=`<b style="color:#b84dff">+${gain} Karanlık Öz</b>`}}
     else if(type==="essence"){if(state.dark<5){showToast("5 Karanlık Öz gerekli.");return}state.dark-=5;state.goddess.reputation+=15;html='<b style="color:#f1d26a">+15 Tanrıça İtibarı</b>'}else return;
-    state.ritualDay=localDayKey();state.stats.rituals++;playSound("ritual",.65);playEffectAt("player-sprite","BvKsn1n.gif",1.4,-10);updatePlayerBars();$("loot-title").textContent="Tanrıça'nın Adağı";$("loot-items").innerHTML=html;closeGoddessHub();openModal("loot");await saveState();renderGoddessHub();updateUI();
+    state.ritualDay=localDayKey();state.stats.rituals++;playSound("ritual",.65);playEffectAt("player-sprite","BvKsn1n.gif",1.4,-10);updatePlayerBars();$("loot-title").textContent="Tanrıça'nın Adağı";$("loot-items").innerHTML=html;closeModal("goddess-hub");openModal("loot");await saveState();renderGoddessHub();updateUI();
   }
   window.performGoddessRitual=performGoddessRitual;
 
