@@ -54,7 +54,7 @@
     .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--mor3),var(--bordo2));transition:width .2s}
     .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
     #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
-    #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated}
+    #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(1.5);transform-origin:center bottom}
     #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
