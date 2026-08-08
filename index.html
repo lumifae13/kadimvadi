@@ -276,10 +276,6 @@
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><img data-src="goddess-portrait.png" style="width:54px;height:54px;border:1px solid var(--gold);border-radius:6px;image-rendering:pixelated"><div><h3 style="margin:0;color:var(--gold)">Tanrıça'nın Divanı</h3><div id="goddess-line" class="tiny">Kaderin bugün yeniden yazılıyor.</div><div class="tiny" style="color:#f1d26a">İtibar <span id="goddess-reputation">0</span></div></div></div>
       <div class="head"><span>Günlük Emirler</span><span id="daily-reset" class="badge">Bugün</span></div>
       <div id="daily-missions" class="daily-grid"></div>
-      <div class="head" style="margin-top:14px"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div>
-      <div class="bar" style="height:18px;margin-bottom:7px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div>
-      <div id="expedition-choices" class="choice-grid"></div>
-      <button id="btn-quest" class="special" style="display:none"></button>
       <div class="head" style="margin-top:14px"><span>Kan Sunağı</span><span class="badge">Günde 1</span></div>
       <div id="ritual-choices" class="ritual-grid"></div>
       <div class="head" style="margin-top:14px"><span>İtibar Mağazası</span><span id="goddess-streak" class="badge">Seri 0</span></div>
@@ -349,7 +345,7 @@
           <div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div>
         </div>
         <div id="expedition-choices" class="choice-grid"></div>
-        <button id="btn-quest" class="special" style="display:none"></button>
+        <button id="btn-quest" class="special" style="display:none" onclick="questAction()"></button>
       </div>
     </section>
 
