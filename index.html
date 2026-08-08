@@ -101,7 +101,7 @@
     .creator-stage{width:244px;height:196px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 67%);box-shadow:inset 0 0 25px #000,0 0 12px #58008255;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
     .creator-stage:after{content:"";position:absolute;left:42px;right:42px;bottom:22px;height:10px;border-radius:50%;background:#000a;filter:blur(3px)}
     #creator-canvas{width:240px;height:192px;image-rendering:pixelated;position:relative;z-index:2}
-    .creator-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%;margin-top:10px}.creator-tab{min-width:0;min-height:31px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
+    .creator-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;width:100%;margin-top:10px}.creator-tab{min-width:0;min-height:29px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
     .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}
     #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img{width:32px;height:32px;filter:grayscale(1);opacity:.3}.ach.unlocked img{filter:none;opacity:1}
@@ -135,7 +135,8 @@
       <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">İçlik</button>
       <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Üst</button>
       <button class="creator-tab" data-category="bottom" onclick="setCreatorCategory('bottom')">Alt</button>
-      <button class="creator-tab" data-category="footwear" onclick="setCreatorCategory('footwear')">Ayak</button>
+      <button class="creator-tab" data-category="socks" onclick="setCreatorCategory('socks')">Çorap</button>
+      <button class="creator-tab" data-category="shoes" onclick="setCreatorCategory('shoes')">Ayakkabı</button>
       <button class="creator-tab" data-category="outfit" onclick="setCreatorCategory('outfit')">Tam</button>
       <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
     </div>
@@ -308,7 +309,8 @@
   function clothingSlot(asset){
     const name=asset.displayName.toLowerCase();
     if(/dress/.test(name))return "outfit";
-    if(/boots|shoes|socks/.test(name))return "footwear";
+    if(/socks/.test(name))return "socks";
+    if(/boots|shoes/.test(name))return "shoes";
     if(/skirt|pants|split hose/.test(name))return "bottom";
     if(/underwear|panties|bikini|swim trunks/.test(name))return "basewear";
     return "top";
@@ -319,7 +321,7 @@
   function specialAchievementId(asset){const name=asset?.displayName.toLowerCase()||"",key=Object.keys(SPECIAL_SKIN_ACHIEVEMENTS).find(value=>name.includes(value));return key?SPECIAL_SKIN_ACHIEVEMENTS[key]:null}
   function isSpecialSkinUnlocked(asset){const requirement=specialAchievementId(asset);return !requirement||state.unlockedAchievements.includes(requirement)}
   function defaultCharacter(gender="female"){
-    return {gender,skinId:assetsFor(gender,"skin")[0]?.id||null,specialSkinId:null,hairId:assetsFor(gender,"hair")[0]?.id||null,basewearId:clothingAssets(gender,"basewear")[0]?.id||null,topId:null,bottomId:null,footwearId:null,outfitId:null};
+    return {gender,skinId:assetsFor(gender,"skin")[0]?.id||null,specialSkinId:null,hairId:assetsFor(gender,"hair")[0]?.id||null,basewearId:clothingAssets(gender,"basewear")[0]?.id||null,topId:null,bottomId:null,socksId:null,shoesId:null,outfitId:null};
   }
   function normalizeCharacter(value,gender="female"){
     const base=defaultCharacter(gender),next={...base,...(value&&typeof value==="object"?value:{})};next.gender=gender;
@@ -327,13 +329,15 @@
     if(next.specialSkinId&&(assetById(next.specialSkinId)?.gender!==gender||!isSpecialSkinUnlocked(assetById(next.specialSkinId))))next.specialSkinId=null;
     if(assetById(next.hairId)?.gender!==gender)next.hairId=base.hairId;
     {const asset=assetById(next.basewearId);if(!asset||asset.gender!==gender||clothingSlot(asset)!=="basewear")next.basewearId=base.basewearId}
-    for(const slot of ["top","bottom","footwear"]){const asset=assetById(next[slot+"Id"]);if(next[slot+"Id"]&&(!asset||asset.gender!==gender||clothingSlot(asset)!==slot))next[slot+"Id"]=null}
+    if(next.footwearId&&!next.socksId&&!next.shoesId){const oldFootwear=assetById(next.footwearId),oldSlot=clothingSlot(oldFootwear);if(oldSlot==="socks"||oldSlot==="shoes")next[oldSlot+"Id"]=next.footwearId}delete next.footwearId;
+    for(const slot of ["top","bottom","socks","shoes"]){const asset=assetById(next[slot+"Id"]);if(next[slot+"Id"]&&(!asset||asset.gender!==gender||clothingSlot(asset)!==slot))next[slot+"Id"]=null}
     if(next.outfitId){const asset=assetById(next.outfitId);if(!asset||asset.gender!==gender||clothingSlot(asset)!=="outfit")next.outfitId=null}
     return next;
   }
   function activeCharacterLayers(character){
     if(!character)return[];
-    const outfit=assetById(character.outfitId),clothes=outfit?[assetById(character.basewearId),outfit,assetById(character.footwearId)]:[assetById(character.basewearId),assetById(character.bottomId),assetById(character.topId),assetById(character.footwearId)];
+    const base=assetById(character.basewearId),socks=assetById(character.socksId),shoes=assetById(character.shoesId),bottom=assetById(character.bottomId),top=assetById(character.topId),outfit=assetById(character.outfitId);
+    const clothes=character.gender==="female"?(outfit?[base,socks,shoes,outfit]:[base,socks,shoes,bottom,top]):(outfit?[base,socks,outfit,shoes]:[base,socks,bottom,top,shoes]);
     return [assetById(character.specialSkinId)||assetById(character.skinId),...clothes,assetById(character.hairId)].filter(Boolean);
   }
 
@@ -863,7 +867,7 @@
   function creatorOptions(){
     if(!creatorDraft)return[];
     if(creatorCategory==="special")return [null,...assetsFor(creatorDraft.gender,"skin","special").filter(isSpecialSkinUnlocked)];
-    if(["basewear","top","bottom","footwear","outfit"].includes(creatorCategory)){const items=clothingAssets(creatorDraft.gender,creatorCategory);return creatorCategory==="basewear"?items:[null,...items]}
+    if(["basewear","top","bottom","socks","shoes","outfit"].includes(creatorCategory)){const items=clothingAssets(creatorDraft.gender,creatorCategory);return creatorCategory==="basewear"?items:[null,...items]}
     return assetsFor(creatorDraft.gender,creatorCategory);
   }
   function creatorSelectedId(){return creatorCategory==="special"?creatorDraft.specialSkinId:creatorDraft[creatorCategory+"Id"]}
@@ -876,13 +880,13 @@
     creatorRenderer?.setCharacter(creatorDraft);
   }
   function setCreatorGender(gender){if(!["female","male"].includes(gender)||creatorDraft?.gender===gender)return;creatorDraft=defaultCharacter(gender);playSound("select",.5);renderCreatorControls()}
-  function setCreatorCategory(category){if(!["skin","hair","basewear","top","bottom","footwear","outfit","special"].includes(category))return;creatorCategory=category;renderCreatorControls()}
+  function setCreatorCategory(category){if(!["skin","hair","basewear","top","bottom","socks","shoes","outfit","special"].includes(category))return;creatorCategory=category;renderCreatorControls()}
   function cycleCreator(direction){
     const options=creatorOptions();if(!options.length)return;const selected=creatorSelectedId();let index=options.findIndex(asset=>(asset?.id||null)===selected);index=(index+direction+options.length)%options.length;const id=options[index]?.id||null;
     if(creatorCategory==="special")creatorDraft.specialSkinId=id;else{creatorDraft[creatorCategory+"Id"]=id;if(["top","bottom"].includes(creatorCategory))creatorDraft.outfitId=null}playSound("tab",.35);renderCreatorControls();
   }
   function randomizeCreator(){
-    const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null,unlockedSpecial=assetsFor(gender,"skin","special").filter(isSpecialSkinUnlocked),useOutfit=Math.random()<.22;creatorDraft={gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:unlockedSpecial.length&&Math.random()<.18?pick(unlockedSpecial)?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,basewearId:pick(clothingAssets(gender,"basewear"))?.id||null,topId:pick(clothingAssets(gender,"top"))?.id||null,bottomId:pick(clothingAssets(gender,"bottom"))?.id||null,footwearId:pick(clothingAssets(gender,"footwear"))?.id||null,outfitId:useOutfit?pick(clothingAssets(gender,"outfit"))?.id||null:null};playSound("select",.6);renderCreatorControls();
+    const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null,unlockedSpecial=assetsFor(gender,"skin","special").filter(isSpecialSkinUnlocked),useOutfit=Math.random()<.22;creatorDraft={gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:unlockedSpecial.length&&Math.random()<.18?pick(unlockedSpecial)?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,basewearId:pick(clothingAssets(gender,"basewear"))?.id||null,topId:pick(clothingAssets(gender,"top"))?.id||null,bottomId:pick(clothingAssets(gender,"bottom"))?.id||null,socksId:pick(clothingAssets(gender,"socks"))?.id||null,shoesId:pick(clothingAssets(gender,"shoes"))?.id||null,outfitId:useOutfit?pick(clothingAssets(gender,"outfit"))?.id||null:null};playSound("select",.6);renderCreatorControls();
   }
   function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
