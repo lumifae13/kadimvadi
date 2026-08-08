@@ -61,8 +61,6 @@
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
-    .combat-impact{position:absolute;right:40px;bottom:35px;border-radius:50%;pointer-events:none;z-index:41;animation:combatImpact .32s ease-out forwards;mix-blend-mode:screen}
-    @keyframes combatImpact{0%{transform:scale(.3);opacity:1}70%{transform:scale(1.15);opacity:.9}100%{transform:scale(1.5);opacity:0}}
     .enemy-hit-impact{position:absolute;left:31px;bottom:31px;border-radius:50%;pointer-events:none;z-index:41;animation:enemyHitImpact .38s ease-out forwards;mix-blend-mode:screen}
     @keyframes enemyHitImpact{0%{transform:scale(.25);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.45);opacity:0}}
     .sheet-fx{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:43;image-rendering:pixelated}
@@ -759,20 +757,22 @@
     const palettes={fire:["#fff09a","#ff3b16"],poison:["#dfff79","#49cf38"],arcane:["#b7f8ff","#3e78ff"],dark:["#f1b5ff","#8a25d9"],physical:["#fff1ca","#d96c42"]};
     return palettes[element]||[["#ffdb75","#ff5a28"],["#eaff75","#65d63e"],["#79fff2","#238cff"],["#e1a4ff","#763cff"],["#fff","#ff2f91"]][stage]||palettes.physical;
   }
+  const WEAPON_HIT_FX=[
+    {file:"legacy-hit-1.png",frames:5},{file:"legacy-hit-2.png",frames:7},{file:"legacy-hit-3.png",frames:5},{file:"legacy-hit-5.png",frames:7},{file:"legacy-hit-4.png",frames:7}
+  ];
   function spawnPlayerImpact(stage){
-    const colors=elementColors(currentEnemyProfile?.element,stage),impact=document.createElement("div"),size=54+stage*10;
-    impact.className="combat-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 10%,${colors[1]} 28%,transparent 68%)`;impact.style.boxShadow=`0 0 ${10+stage*5}px ${colors[1]}`;
-    impact.style.bottom=(currentEnemyProfile?.kind==="boss"?35:20)+"px";
-    $("battle").appendChild(impact);setTimeout(()=>impact.remove(),350);
+    const cfg=WEAPON_HIT_FX[stage],isBoss=currentEnemyProfile?.kind==="boss",scale=2+stage*.15+(isBoss ? .45 : 0),size=32*scale,element=currentEnemyProfile?.element;
+    const filters={fire:"hue-rotate(205deg) saturate(2.4) brightness(1.15)",poison:"hue-rotate(285deg) saturate(1.9)",arcane:"saturate(1.35) brightness(1.12)",dark:"hue-rotate(70deg) saturate(1.9)",physical:"sepia(.8) hue-rotate(330deg)"};
+    playSheetFX({file:cfg.file,frameWidth:32,frameHeight:32,frames:cfg.frames,scale,right:62-size/2,bottom:(isBoss?64:57)-size/2,duration:cfg.frames*58,filter:filters[element]||filters.arcane});
   }
   function spawnEnemyHitImpact(isBoss){
     const impact=document.createElement("div"),size=isBoss?72:44,colors=isBoss?["#ffd0ff","#9b28dc"]:["#ffd2bd","#d52d34"];
     impact.className="enemy-hit-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.left=(isBoss?18:31)+"px";impact.style.bottom=(isBoss?22:31)+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 8%,${colors[1]} 30%,transparent 68%)`;impact.style.boxShadow=`0 0 ${isBoss?20:9}px ${colors[1]}`;
     $("battle").appendChild(impact);setTimeout(()=>impact.remove(),400);
   }
-  function playSheetFX({file,frameWidth,frameHeight,frames,scale=1,left,right,bottom,duration=650}){
+  function playSheetFX({file,frameWidth,frameHeight,frames,scale=1,left,right,bottom,duration=650,filter}){
     const fx=document.createElement("div"),width=frameWidth*scale,height=frameHeight*scale,sheetWidth=frameWidth*frames*scale;
-    fx.className="sheet-fx";fx.style.width=width+"px";fx.style.height=height+"px";fx.style.backgroundImage=`url("${V55_RAW_URL}${file}")`;fx.style.backgroundSize=`${sheetWidth}px ${height}px`;if(left!=null)fx.style.left=left+"px";if(right!=null)fx.style.right=right+"px";fx.style.bottom=bottom+"px";
+    fx.className="sheet-fx";fx.style.width=width+"px";fx.style.height=height+"px";fx.style.backgroundImage=`url("${V55_RAW_URL}${file}")`;fx.style.backgroundSize=`${sheetWidth}px ${height}px`;if(left!=null)fx.style.left=left+"px";if(right!=null)fx.style.right=right+"px";fx.style.bottom=bottom+"px";if(filter)fx.style.filter=filter;
     $("battle").appendChild(fx);let frame=0;const timer=setInterval(()=>{frame++;if(frame>=frames){clearInterval(timer);fx.remove();return}fx.style.backgroundPosition=`-${frame*width}px 0`},duration/frames);setTimeout(()=>{clearInterval(timer);fx.remove()},duration+80);
   }
   function spawnEnemyDeathImpact(){
