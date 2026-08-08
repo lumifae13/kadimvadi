@@ -1234,7 +1234,7 @@
   }
   function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
 
-  function damageEnemy(isAuto = false){
+  function enemyStrike(){
     if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive)return;
     const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));
     if(!isAuto) state.stats.clicks++; 
