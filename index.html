@@ -93,6 +93,7 @@
     .shop-item button{width:auto;min-width:76px;flex:0 0 auto}
     .eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
     .eq{background:#0007;border:1px solid #333;border-radius:7px;padding:8px;text-align:center}.eq-icon{width:48px;height:48px;margin:0 auto 4px;background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:pixelated}
+    .inventory-avatar{display:grid;grid-template-columns:68px 1fr 68px;gap:5px;align-items:center;margin-bottom:8px}.inventory-avatar-stage{height:154px;border:1px solid #5c4711;border-radius:8px;background:radial-gradient(circle,#260016,#080004 68%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.inventory-avatar-stage:after{content:"";position:absolute;left:18px;right:18px;bottom:22px;height:7px;border-radius:50%;background:#000b;filter:blur(2px)}#inventory-character{width:150px;height:120px;image-rendering:pixelated;position:relative;z-index:2}.wardrobe-column{display:flex;flex-direction:column;gap:5px}.wardrobe-slot{height:46px;padding:3px;border:1px solid #3a1a27;background:#090004;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.wardrobe-slot.filled{border-color:#70405c;background:#18000c}.wardrobe-slot-label{font-size:8px;color:var(--muted);text-transform:uppercase}.wardrobe-slot-name{font-size:8px;color:#fff;max-width:60px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wardrobe-edit{margin:0 0 12px;min-height:32px;font-size:10px}
     .keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.key{height:44px;border:1px solid var(--bordo);background:#140005;border-radius:5px;position:relative;display:flex;align-items:center;justify-content:center}.key.locked{opacity:.25}.key-count{position:absolute;right:2px;bottom:2px;background:#000;border-radius:3px;padding:1px 3px;font-size:8px}
     .unique-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.unique{aspect-ratio:1;background:#050002;border:1px solid #222;border-radius:5px;display:flex;align-items:center;justify-content:center}.unique.locked{opacity:.18}.unique.equipped{border-color:var(--gold);box-shadow:inset 0 0 10px #b38b2280}
     .mg{height:36px;margin:16px 0;background:#000;border:2px solid var(--mor);border-radius:18px;position:relative;overflow:hidden}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#58008255;border-left:2px solid var(--mor2);border-right:2px solid var(--mor2)}.mg-cursor{position:absolute;left:0;top:0;width:4px;height:100%;background:#fff;box-shadow:0 0 8px #fff}
@@ -249,6 +250,20 @@
     <section id="tab-chest" class="tab">
       <div class="panel">
         <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
+        <div class="inventory-avatar">
+          <div class="wardrobe-column">
+            <button id="wardrobe-hair" class="wardrobe-slot" onclick="openWardrobeSlot('hair')"></button>
+            <button id="wardrobe-top" class="wardrobe-slot" onclick="openWardrobeSlot('top')"></button>
+            <button id="wardrobe-bottom" class="wardrobe-slot" onclick="openWardrobeSlot('bottom')"></button>
+          </div>
+          <div class="inventory-avatar-stage"><canvas id="inventory-character" width="80" height="64"></canvas></div>
+          <div class="wardrobe-column">
+            <button id="wardrobe-outfit" class="wardrobe-slot" onclick="openWardrobeSlot('outfit')"></button>
+            <button id="wardrobe-socks" class="wardrobe-slot" onclick="openWardrobeSlot('socks')"></button>
+            <button id="wardrobe-shoes" class="wardrobe-slot" onclick="openWardrobeSlot('shoes')"></button>
+          </div>
+        </div>
+        <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
         <div class="eq-grid">
           <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
           <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
@@ -308,7 +323,7 @@
   }
   initCDN();
 
-  let characterManifest=null,characterAssets=[],creatorRenderer=null,battleRenderer=null,creatorCategory="skin",creatorDraft=null,creatorForcedOpen=false;
+  let characterManifest=null,characterAssets=[],creatorRenderer=null,battleRenderer=null,inventoryRenderer=null,creatorCategory="skin",creatorDraft=null,creatorForcedOpen=false;
   const characterImageCache=new Map();
 
   function getCharacterImage(path){
@@ -316,7 +331,7 @@
     if(!characterImageCache.has(path)){
       const image=new Image();image.decoding="async";
       image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>{if(!image.dataset.rawFallback){image.dataset.rawFallback="1";image.src=RAW_ASSET_URL+path}else resolve(false)})});
-      image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw()});
+      image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw();inventoryRenderer?.draw()});
       image.src=CDN_URL+path;
       characterImageCache.set(path,image);
     }
@@ -676,8 +691,14 @@
   }
   window.buyMarketItem=buyMarketItem;
 
+  function renderWardrobeSlot(id,label,asset){
+    const el=$(id);if(!el)return;el.classList.toggle("filled",!!asset);el.innerHTML=`<span class="wardrobe-slot-label">${label}</span><span class="wardrobe-slot-name">${asset?asset.displayName.replace(/^(Female|Male)\s+/i,""):"Boş"}</span>`;
+  }
   function renderInventory(){
     const w=state.equippedWeapon,a=state.equippedArmor;
+    inventoryRenderer?.setCharacter(state.character);inventoryRenderer?.setAnimation("idle");
+    renderWardrobeSlot("wardrobe-hair","Saç",assetById(state.character?.hairId));renderWardrobeSlot("wardrobe-top","Üst",assetById(state.character?.topId));renderWardrobeSlot("wardrobe-bottom","Alt",assetById(state.character?.bottomId));
+    renderWardrobeSlot("wardrobe-outfit","Tam",assetById(state.character?.outfitId));renderWardrobeSlot("wardrobe-socks","Çorap",assetById(state.character?.socksId));renderWardrobeSlot("wardrobe-shoes","Ayakkabı",assetById(state.character?.shoesId));
     const wImg=w.isUnique?wepUniques[w.idx]:wepTiers[w.t]?.[w.l]||wepTiers[0][0];
     const aImg=a.isUnique?armUniques[a.idx]:armTiers[a.t]?.[a.l]||armTiers[0][0];
     $("eq-weapon-img").style.backgroundImage=`url("${CDN_URL}${wImg}")`;
@@ -942,15 +963,15 @@
     const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
     const r=getRitualStats();$("ritual-cost").textContent=`Bedel: ${r.bloodCost} Kan + %${r.hpCostPercent} Can`;
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
-    const invSig=JSON.stringify([state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
+    const invSig=JSON.stringify([state.character,state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();checkRitualStatus();
     if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
 
   function initCharacterSystem(){
-    creatorRenderer=new LayeredCharacterRenderer($("creator-canvas"));battleRenderer=new LayeredCharacterRenderer($("battle-character"));
+    creatorRenderer=new LayeredCharacterRenderer($("creator-canvas"));battleRenderer=new LayeredCharacterRenderer($("battle-character"));inventoryRenderer=new LayeredCharacterRenderer($("inventory-character"));
     creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorRenderer.setCharacter(creatorDraft);creatorRenderer.setAnimation("idle");
-    if(state.gender){state.character=normalizeCharacter(state.character,state.gender);battleRenderer.setCharacter(state.character);battleRenderer.setAnimation("idle")}
+    if(state.gender){state.character=normalizeCharacter(state.character,state.gender);battleRenderer.setCharacter(state.character);battleRenderer.setAnimation("idle");inventoryRenderer.setCharacter(state.character);inventoryRenderer.setAnimation("idle")}
     renderCreatorControls();
   }
   function creatorOptions(){
@@ -978,11 +999,12 @@
     const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null,unlockedSpecial=assetsFor(gender,"skin","special").filter(isSpecialSkinUnlocked),useOutfit=Math.random()<.22;creatorDraft={gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:unlockedSpecial.length&&Math.random()<.18?pick(unlockedSpecial)?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,basewearId:pick(clothingAssets(gender,"basewear"))?.id||null,topId:pick(clothingAssets(gender,"top"))?.id||null,bottomId:pick(clothingAssets(gender,"bottom"))?.id||null,socksId:pick(clothingAssets(gender,"socks"))?.id||null,shoesId:pick(clothingAssets(gender,"shoes"))?.id||null,outfitId:useOutfit?pick(clothingAssets(gender,"outfit"))?.id||null:null};playSound("select",.6);renderCreatorControls();
   }
   function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
+  function openWardrobeSlot(category){openCharacterCreator();creatorCategory=category;renderCreatorControls()}
   async function finishCharacterCreation(){
     if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=true;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
     updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
   }
-  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
+  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,openWardrobeSlot,finishCharacterCreation});
 
   $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
   $("btn-quest").onclick=questAction;
