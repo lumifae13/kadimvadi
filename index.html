@@ -1063,7 +1063,7 @@
     }else if(state.questEndTime>0){
       $("expedition-choices").style.display="none";btn.style.display="flex";btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
     }else{
-      btn.style.display="none";$("expedition-choices").style.display="grid";$("expedition-choices").innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+      btn.style.display="none";$("expedition-choices").style.display="grid";if(!$("expedition-choices").dataset.ready){$("expedition-choices").innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");$("expedition-choices").dataset.ready="1"}$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
   async function startExpedition(riskId){if(state.questEndTime>0||!QUEST_RISKS[riskId])return;state.questRisk=riskId;state.questType=Object.keys(QUEST_TYPES)[Math.floor(Math.random()*Object.keys(QUEST_TYPES).length)];state.questStartedAt=Date.now();state.questEndTime=state.questStartedAt+getQuestStats().duration*1000;playSound("quest_start",.5);await saveState();renderGoddessHub()}
