@@ -546,6 +546,17 @@
   const ALL_COSMETIC_OFFERS=[...COSMETIC_BUNDLES,...COSMETIC_MARKET_OFFERS];
   function isMarketExclusiveCosmetic(id){return MARKET_EXCLUSIVE_COSMETICS.has(id)}
   const marketVariantSelection={};
+  const MARKET_VARIANT_SWATCHES={
+    "variant:elf-f":["#f0c0c0","#d8a890","#a87860","#904848","#603030"],
+    "variant:elf-m":["#f0c0c0","#d8a890","#a87860","#904848","#603030"],
+    "variant:bunny":["#d8d8d8","#a81830","#a84890","#f09018","#181818"],
+    "variant:caps-f":["#1878a8","#609030","#f09018","#481878","#a81830"],
+    "variant:caps-m":["#1878a8","#609030","#f09018","#481878","#a81830"],
+    "variant:hats-f":["#901818","#1860a8","#307818","#301878","#d87800"],
+    "variant:hats-m":["#307830","#a81830","#1878a8","#481878","#f09018","#a81830","#1878a8","#609030","#481878","#f09018"],
+    "variant:long-dress":["#1878a8","#609030","#f09018","#481878","#a81830"],
+    "variant:capes":["#184890","#186018","#c04800","#180048","#481818"]
+  };
   function selectedVariantId(offer){if(!offer.variantIds)return null;if(marketVariantSelection[offer.id])return marketVariantSelection[offer.id];if(offer.id.includes("elf-")){const skinNo=Number((state.character?.skinId||"").match(/(\d+)$/)?.[1]||1);return offer.variantIds[Math.max(0,Math.min(offer.variantIds.length-1,skinNo-1))]}return offer.variantIds[0]}
   function offerPurchaseIds(offer){return offer.variantIds?[selectedVariantId(offer)]:offer.assetIds||[]}
   function ownsOffer(offer){return offerPurchaseIds(offer).every(id=>state.ownedCosmetics.includes(id))}
@@ -721,10 +732,10 @@
 
   function renderMarket(){
     const signature=JSON.stringify([characterAssets.length,state.gender,state.character?.skinId,state.ownedCosmetics,state.purchasedMarketOffers,marketVariantSelection]);if(uiCache.market===signature)return;uiCache.market=signature;
-    const visible=ALL_COSMETIC_OFFERS.filter(o=>o.id.startsWith("bundle:")||!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))],dotColors=["#f1c7aa","#c98f6b","#74442f","#d9d9d9","#7b2840","#365f87","#65833b","#7b4b91","#b44a35","#d19a32"];
+    const visible=ALL_COSMETIC_OFFERS.filter(o=>o.id.startsWith("bundle:")||!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))];
     const previewAsset=asset=>{const gender=asset.gender==="unisex"?(state.gender||"female"):asset.gender,base=assetsFor(gender,"skin")[0],layers=asset.category==="skin"?[asset]:asset.category==="back"?[asset,base]:[base,asset];return `<span class="market-character">${layers.filter(Boolean).map(layer=>`<i style="background-image:url('${RAW_ASSET_URL}${layer.runtimePath}')"></i>`).join("")}</span>`};
     const preview=offer=>offerPurchaseIds(offer).slice(0,2).map(id=>assetById(id)).filter(Boolean).map(previewAsset).join("");
-    const dots=offer=>offer.variantIds?`<div class="variant-dots">${offer.variantIds.map((id,i)=>`<button class="variant-dot ${selectedVariantId(offer)===id?"active":""}" style="background:${dotColors[i%dotColors.length]}" title="Renk ${i+1}" onclick="selectMarketVariant('${offer.id}','${id}')"></button>`).join("")}</div><div class="market-progress">${offer.variantIds.filter(id=>state.ownedCosmetics.includes(id)).length}/${offer.variantIds.length} sende</div>`:"";
+    const dots=offer=>offer.variantIds?`<div class="variant-dots">${offer.variantIds.map((id,i)=>`<button class="variant-dot ${selectedVariantId(offer)===id?"active":""}" style="background:${MARKET_VARIANT_SWATCHES[offer.id]?.[i]||"#777"}" title="Renk ${i+1}" onclick="selectMarketVariant('${offer.id}','${id}')"></button>`).join("")}</div><div class="market-progress">${offer.variantIds.filter(id=>state.ownedCosmetics.includes(id)).length}/${offer.variantIds.length} sende</div>`:"";
     const cosmetics=sections.map(section=>`<div class="market-section-title">${section}</div><div class="market-grid">${visible.filter(o=>o.section===section).map(offer=>{const owned=ownsOffer(offer);return `<article class="market-card ${offer.id.startsWith("bundle:")?"bundle":""} ${offer.variantIds?"variant":""}"><div class="market-preview">${preview(offer)}</div><div class="shop-name">${offer.name}</div><div class="shop-desc">${offer.desc}</div>${dots(offer)}${owned?`<div class="market-owned">✓ ALINDI</div>`:`<button class="primary market-buy" onclick="buyCosmeticOffer('${offer.id}')">$${offer.price} · SATIN AL</button>`}</article>`}).join("")}</div>`).join("");
     const resources=`<div class="market-section-title">Kaynaklar</div>${marketItems.map((item,i)=>`<div class="shop-item"><div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${item.icon}')"></span><div><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div></div></div><button class="primary market-buy" onclick="buyMarketItem(${i})">$${item.price}</button></div>`).join("")}`;
     $("market").innerHTML=`<div class="market-hero"><h3>Kozmetik Market</h3><div class="tiny">Bir kez al, kalıcı olarak kullan. Renk noktalarından varyant seçebilirsin.</div></div>${cosmetics}${resources}`;
