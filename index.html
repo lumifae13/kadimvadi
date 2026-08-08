@@ -319,8 +319,38 @@
 
   <div id="content">
     <section id="tab-main" class="tab active">
-      <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
-      <div class="panel goddess-card"><div class="goddess-portrait" style="background-image:url('https://raw.githubusercontent.com/lumifae13/kadimvadi/img/goddess-portrait.png')"></div><div><h3>Tanrıça'nın Çağrısı</h3><div class="goddess-dialogue">Avlarını, seferlerini ve kan adağını bana getir.</div><div class="goddess-rep"><i id="goddess-rep-bar" style="width:0%"></i></div><button class="gold" style="min-height:30px;margin-top:6px" onclick="openGoddessHub()">Görevleri Gör</button></div></div>
+      <div class="panel">
+        <div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div>
+        <button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button>
+      </div>
+      
+      <div class="panel goddess-card">
+        <div class="goddess-portrait" style="background-image:url('https://raw.githubusercontent.com/lumifae13/kadimvadi/img/goddess-portrait.png')"></div>
+        <div>
+          <h3>Tanrıça'nın Çağrısı</h3>
+          <div class="goddess-dialogue">Avlarını, seferlerini ve kan adağını bana getir.</div>
+          <div class="goddess-rep"><i id="goddess-rep-bar" style="width:0%"></i></div>
+          <button class="gold" style="min-height:30px;margin-top:6px" onclick="openGoddessHub()">Divanı Gör</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><span>İksir Çantası</span></div>
+        <div id="consumables" class="consumable-grid" style="margin-bottom:14px"></div>
+        <div class="head"><span>Ganimet Sandığı</span></div>
+        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
+        <div id="keys" class="keys-grid"></div>
+      </div>
+
+      <div class="panel purple">
+        <div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div>
+        <div class="bar" style="height:18px;margin-bottom:7px">
+          <div id="quest-progress" class="bar-fill"></div>
+          <div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div>
+        </div>
+        <div id="expedition-choices" class="choice-grid"></div>
+        <button id="btn-quest" class="special" style="display:none"></button>
+      </div>
     </section>
 
     <section id="tab-chest" class="tab">
@@ -347,23 +377,26 @@
         </div>
         <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
         <div id="wardrobe-drawer" class="wardrobe-drawer"><div class="wardrobe-drawer-head"><span id="wardrobe-drawer-title">Eşyalar</span><button onclick="closeInventoryWardrobe()" style="width:auto;min-height:24px;padding:2px 8px">×</button></div><div id="wardrobe-items" class="wardrobe-items"></div></div>
+        
         <div class="head" style="margin-top:14px"><span>Kuşanılmış Savaş Ekipmanı</span><span class="badge">2 Slot</span></div>
         <div class="tiny center" style="margin-bottom:8px">Yadigârlar kendi deposunda ayrı tutulur.</div>
         <div class="eq-grid">
           <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
           <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
         </div>
+        
         <div class="head" style="margin-top:14px"><span>Yoldaş Pet</span><span class="badge">Pasif</span></div>
         <div id="pets" class="pet-grid"></div>
+        
         <div class="head" style="margin-top:14px"><span>Ekipman Deposu</span><span id="drop-inventory-count" class="badge">0 / 30</span></div>
         <div id="drop-inventory" class="drop-inventory"></div>
-        <div class="head"><span>Ganimet Sandığı</span></div>
-        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
-        <div id="keys" class="keys-grid"></div>
-        <div class="head" style="margin-top:14px"><span>İksir Çantası</span></div>
-        <div id="consumables" class="consumable-grid"></div>
       </div>
-      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div><div class="tiny center" style="margin-bottom:10px">Tüm anahtarlardan nadiren düşebilen Kadim Yadigârlar. Kuşanmak için dokun.</div><div id="uniques" class="unique-grid"></div></div>
+      
+      <div class="panel gold">
+        <div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div>
+        <div class="tiny center" style="margin-bottom:10px">Seviye 15 ve sonrasında düşen kadim eşyalar. Sadece bulduğun yadigârlar burada görünür.</div>
+        <div id="uniques" class="unique-grid"></div>
+      </div>
     </section>
 
     <section id="tab-camp" class="tab">
