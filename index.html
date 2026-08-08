@@ -92,6 +92,9 @@
     #nav{position:absolute;left:0;right:0;bottom:var(--safe-bottom);height:48px;background:#050002fa;border-top:1px solid var(--bordo3);display:flex;z-index:20}
     .nav{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--muted);font-weight:800}.nav.active{color:#fff;border-top:2px solid var(--bordo2);background:#ffffff05}.nav .icon{width:23px;height:23px;opacity:.7}.nav.active .icon{opacity:1}
     .overlay{display:none;position:absolute;inset:0;background:#000e;z-index:250;align-items:center;justify-content:center;padding:18px}.modal{width:100%;max-height:88%;overflow:auto}.close{position:absolute;left:-5px;top:-5px;width:28px;height:28px;background-size:contain;background-repeat:no-repeat}
+    #intro{display:flex;position:absolute;inset:0;z-index:340;background:radial-gradient(circle at 50% 38%,#27000e,#070002 58%,#000);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
+    #intro-logo{width:240px;max-width:90%;image-rendering:pixelated;filter:drop-shadow(0 0 14px #9e0024);margin-bottom:8px}
+    #intro-start{width:190px;margin-top:20px}.intro-progress{height:3px;width:190px;background:#23000a;margin-top:10px;border-radius:2px;overflow:hidden}.intro-progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--mor2),var(--bordo2));transition:width .12s}
     #creation{display:flex;position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,#26000d,#050002 58%,#000);z-index:300;align-items:center;justify-content:flex-start;flex-direction:column;text-align:center;padding:14px 12px 22px;overflow-y:auto}
     .creator-title{margin:0;color:#fff;font:900 17px/1.2 Georgia,serif;letter-spacing:.5px;text-shadow:0 0 10px #9e0024}
     .gender-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:220px;margin:10px auto 8px}.gender-switch button{min-height:36px}.gender-switch button.active{border-color:var(--gold);color:#f1d26a;background:linear-gradient(#4a3500,#211700)}
@@ -109,6 +112,14 @@
 <body>
 <div id="game">
   <div id="toast"></div>
+
+  <div id="intro">
+    <img id="intro-logo" data-src="5uCOUOu.png" alt="Kadim Vadi">
+    <div class="tiny">Karanlık seni bekliyor.</div>
+    <button id="intro-start" class="primary" onclick="startGameIntro()">Başla</button>
+    <div class="intro-progress"><div id="intro-progress-bar"></div></div>
+    <div id="intro-progress-text" class="tiny" style="margin-top:6px">Dokun ve kadere adım at.</div>
+  </div>
 
   <div id="creation">
     <h2 class="creator-title">Kanın Sahibine Biçim Ver</h2>
@@ -273,11 +284,17 @@
   function getCharacterImage(path){
     if(!path)return null;
     if(!characterImageCache.has(path)){
-      const image=new Image();image.decoding="async";image.addEventListener("error",()=>{if(!image.dataset.rawFallback){image.dataset.rawFallback="1";image.src=RAW_ASSET_URL+path}});image.src=CDN_URL+path;
+      const image=new Image();image.decoding="async";
+      image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>{if(!image.dataset.rawFallback){image.dataset.rawFallback="1";image.src=RAW_ASSET_URL+path}else resolve(false)})});
       image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw()});
+      image.src=CDN_URL+path;
       characterImageCache.set(path,image);
     }
     return characterImageCache.get(path);
+  }
+  async function preloadCharacterAssets(onProgress){
+    let finished=0;const total=characterAssets.length;
+    await Promise.all(characterAssets.map(async asset=>{const image=getCharacterImage(asset.runtimePath);await image._ready;finished++;onProgress?.(finished,total)}));
   }
 
   function assetById(id){return characterAssets.find(asset=>asset.id===id)||null}
@@ -336,6 +353,17 @@
     weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
   };
   sfx.bg.loop = true;
+
+  async function startGameIntro(){
+    if(introStarted)return;introStarted=true;const button=$("intro-start");button.disabled=true;button.textContent="Hazırlanıyor...";
+    sfx.bg.volume=userSettings.music;sfx.bg.play().catch(()=>{});
+    if(!characterAssets.length)await loadCharacterManifest();
+    await preloadCharacterAssets((done,total)=>{const percent=Math.round(done/total*100);$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`});
+    $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
+    if(state.gender){isCombatActive=true;applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
+    updateUI();
+  }
+  window.startGameIntro=startGameIntro;
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
   const enemyAttackGif = "Yku2dxV.gif";
@@ -426,7 +454,7 @@
   let state = clone(defaultState);
   let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
   let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
-  let isDead=false,isMapChanging=false,isCombatActive=true,isAFK=false,lastInteractTime=Date.now();
+  let isDead=false,isMapChanging=false,isCombatActive=false,isAFK=false,introStarted=false,lastInteractTime=Date.now();
   let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
   let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null;
   let userSettings={music:0.15,sfx:1};
@@ -781,7 +809,7 @@
 
   function switchTab(id,el){
     playSound("tab",.5);document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));$("tab-"+id).classList.add("active");el?.classList.add("active");
-    isCombatActive=id==="main";document.body.classList.toggle("hide-battle",!isCombatActive);
+    isCombatActive=id==="main"&&!!state.gender&&introStarted;document.body.classList.toggle("hide-battle",id!=="main");
   }
   window.switchTab=switchTab;
 
@@ -837,8 +865,8 @@
   }
   function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
-    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
-    if(sfx.bg.paused)sfx.bg.play().catch(()=>{});updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
+    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=true;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
   }
   Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
 
@@ -881,7 +909,7 @@
       if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
       state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;
       initCharacterSystem();
-      if(state.gender){applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}
+      if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
       updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
     }catch(e){
       console.error("Phone SDK init error",e);showToast("Telefon SDK başlatılamadı.");state=sanitizeState(clone(defaultState));updateUI();
