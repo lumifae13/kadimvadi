@@ -1322,7 +1322,6 @@
     const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),playerClass:pendingPrestigeClass||state.playerClass,rune:state.rune,dark:state.dark,gems:clone(state.gems),settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
     state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
   }
-  }
   Object.assign(window,{openPrestigeModal,selectPrestigeClass,executePrestige});
 
   function switchTab(id,el){
