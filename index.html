@@ -313,7 +313,7 @@
 
     <section id="tab-chest" class="tab">
       <div class="panel">
-        <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
+        <div class="head"><span>Karakter ve Görünüm</span><span class="badge">Kozmetik</span></div>
         <div class="inventory-avatar">
           <div class="wardrobe-column">
             <button id="wardrobe-hair" class="wardrobe-slot" onclick="openInventoryWardrobe('hair')"></button>
@@ -335,13 +335,15 @@
         </div>
         <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
         <div id="wardrobe-drawer" class="wardrobe-drawer"><div class="wardrobe-drawer-head"><span id="wardrobe-drawer-title">Eşyalar</span><button onclick="closeInventoryWardrobe()" style="width:auto;min-height:24px;padding:2px 8px">×</button></div><div id="wardrobe-items" class="wardrobe-items"></div></div>
+        <div class="head" style="margin-top:14px"><span>Kuşanılmış Savaş Ekipmanı</span><span class="badge">2 Slot</span></div>
+        <div class="tiny center" style="margin-bottom:8px">Silah ve zırh düşmanlardan düşer. Yadigârlar kendi deposunda ayrı tutulur.</div>
         <div class="eq-grid">
           <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
           <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
         </div>
         <div class="head" style="margin-top:14px"><span>Yoldaş Pet</span><span class="badge">Pasif</span></div>
         <div id="pets" class="pet-grid"></div>
-        <div class="head" style="margin-top:14px"><span>Düşen Ekipmanlar</span><span id="drop-inventory-count" class="badge">0 / 30</span></div>
+        <div class="head" style="margin-top:14px"><span>Ekipman Deposu</span><span id="drop-inventory-count" class="badge">0 / 30</span></div>
         <div id="drop-inventory" class="drop-inventory"></div>
         <div class="head"><span>Ganimet Sandığı</span></div>
         <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
@@ -519,7 +521,7 @@
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
   const COMBAT_REGIONS=[
-    {id:"forest",min:1,name:"Karanlık Orman",scene:"cliffs",enemies:["forest-fox","forest-plant","forest-slime"],elites:["forest-shuriken"],bosses:["orc"],hp:1,atk:1,loot:1,drop:{equipment:.08,potion:.08,key:.28,rarity:0,elements:["arcane","physical"]}},
+    {id:"forest",min:1,name:"Karanlık Orman",scene:"cliffs",enemies:["forest-classic-slime","forest-plant","forest-slime"],elites:["forest-shuriken"],bosses:["orc"],hp:1,atk:1,loot:1,drop:{equipment:.08,potion:.08,key:.28,rarity:0,elements:["arcane","physical"]}},
     {id:"marsh",min:10,name:"Zehir Bataklığı",scene:"cave",enemies:["marsh-slime","marsh-plant"],elites:["marsh-poison","marsh-ghoul"],bosses:["marsh-heart"],hp:1.18,atk:1.1,loot:1.15,drop:{equipment:.1,potion:.12,key:.34,rarity:.04,elements:["poison","blood"]}},
     {id:"ember",min:25,name:"Kor Yarığı",scene:"cave",enemies:["ember-slime","ember-ghoul"],elites:["ember-shuriken","ember-wizard"],bosses:["demon"],hp:1.38,atk:1.22,loot:1.35,drop:{equipment:.13,potion:.14,key:.4,rarity:.08,elements:["fire","physical"]}},
     {id:"abyss",min:50,name:"Boşluk Geçidi",scene:"church",enemies:["abyss-ghoul","abyss-wizard"],elites:["abyss-angel","abyss-blue-wizard"],bosses:["blood-monster"],hp:1.7,atk:1.42,loot:1.65,drop:{equipment:.17,potion:.16,key:.5,rarity:.14,elements:["dark","blood"]}},
@@ -545,7 +547,7 @@
     {id:"blood-monster",name:"Kan Yaratığı",kind:"boss",element:"blood",ability:{name:"Kan Emici",every:3,damage:1.15,drain:.08},animations:{idle:{file:"boss-blood-monster-idle.png",frames:6,fps:7},attack:{file:"boss-blood-monster-attack01.png",frames:8,fps:14},hurt:{file:"boss-blood-monster-hurt.png",frames:4,fps:13},death:{file:"boss-blood-monster-death.png",frames:4,fps:8}}}
   ];
   const REGION_ANIMATED_ENEMIES=[
-    {id:"forest-fox",name:"Yaban Tilkisi",kind:"normal",element:"physical",sprite:"region-fox.png",frames:8,fps:9,scale:.64,group:3,hpMult:.9,atkMult:1.05},
+    {id:"forest-classic-slime",name:"Mavi Slime",kind:"normal",element:"arcane",sprite:"region-classic-slime-blue.png",frames:5,fps:8,scale:.65,group:3,hpMult:.9,atkMult:.9},
     {id:"forest-plant",name:"Sıçrayan Filiz",kind:"normal",element:"poison",sprite:"region-plant-jump.png",frames:20,fps:14,scale:.58,group:3,hpMult:.82,atkMult:.92},
     {id:"forest-slime",name:"Çayır Slime",kind:"normal",element:"poison",sprite:"region-slime-green.png",frames:30,fps:18,scale:.62,group:3,hpMult:.95,atkMult:.9},
     {id:"forest-shuriken",name:"Uçurum Avcısı",kind:"elite",element:"physical",sprite:"region-shuriken-dude.png",frames:9,fps:10,scale:.92,hpMult:1.5,atkMult:1.35},
@@ -696,8 +698,8 @@
     {id:"wealth",name:"Market Müdavimi",desc:"Marketten 25 satın alım yap.",icon:"D11BDxH.png",type:"shop",req:25},
     {id:"chest_opener",name:"Hazine Avcısı",desc:"50 sandık aç.",icon:"bsmif0s.png",type:"chest",req:50},
     {id:"dimension",name:"Boyut Gezgini",desc:"Boyut Kapısını 50 kez başarıyla aç.",icon:"zfJ5L5I.png",type:"mg_win",req:50},
-    {id:"blacksmith",name:"Kadim Demirci",desc:"Silahını 50 kez güçlendir.",icon:"uIRlL4e.png",type:"upg_w",req:50},
-    {id:"tank",name:"Sarsılmaz Duvar",desc:"Zırhını 25 kez güçlendir.",icon:"T5MZ1kg.png",type:"upg_a",req:25},
+    {id:"blacksmith",name:"Silah Ustası",desc:"10 silah ganimeti bul.",icon:"uIRlL4e.png",type:"loot_weapon",req:10},
+    {id:"tank",name:"Zırh Koleksiyoncusu",desc:"10 zırh ganimeti bul.",icon:"T5MZ1kg.png",type:"loot_armor",req:10},
     {id:"lucky",name:"Şeytan Tüyü",desc:"Bir Yadigâr düşür.",icon:"F7MaUi9.png",type:"unique",req:1},
     {id:"level_50",name:"Kadim Bilge",desc:"Seviye 50 ol.",icon:"CTPayn5.png",type:"level",req:50}
   ];
@@ -720,7 +722,7 @@
     upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
     ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,ritualDay:"",weekly:{key:"",bossClaimed:false},goddess:{day:"",reputation:0,claimed:[],bonusClaimed:false,streak:0,lastCompleteDay:"",shopClaims:[],baseline:{kills:0,quests:0,rituals:0}},
     settings:{music:0.15,sfx:1},
-    stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,mg_win:0,uniques:0},
+    stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,loot_weapon:0,loot_armor:0,mg_win:0,uniques:0},
     unlockedAchievements:[]
   };
 
@@ -744,7 +746,7 @@
     s.consumables={...defaultState.consumables,...(raw?.consumables||{})};Object.keys(s.consumables).forEach(k=>s.consumables[k]=Math.max(0,Math.floor(Number(s.consumables[k])||0)));
     const petMigrated=Number(raw?.petAccessVersion)>=2;s.ownedPets=Array.isArray(s.ownedPets)?[...new Set(s.ownedPets.filter(id=>PETS[id]&&(petMigrated||id!=="wisp")))]:[];s.equippedPet=s.ownedPets.includes(s.equippedPet)?s.equippedPet:null;s.petAccessVersion=2;
     s.petProgress={};for(const id of Object.keys(PETS)){const p=raw?.petProgress?.[id]||{};s.petProgress[id]={xp:Math.max(0,Math.floor(Number(p.xp)||0)),level:Math.max(1,Math.floor(Number(p.level)||1))}}
-    s.itemInventory=Array.isArray(raw?.itemInventory)?raw.itemInventory.filter(i=>i&&["weapon","armor"].includes(i.type)&&RARITIES[i.rarity]).slice(0,30).map(i=>({...i,power:Math.max(1,Math.floor(Number(i.power)||1)),element:ELEMENT_NAMES[i.element]?i.element:"physical"})):[];s.equippedLootItems={weapon:null,armor:null,...(raw?.equippedLootItems||{})};for(const type of ["weapon","armor"]){if(!s.itemInventory.some(i=>i.id===s.equippedLootItems[type]&&i.type===type))s.equippedLootItems[type]=null}
+    s.itemInventory=Array.isArray(raw?.itemInventory)?raw.itemInventory.filter(i=>i&&["weapon","armor"].includes(i.type)&&RARITIES[i.rarity]).slice(0,30).map(i=>({...i,power:Math.max(1,Math.floor(Number(i.power)||1)),element:ELEMENT_NAMES[i.element]?i.element:"physical"})):[];s.equippedLootItems={weapon:null,armor:null,...(raw?.equippedLootItems||{})};for(const type of ["weapon","armor"]){const eq=type==="weapon"?s.equippedWeapon:s.equippedArmor;if(eq.isUnique||!s.itemInventory.some(i=>i.id===s.equippedLootItems[type]&&i.type===type))s.equippedLootItems[type]=null}
     s.weekly={...defaultState.weekly,...(raw?.weekly||{})};s.weekly.bossClaimed=!!s.weekly.bossClaimed;
     s.goddess={...clone(defaultState.goddess),...(raw?.goddess||{}),baseline:{...defaultState.goddess.baseline,...(raw?.goddess?.baseline||{})}};s.goddess.claimed=Array.isArray(s.goddess.claimed)?s.goddess.claimed.filter(id=>DAILY_MISSIONS.some(m=>m.id===id)):[];s.goddess.shopClaims=Array.isArray(s.goddess.shopClaims)?s.goddess.shopClaims.filter(key=>GODDESS_OFFERS.some(o=>key===o.id||key.startsWith(o.id+":"))):[];s.goddess.reputation=Math.max(0,Math.floor(Number(s.goddess.reputation)||0));s.goddess.streak=Math.max(0,Math.floor(Number(s.goddess.streak)||0));
     s.gender=["female","male"].includes(s.gender)?s.gender:null;
@@ -803,42 +805,25 @@
   function cumulativeLevel(tiers,tier,level,startTier=0){let total=0;for(let i=startTier;i<tier;i++)total+=tiers[i].length;return total+level}
   function xpNeeded(){return state.level*state.level*100}
 
-  function equipmentUpgradeCost(type,eq){
-    if(eq.isUnique) return 0;
-    if(type==="armor"){
-      if(eq.t===0) return [80,120,150][eq.l]??150;
-      const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
-      return Math.floor(180*Math.pow(1.20,effective));
-    }
-    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
-    return Math.floor(150*Math.pow(1.45,effective));
-  }
-  function weaponEffectStage(eq){const effective=eq.isUnique?15+eq.idx*3:cumulativeLevel(wepTiers,eq.t,eq.l);return Math.min(4,Math.floor(effective/3))}
+  function weaponEffectStage(eq){if(eq.isUnique)return 4;const item=equippedDropItem("weapon");return item?({common:1,rare:2,epic:3,relic:4}[item.rarity]||1):0}
   function petLevel(id){return state.petProgress?.[id]?.level||1}function petXpNeeded(id){return petLevel(id)*50}function activePet(){const p=PETS[state.equippedPet];if(!p)return{};const scale=1+(petLevel(state.equippedPet)-1)*.1;return {...p,soul:(p.soul||0)*scale,hp:(p.hp||0)*scale,attack:(p.attack||0)*scale}}
   function equippedDropItem(type){return state.itemInventory?.find(i=>i.id===state.equippedLootItems?.[type]&&i.type===type)||null}
   function lootItemBonuses(item){if(!item)return{};const rank={common:0,rare:1,epic:2,relic:3}[item.rarity]||0,tier=rank+1,b={};if(item.type==="weapon"){b.crit=rank*.01;if(item.element==="arcane")b.crit+=.03+tier*.02;if(item.element==="fire")b.burn=.04+tier*.025;if(item.element==="poison")b.poison=.03+tier*.02;if(item.element==="blood")b.lifesteal=.02+tier*.015;if(item.element==="dark")b.execute=.06+tier*.025;if(item.element==="physical"){b.crit+=.02+tier*.015;b.critDamage=.15+tier*.05}}else{b.hp=rank*.01;if(item.element==="arcane")b.shield=.08+tier*.04;if(item.element==="fire")b.thorns=.03+tier*.02;if(item.element==="poison")b.regen=.015+tier*.008;if(item.element==="blood")b.hp+=.05+tier*.025;if(item.element==="dark")b.resist=.025+tier*.0125;if(item.element==="physical")b.resist=.02+tier*.01}return b}
   function lootBonusLabels(item){const b=lootItemBonuses(item),labels=[];if(b.crit)labels.push(`Kritik %${Math.round(b.crit*100)}`);if(b.critDamage)labels.push(`Kritik Hasar %${Math.round(b.critDamage*100)}`);if(b.burn)labels.push(`Yanma %${Math.round(b.burn*100)}`);if(b.poison)labels.push(`Zehir %${Math.round(b.poison*100)}`);if(b.lifesteal)labels.push(`Can Çalma %${Math.round(b.lifesteal*100)}`);if(b.execute)labels.push(`İnfaz %${Math.round(b.execute*100)}`);if(b.hp)labels.push(`Can %${Math.round(b.hp*100)}`);if(b.shield)labels.push(`Kalkan %${Math.round(b.shield*100)}`);if(b.resist)labels.push(`Direnç %${Math.round(b.resist*100)}`);if(b.thorns)labels.push(`Diken %${Math.round(b.thorns*100)}`);if(b.regen)labels.push(`Yenilenme %${Math.round(b.regen*100)}`);return labels}
   function lootItemRating(item){if(!item)return 0;return item.power+Object.values(lootItemBonuses(item)).reduce((sum,value)=>sum+value*100,0)}
-  function getWeaponTrait(eq){const elements=["arcane","poison","fire","dark","blood"],stage=weaponEffectStage(eq),element=eq.isUnique?elements[Math.abs(eq.idx)%elements.length]:elements[stage];return {element,name:`${ELEMENT_NAMES[element]} Gücü`,power:eq.isUnique ? .14 : .02+stage*.025,proc:eq.isUnique ? .24 : .1+stage*.025}}
-  function getArmorTrait(eq){const elements=["arcane","poison","fire","dark","blood"],effective=eq.isUnique?eq.idx:cumulativeLevel(armTiers,eq.t,eq.l,1),element=elements[Math.max(0,effective)%elements.length];return {element,name:`${ELEMENT_NAMES[element]} Muhafazası`,hp:eq.isUnique ? .12 : Math.min(.08,Math.max(0,effective)*.008),shield:eq.isUnique ? .18 : Math.min(.12,Math.max(0,effective)*.012),resist:eq.isUnique ? .05 : Math.min(.03,Math.max(0,effective)*.003)}}
-  function hasEquipmentResonance(){const armorEquipped=state.equippedArmor.isUnique||state.equippedArmor.t>0;return armorEquipped&&getWeaponTrait(state.equippedWeapon).element===getArmorTrait(state.equippedArmor).element}
+  function getWeaponTrait(eq){if(!eq.isUnique)return {element:"physical",name:"Temel Vuruş",power:0,proc:0};const elements=["arcane","poison","fire","dark","blood"],element=elements[Math.abs(eq.idx)%elements.length];return {element,name:`${ELEMENT_NAMES[element]} Gücü`,power:.14,proc:.24}}
+  function getArmorTrait(eq){if(!eq.isUnique)return {element:"physical",name:"Temel Koruma",hp:0,shield:0,resist:0};const elements=["arcane","poison","fire","dark","blood"],element=elements[Math.abs(eq.idx)%elements.length];return {element,name:`${ELEMENT_NAMES[element]} Muhafazası`,hp:.12,shield:.18,resist:.05}}
+  function activeEquipmentElement(type){const eq=type==="weapon"?state.equippedWeapon:state.equippedArmor,drop=equippedDropItem(type);return eq.isUnique?(type==="weapon"?getWeaponTrait(eq):getArmorTrait(eq)).element:drop?.element||"physical"}
+  function hasEquipmentResonance(){const weaponEquipped=state.equippedWeapon.isUnique||!!equippedDropItem("weapon"),armorEquipped=state.equippedArmor.isUnique||!!equippedDropItem("armor");return weaponEquipped&&armorEquipped&&activeEquipmentElement("weapon")===activeEquipmentElement("armor")}
   function weaponAttack(eq){
     const trait=getWeaponTrait(eq),pet=activePet(),drop=equippedDropItem("weapon");let base;
     if(eq.isUnique)base=95+(eq.idx*18)+(state.level*2);
-    else{
-    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
-    base=7+(effective*7)+(state.level*2);
-    }
-    return Math.floor((base+(drop?.power||0))*(1+trait.power+(pet.attack||0)+(hasEquipmentResonance() ? .1 : 0)));
+    else base=drop?6+state.level+drop.power:7+(state.level*2);
+    return Math.floor(base*(1+trait.power+(pet.attack||0)+(hasEquipmentResonance() ? .1 : 0)));
   }
   function armorDefense(eq){
-    let base;if(eq.isUnique)base=50+(eq.idx*15);
-    else if(eq.t===0)base=0;
-    else{
-    const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
-    base=(effective+1)*4;
-    }
-    return Math.floor((base+(equippedDropItem("armor")?.power||0))*(hasEquipmentResonance()?1.1:1));
+    const drop=equippedDropItem("armor");let base;if(eq.isUnique)base=50+(eq.idx*15);else base=drop?drop.power+Math.floor(state.level*.25):0;
+    return Math.floor(base*(hasEquipmentResonance()?1.1:1));
   }
   function getDamageMitigation(){const drop=lootItemBonuses(equippedDropItem("armor"));return Math.min(.78,(playerDef<=0?0:playerDef/(playerDef+180))+(getArmorTrait(state.equippedArmor).resist||0)+(drop.resist||0))}
 
@@ -959,18 +944,17 @@
     renderWardrobeSlot("wardrobe-outfit","Tam",assetById(state.character?.outfitId));renderWardrobeSlot("wardrobe-socks","Çorap",assetById(state.character?.socksId));renderWardrobeSlot("wardrobe-shoes","Ayakkabı",assetById(state.character?.shoesId));
     renderWardrobeSlot("wardrobe-ears","Kulak",assetById(state.character?.earsId));renderWardrobeSlot("wardrobe-hat","Şapka",assetById(state.character?.hatId));renderWardrobeSlot("wardrobe-mask","Maske",assetById(state.character?.maskId));renderWardrobeSlot("wardrobe-back","Sırt",assetById(state.character?.backId));
     renderInventoryWardrobe();
-    const wImg=w.isUnique?wepUniques[w.idx]:wepTiers[w.t]?.[w.l]||wepTiers[0][0];
-    const aImg=a.isUnique?armUniques[a.idx]:armTiers[a.t]?.[a.l]||armTiers[0][0];
-    $("eq-weapon-img").style.backgroundImage=`url("${CDN_URL}${wImg}")`;
-    $("eq-armor-img").style.backgroundImage=`url("${CDN_URL}${aImg}")`;
-    $("eq-weapon-name").textContent=w.isUnique?wepUniqueNames[w.idx]:`Asa S${w.t+1}-${w.l+1}`;
-    $("eq-armor-name").textContent=a.isUnique?armUniqueNames[a.idx]:`Cübbe S${a.t+1}-${a.l+1}`;
-    $("eq-weapon-name").style.color=w.isUnique?"var(--gold)":"#fff"; $("eq-armor-name").style.color=a.isUnique?"var(--gold)":"#fff";
-    $("eq-weapon-stat").innerHTML=`ATK: ${playerAtk}<div class="trait-line">${wTrait.name} · Tetik %${Math.round(wTrait.proc*100)}${resonance?" · REZONANS":""}${wDrop?`<br>${lootBonusLabels(wDrop).join(" · ")}`:""}</div>`; $("eq-armor-stat").innerHTML=`DEF: ${playerDef} · Azaltım %${Math.round(getDamageMitigation()*100)}<div class="trait-line">${aTrait.name}${aTrait.hp?` · Can +%${Math.round(aTrait.hp*100)}`:""}${resonance?" · REZONANS":""}${aDrop?`<br>${lootBonusLabels(aDrop).join(" · ")}`:""}</div>`;
-    const wMax=w.t===wepTiers.length-1&&w.l===wepTiers[w.t].length-1;
-    const aMax=a.t===armTiers.length-1&&a.l===armTiers[a.t].length-1;
-    $("eq-weapon-upg").innerHTML=w.isUnique?`<button disabled>YADİGÂR</button>`:wMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('weapon')">${equipmentUpgradeCost("weapon",w)} RUH</button>`;
-    $("eq-armor-upg").innerHTML=a.isUnique?`<button disabled>YADİGÂR</button>`:aMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('armor')">${equipmentUpgradeCost("armor",a)} RUH</button>`;
+    const wSlot=$("eq-weapon-img"),aSlot=$("eq-armor-img");
+    if(w.isUnique)wSlot.style.cssText=`background-image:url("${CDN_URL}${wepUniques[w.idx]}")`;else if(wDrop)wSlot.style.cssText=atlasIconStyle("weapons",wDrop.index,3);else wSlot.style.cssText=`background-image:url("${CDN_URL}${wepTiers[0][0]}")`;
+    if(a.isUnique)aSlot.style.cssText=`background-image:url("${CDN_URL}${armUniques[a.idx]}")`;else if(aDrop)aSlot.style.cssText=atlasIconStyle("armours",aDrop.index,3);else aSlot.style.cssText=`background-image:url("${CDN_URL}${armTiers[0][0]}")`;
+    $("eq-weapon-name").textContent=w.isUnique?wepUniqueNames[w.idx]:wDrop?.name||"Çırak Asası";
+    $("eq-armor-name").textContent=a.isUnique?armUniqueNames[a.idx]:aDrop?.name||"Yolcu Giysisi";
+    $("eq-weapon-name").style.color=w.isUnique?"var(--gold)":wDrop?RARITIES[wDrop.rarity].color:"#fff"; $("eq-armor-name").style.color=a.isUnique?"var(--gold)":aDrop?RARITIES[aDrop.rarity].color:"#fff";
+    const wLabel=w.isUnique?`${wTrait.name} · Tetik %${Math.round(wTrait.proc*100)}`:wDrop?`${ELEMENT_NAMES[wDrop.element]} · ${lootBonusLabels(wDrop).join(" · ")}`:"Başlangıç silahı";
+    const aLabel=a.isUnique?`${aTrait.name} · Can +%${Math.round(aTrait.hp*100)}`:aDrop?`${ELEMENT_NAMES[aDrop.element]} · ${lootBonusLabels(aDrop).join(" · ")}`:"Başlangıç giysisi";
+    $("eq-weapon-stat").innerHTML=`ATK: ${playerAtk}<div class="trait-line">${wLabel}${resonance?" · REZONANS":""}</div>`; $("eq-armor-stat").innerHTML=`DEF: ${playerDef} · Azaltım %${Math.round(getDamageMitigation()*100)}<div class="trait-line">${aLabel}${resonance?" · REZONANS":""}</div>`;
+    $("eq-weapon-upg").innerHTML=`<button disabled>${w.isUnique?"YADİGÂR":wDrop?"GANİMET":"DÜŞMANDAN DÜŞER"}</button>`;
+    $("eq-armor-upg").innerHTML=`<button disabled>${a.isUnique?"YADİGÂR":aDrop?"GANİMET":"DÜŞMANDAN DÜŞER"}</button>`;
     $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})" title="Seviye ${i+1} Sandık"><span class="atlas-icon" style="${atlasIconStyle("chests",CHEST_ATLAS_INDICES[i],2)}"></span><span class="key-count">x${state.keys[i]}</span></div>`).join("");
     $("consumables").innerHTML=Object.entries(CONSUMABLE_DEFS).map(([id,item])=>`<div class="consumable-card"><span class="atlas-icon" style="${atlasIconStyle(item.atlas,item.index,2)}"></span><b style="font-size:8px">${item.name}</b><div class="tiny">x${state.consumables[id]}</div><button onclick="useConsumable('${id}')" ${state.consumables[id]>0?"":"disabled"}>KULLAN</button></div>`).join("");
     $("pets").innerHTML=Object.entries(PETS).map(([id,pet])=>{const owned=state.ownedPets.includes(id),equipped=state.equippedPet===id,p=state.petProgress[id];return `<div class="pet-card ${owned?"owned":""} ${equipped?"equipped":""}" onclick="equipPet('${id}')"><div class="pet-preview" style="background-image:url('${RAW_ASSET_URL}${pet.file}');background-size:${pet.frames*48}px auto"></div><b>${pet.name}</b><div class="tiny">${owned?`${pet.bonus} · Sv.${p.level} · ${p.xp}/${p.level*50} XP`:pet.unlock}</div>${owned?`<button onclick="event.stopPropagation();feedPet('${id}')">BESLE · ${p.level*50} RUH</button>`:""}</div>`}).join("");renderBattlePet();
@@ -979,19 +963,6 @@
       wepUniques.map((img,i)=>`<div class="unique ${state.unlockedWeapons.includes(i)?"":"locked"} ${w.isUnique&&w.idx===i?"equipped":""}" onclick="equipUnique('weapon',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("")+
       armUniques.map((img,i)=>`<div class="unique ${state.unlockedArmors.includes(i)?"":"locked"} ${a.isUnique&&a.idx===i?"equipped":""}" onclick="equipUnique('armor',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("");
   }
-
-  async function upgradeEquipment(type){
-    const isWeapon=type==="weapon"; const eq=isWeapon?state.equippedWeapon:state.equippedArmor; if(eq.isUnique)return;
-    const tiers=isWeapon?wepTiers:armTiers; const maxT=tiers.length-1,maxL=tiers[eq.t].length-1;
-    if(eq.t===maxT&&eq.l===maxL) return;
-    const cost=equipmentUpgradeCost(type,eq); if(state.soul<cost){showToast("Yetersiz Ruh!");return}
-    state.soul-=cost;
-    if(eq.l<maxL) eq.l++; else {eq.t++;eq.l=0}
-    state.stats[isWeapon?"weapon_upg":"armor_upg"]++;
-    playSound(isWeapon?"weapon_upg":"robe_upg",.8); playEffectAt("player-sprite","5492udk.gif",1,10);
-    updateCombatStats(); await saveState(); updateUI(); showToast("Eşya güçlendirildi!");
-  }
-  window.upgradeEquipment=upgradeEquipment;
 
   async function openChest(keyIndex){
     if(state.keys[keyIndex]<=0){showToast("Bu anahtardan yok!");return}
@@ -1027,7 +998,7 @@
   function renderBattlePet(){const pet=PETS[state.equippedPet],el=$("battle-pet");if(!pet||!state.ownedPets.includes(state.equippedPet)){el.style.display="none";return}el.style.display="block";el.style.backgroundImage=`url("${RAW_ASSET_URL}${pet.file}")`;el.style.backgroundSize=`${pet.frames*32}px auto`;el.style.setProperty("--pet-end",`-${pet.frames*32}px`);el.style.animationTimingFunction=`steps(${pet.frames})`}
   async function equipPet(id){if(!state.ownedPets.includes(id)||!PETS[id])return;state.equippedPet=id;updateCombatStats();renderBattlePet();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false);showToast(PETS[id].name+" sana katıldı.")}
   async function feedPet(id){if(!state.ownedPets.includes(id))return;const p=state.petProgress[id],cost=p.level*50;if(state.soul<cost){showToast("Yetersiz Ruh!");return}state.soul-=cost;p.xp+=25;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;showToast(`${PETS[id].name} Seviye ${p.level}!`)}updateCombatStats();uiCache.inventory="";await saveState();updateUI(false)}
-  async function equipLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.equippedLootItems[item.type]=id;updateCombatStats();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false)}
+  async function equipLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.equippedLootItems[item.type]=id;if(item.type==="weapon")state.equippedWeapon={isUnique:false,t:0,l:0,idx:0};else state.equippedArmor={isUnique:false,t:0,l:0,idx:0};updateCombatStats();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false)}
   async function salvageLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.soul+=RARITIES[item.rarity].salvage;state.itemInventory=state.itemInventory.filter(i=>i.id!==id);if(state.equippedLootItems[item.type]===id)state.equippedLootItems[item.type]=null;updateCombatStats();uiCache.inventory="";await saveState();updateUI(false);showToast(`+${RARITIES[item.rarity].salvage} Ruh`)}
   Object.assign(window,{equipPet,feedPet,equipLootItem,salvageLootItem});
 
@@ -1035,6 +1006,7 @@
     if(type==="weapon"&&state.unlockedWeapons.includes(idx)) state.equippedWeapon={isUnique:true,t:0,l:0,idx};
     else if(type==="armor"&&state.unlockedArmors.includes(idx)) state.equippedArmor={isUnique:true,t:0,l:0,idx};
     else return;
+    state.equippedLootItems[type]=null;
     playSound("equip",.7); updateCombatStats(); queueSave(); updateUI();
   }
   window.equipUnique=equipUnique;
@@ -1116,7 +1088,7 @@
   function weekKey(){const d=new Date(),start=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-start)/86400000)+start.getDay()+1)/7);return `${d.getFullYear()}-W${week}`}
   function ensureWeekly(){const key=weekKey();if(state.weekly.key!==key){state.weekly={key,bossClaimed:false};queueSave()}}
   function generateLootEquipment(isBoss){
-    const table=(currentRegion||getCombatRegion()).drop||{},isElite=currentEnemyProfile?.kind==="elite",chance=isBoss ? .72 : isElite ? .28 : (table.equipment||.1);if(state.level<5||Math.random()>chance)return null;const roll=Math.min(.999,Math.random()+(table.rarity||0));let rarity=roll<.58?"common":roll<.86?"rare":roll<.97?"epic":"relic";if(rarity==="relic"&&state.level<25)rarity="epic";const type=Math.random()>.5?"weapon":"armor",elements=table.elements||["arcane","poison","fire","dark","blood"],element=elements[Math.floor(Math.random()*elements.length)],def=RARITIES[rarity],power=Math.max(2,Math.floor(state.level*(type==="weapon"?1.7:1.1)*def.mult*(.85+Math.random()*.3))),index=Math.floor(Math.random()*(type==="weapon"?72:171));return {id:`drop-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,type,rarity,element,power,index,name:`${ELEMENT_NAMES[element]} ${type==="weapon"?"Silahı":"Zırhı"}`}
+    const table=(currentRegion||getCombatRegion()).drop||{},isElite=currentEnemyProfile?.kind==="elite",chance=isBoss ? .85 : isElite ? .38 : Math.max(.14,table.equipment||.1);if(state.level<5||Math.random()>chance)return null;const roll=Math.min(.999,Math.random()+(table.rarity||0));let rarity=roll<.58?"common":roll<.86?"rare":roll<.97?"epic":"relic";if(rarity==="relic"&&state.level<25)rarity="epic";const type=Math.random()>.5?"weapon":"armor",elements=table.elements||["arcane","poison","fire","dark","blood"],element=elements[Math.floor(Math.random()*elements.length)],def=RARITIES[rarity],power=Math.max(2,Math.floor(state.level*(type==="weapon"?1.7:1.1)*def.mult*(.85+Math.random()*.3))),index=Math.floor(Math.random()*(type==="weapon"?72:171));return {id:`drop-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,type,rarity,element,power,index,name:`${ELEMENT_NAMES[element]} ${type==="weapon"?"Silahı":"Zırhı"}`}
   }
   function rollEnemyLoot(profile){
     const region=currentRegion||getCombatRegion(),lootMult=region.loot||1,isBoss=profile?.kind==="boss",found=[];
@@ -1126,7 +1098,7 @@
     if(state.level>=25&&Math.random()<.08*lootMult){const darkGain=Math.max(1,Math.floor(lootMult));state.dark+=darkGain;found.push(`+${darkGain} Öz`)}
     if(isBoss&&state.level>=15&&Math.random()<.06){const petId=state.level>=35?"fox":"dog";if(!state.ownedPets.includes(petId)){state.ownedPets.push(petId);found.push("Yeni Pet: "+PETS[petId].name)}}
     if(isBoss&&state.level>=25&&Math.random()<.035){const weapon=Math.random()>.42,list=weapon?wepUniques:armUniques,owned=weapon?state.unlockedWeapons:state.unlockedArmors,idx=Math.floor(Math.random()*list.length);if(!owned.includes(idx)){owned.push(idx);state.stats.uniques++;found.push("Yadigâr: "+(weapon?wepUniqueNames[idx]:armUniqueNames[idx]))}}
-    const item=generateLootEquipment(isBoss);if(item){if(state.itemInventory.length<30){state.itemInventory.push(item);found.push(`${RARITIES[item.rarity].name} ${item.type==="weapon"?"Silah":"Zırh"}`)}else{state.soul+=RARITIES[item.rarity].salvage;found.push(`Envanter dolu: +${RARITIES[item.rarity].salvage} Ruh`)}}
+    const item=generateLootEquipment(isBoss);if(item){if(state.itemInventory.length<30){state.itemInventory.push(item);state.stats[`loot_${item.type}`]=(state.stats[`loot_${item.type}`]||0)+1;found.push(`${RARITIES[item.rarity].name} ${item.type==="weapon"?"Silah":"Zırh"}`)}else{state.soul+=RARITIES[item.rarity].salvage;found.push(`Envanter dolu: +${RARITIES[item.rarity].salvage} Ruh`)}}
     showCombatLoot(found);return found;
   }
 
@@ -1263,7 +1235,7 @@
   window.buyAltarUpgrade=buyAltarUpgrade;
 
   function achievementValue(a){
-    const s=state.stats;return ({kill:s.kills,click:s.clicks,death:s.deaths,quest:s.quests,ritual:s.rituals,shop:s.shop,chest:s.chests,mg_win:s.mg_win,upg_w:s.weapon_upg,upg_a:s.armor_upg,unique:s.uniques,level:state.level})[a.type]||0;
+    const s=state.stats;return ({kill:s.kills,click:s.clicks,death:s.deaths,quest:s.quests,ritual:s.rituals,shop:s.shop,chest:s.chests,mg_win:s.mg_win,loot_weapon:s.loot_weapon,loot_armor:s.loot_armor,unique:s.uniques,level:state.level})[a.type]||0;
   }
   function checkAchievements(){
     let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);const reward=SPECIAL_SKIN_REWARDS[a.id];showToast(reward?`🏆 ${a.name} · ${reward} açıldı!`:"🏆 "+a.name);playSound("equip",.8);changed=true}}
