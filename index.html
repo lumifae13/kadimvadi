@@ -56,8 +56,10 @@
     #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
     #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(-1.5,1.5);transform-origin:center bottom}
     #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
+    #enemy-sprite.slime-v55{background-size:512px 192px;animation:slimeIdle .8s steps(4) infinite}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
+    @keyframes slimeIdle{from{background-position:0 0}to{background-position:-256px 0}}
     .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
     .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
     .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
@@ -159,7 +161,24 @@
       <label>Efekt</label><input id="vol-sfx" type="range" min="0" max="1" step="0.1" value="1" onchange="updateVolumes()">
       <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri Düzenle</button>
       <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu Sıfırla</button>
+      <button class="tiny" style="margin:12px auto 0;width:auto;min-height:28px;padding:0 14px" onclick="closeModal('settings');openModal('credits')">Krediler</button>
       <div class="tiny center" style="margin-top:18px">SYLEX entertainment · demo build</div>
+    </div>
+  </div>
+
+  <div id="credits" class="overlay">
+    <div class="panel modal" style="position:relative">
+      <div class="close" data-bg="c6YwskP.png" onclick="closeModal('credits')"></div>
+      <h3 class="center" style="margin:0;color:var(--gold)">Krediler</h3>
+      <div class="tiny center" style="margin:5px 0 12px">Kadim Vadi'de kullanılan görsel paketler</div>
+      <div style="display:grid;gap:8px;font-size:10px;line-height:1.35">
+        <div class="panel"><b>Pixel Art Characters, Slimes & Effects</b><br>GandalfHardcore</div>
+        <div class="panel"><b>Super Pixel Effects Gigapack</b><br>Will Tice / unTied Games</div>
+        <div class="panel"><b>Free Raven Fantasy Icons</b><br>Caio / Clockwork Raven Studios</div>
+        <div class="panel"><b>Basic Asset Pack</b><br><span class="tiny">Yapımcı bilgisi bekleniyor</span></div>
+        <div class="panel"><b>Items & Potions Icon Packs</b><br><span class="tiny">Yapımcı bilgisi bekleniyor</span></div>
+        <div class="panel"><b>Effect and FX Pixel All Free</b><br><span class="tiny">Yapımcı bilgisi bekleniyor</span></div>
+      </div>
     </div>
   </div>
 
@@ -390,6 +409,13 @@
   window.startGameIntro=startGameIntro;
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
+  const V55_SLIME_ENEMIES = [
+    {id:"slime-blue",name:"Mavi Slime",element:"arcane",sprite:"asset-v55/enemies/slimes/slime-blue.png"},
+    {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"asset-v55/enemies/slimes/slime-green.png"},
+    {id:"slime-red",name:"Ateş Slime",element:"fire",sprite:"asset-v55/enemies/slimes/slime-red.png"}
+  ];
+  let v55SlimesReady=false,currentEnemyProfile=null;
+  function preloadV55Enemies(){Promise.all(V55_SLIME_ENEMIES.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=CDN_URL+enemy.sprite}))).then(()=>{v55SlimesReady=true}).catch(()=>{v55SlimesReady=false})}
   const enemyAttackGif = "Yku2dxV.gif";
   const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
   const frameCounts = {idle:6,dash:4,jump:8,death:6};
@@ -719,7 +745,10 @@
   }
 
   function spawnEnemy(){
-    const el=$("enemy-sprite"); el.style.backgroundImage=`url("${CDN_URL}${enemyList[Math.floor(Math.random()*enemyList.length)]}")`; el.style.opacity="1";
+    const el=$("enemy-sprite");
+    if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.classList.remove("slime-v55");el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    el.style.backgroundPosition="0 0";el.style.opacity="1";
     updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
   }
 
@@ -934,6 +963,7 @@
       if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
       state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;
       initCharacterSystem();
+      preloadV55Enemies();
       if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
       updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
     }catch(e){
