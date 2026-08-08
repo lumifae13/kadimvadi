@@ -61,6 +61,8 @@
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
+    .combat-impact{position:absolute;right:40px;bottom:35px;border-radius:50%;pointer-events:none;z-index:41;animation:combatImpact .32s ease-out forwards;mix-blend-mode:screen}
+    @keyframes combatImpact{0%{transform:scale(.3);opacity:1}70%{transform:scale(1.15);opacity:.9}100%{transform:scale(1.5);opacity:0}}
     .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
     .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
     .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
@@ -387,15 +389,14 @@
   const sfx = {
     bg:new Audio("https://files.catbox.moe/74c7yc.mp3"),
     p_atk:new Audio("https://files.catbox.moe/jxe6g6.wav"), e_atk:new Audio("https://files.catbox.moe/yqtnmq.wav"),
-    loot:new Audio(CDN_URL+"gem.wav"), lvlup:new Audio(CDN_URL+"level-complete.wav"),
-    equip:new Audio(CDN_URL+"equip.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
+    loot:new Audio("https://files.catbox.moe/sr74q7.wav"), lvlup:new Audio("https://files.catbox.moe/459gkz.wav"),
+    equip:new Audio("https://files.catbox.moe/ozg7s8.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
     mapchange:new Audio("https://files.catbox.moe/xnmhb5.wav"), chest:new Audio("https://files.catbox.moe/az4wl5.wav"),
-    e_death:new Audio(CDN_URL+"enemy-defeat.wav"), p_death:new Audio(CDN_URL+"player-defeat.wav"),
+    e_death:new Audio("https://files.catbox.moe/t30v8r.wav"), p_death:new Audio("https://files.catbox.moe/k9gftq.wav"),
     tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
     ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
     rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
-    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav"),
-    boss:new Audio(CDN_URL+"boss-warning.wav")
+    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
   };
   sfx.bg.loop = true;
 
@@ -748,13 +749,18 @@
     Object.assign(eff.style,{position:"absolute",width:(100*scale)+"px",height:(100*scale)+"px",left:"50%",top:`calc(50% + ${offsetY}px)`,transform:"translate(-50%,-50%)",zIndex:"100",pointerEvents:"none"});
     target.appendChild(eff); setTimeout(()=>eff.remove(),800);
   }
+  function spawnPlayerImpact(stage){
+    const colors=[["#ffdb75","#ff5a28"],["#eaff75","#65d63e"],["#79fff2","#238cff"],["#e1a4ff","#763cff"],["#fff","#ff2f91"]][stage]||["#fff","#ff5a28"],impact=document.createElement("div"),size=54+stage*10;
+    impact.className="combat-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 10%,${colors[1]} 28%,transparent 68%)`;impact.style.boxShadow=`0 0 ${10+stage*5}px ${colors[1]}`;
+    $("battle").appendChild(impact);setTimeout(()=>impact.remove(),350);
+  }
   function shootProjectile(type){
     const p=document.createElement("img"); p.src=CDN_URL+(type==="player"?"mZbPRLE.gif":enemyAttackGif);p.style.position="absolute";p.style.bottom="42px";p.style.zIndex="40";p.style.transition=".3s linear";
     if(type==="player"){
       const effective=state.equippedWeapon.isUnique?15+state.equippedWeapon.idx*3:cumulativeLevel(wepTiers,state.equippedWeapon.t,state.equippedWeapon.l);
-      const stage=Math.min(4,Math.floor(effective/3)),size=30+Math.min(28,effective*2),hues=[0,55,125,205,285],glow=4+stage*3;
+      const stage=Math.min(4,Math.floor(effective/3)),size=52+Math.min(40,effective*3),hues=[0,55,125,205,285],glow=8+stage*4;
       p.dataset.weaponEffectStage=String(stage);p.style.width=size+"px";p.style.filter=`hue-rotate(${hues[stage]}deg) saturate(${1.1+stage*.35}) brightness(${1+stage*.12}) drop-shadow(0 0 ${glow}px ${stage>=3?"#d8a8ff":"#ff784d"})`;
-      p.style.left="60px";setTimeout(()=>p.style.left="200px",10);playSound("p_atk",Math.min(.35,.15+stage*.04));
+      p.style.bottom=(35-stage*2)+"px";p.style.left="55px";setTimeout(()=>p.style.left="205px",10);setTimeout(()=>spawnPlayerImpact(stage),245);playSound("p_atk",Math.min(.35,.15+stage*.04));
     }else{p.style.width="32px";p.style.right="60px";p.style.transform="scaleX(-1)";setTimeout(()=>p.style.right="200px",10);playSound("e_atk",.15)}
     $("battle").appendChild(p);setTimeout(()=>p.remove(),320);
   }
@@ -763,7 +769,7 @@
     const el=$("enemy-sprite");
     const isBoss=v55BossesReady&&state.stats.kills%10===9;
     el.classList.remove("slime-v55","boss-v55");
-    if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.45);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;showToast(`BOSS: ${currentEnemyProfile.name}`)}
     else if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
     else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
     el.style.backgroundPosition="0 0";el.style.opacity="1";
