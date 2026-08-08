@@ -1156,7 +1156,7 @@
   function dailyMissionProgress(m){return Math.max(0,(state.stats[m.stat]||0)-(state.goddess.baseline[m.stat]||0))}
   function dayDistance(from,to){if(!from||!to)return 99;const parse=s=>{const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};return Math.round((parse(to)-parse(from))/86400000)}
   async function claimDailyMission(id){
-    ensureDailyMissions();const mission=DAILY_MISSIONS.find(m=>m.id===id);if(!mission||dailyMissionProgress(m)<mission.req||state.goddess.claimed.includes(id))return;
+    ensureDailyMissions();const mission=DAILY_MISSIONS.find(m=>m.id===id);if(!mission||dailyMissionProgress(mission)<mission.req||state.goddess.claimed.includes(id))return;
     state.goddess.claimed.push(id);state.goddess.reputation+=10;state.soul+=100+state.level*10;addXP(60);playSound("loot",.55);
     if(state.goddess.reputation>=100&&!state.ownedPets.includes("wisp")){state.ownedPets.push("wisp");showToast("Kor Wisp sana katıldı!")}
     if(state.goddess.claimed.length===DAILY_MISSIONS.length&&!state.goddess.bonusClaimed){const today=localDayKey(),consecutive=dayDistance(state.goddess.lastCompleteDay,today)===1;state.goddess.streak=consecutive?state.goddess.streak+1:1;state.goddess.lastCompleteDay=today;state.goddess.bonusClaimed=true;state.keys[Math.min(7,Math.floor(state.level/10))]++;state.goddess.reputation+=20;const streakSoul=100*Math.min(7,state.goddess.streak);state.soul+=streakSoul;if(state.goddess.streak%7===0)state.rune++;showToast(`Günlük Divan · ${state.goddess.streak} gün seri · +${streakSoul} Ruh${state.goddess.streak%7===0?" · +1 Rün":""}`)}
