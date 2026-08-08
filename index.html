@@ -94,6 +94,7 @@
     .eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
     .eq{background:#0007;border:1px solid #333;border-radius:7px;padding:8px;text-align:center}.eq-icon{width:48px;height:48px;margin:0 auto 4px;background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:pixelated}
     .inventory-avatar{display:grid;grid-template-columns:68px 1fr 68px;gap:5px;align-items:center;margin-bottom:8px}.inventory-avatar-stage{height:154px;border:1px solid #5c4711;border-radius:8px;background:radial-gradient(circle,#260016,#080004 68%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.inventory-avatar-stage:after{content:"";position:absolute;left:18px;right:18px;bottom:22px;height:7px;border-radius:50%;background:#000b;filter:blur(2px)}#inventory-character{width:150px;height:120px;image-rendering:pixelated;position:relative;z-index:2}.wardrobe-column{display:flex;flex-direction:column;gap:5px}.wardrobe-slot{height:46px;padding:3px;border:1px solid #3a1a27;background:#090004;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.wardrobe-slot.filled{border-color:#70405c;background:#18000c}.wardrobe-slot-label{font-size:8px;color:var(--muted);text-transform:uppercase}.wardrobe-slot-name{font-size:8px;color:#fff;max-width:60px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wardrobe-edit{margin:0 0 12px;min-height:32px;font-size:10px}
+    .wardrobe-slot.selected{border-color:var(--gold);box-shadow:inset 0 0 9px #b38b2266}.wardrobe-drawer{display:none;border:1px solid #5c4711;border-radius:7px;background:#090004;padding:7px;margin:-5px 0 12px}.wardrobe-drawer.open{display:block}.wardrobe-drawer-head{display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-size:10px;font-weight:900;margin-bottom:6px}.wardrobe-items{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.wardrobe-item{min-height:54px;padding:3px;border:1px solid #321827;background:#100008;border-radius:5px;color:#ddd;font-size:8px;display:flex;flex-direction:column;align-items:center;justify-content:center}.wardrobe-item.equipped{border-color:var(--gold);background:#261900}.wardrobe-item-sprite{width:40px;height:32px;background-repeat:no-repeat;background-position:0 0;background-size:auto 224px;image-rendering:pixelated}
     .keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.key{height:44px;border:1px solid var(--bordo);background:#140005;border-radius:5px;position:relative;display:flex;align-items:center;justify-content:center}.key.locked{opacity:.25}.key-count{position:absolute;right:2px;bottom:2px;background:#000;border-radius:3px;padding:1px 3px;font-size:8px}
     .unique-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.unique{aspect-ratio:1;background:#050002;border:1px solid #222;border-radius:5px;display:flex;align-items:center;justify-content:center}.unique.locked{opacity:.18}.unique.equipped{border-color:var(--gold);box-shadow:inset 0 0 10px #b38b2280}
     .mg{height:36px;margin:16px 0;background:#000;border:2px solid var(--mor);border-radius:18px;position:relative;overflow:hidden}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#58008255;border-left:2px solid var(--mor2);border-right:2px solid var(--mor2)}.mg-cursor{position:absolute;left:0;top:0;width:4px;height:100%;background:#fff;box-shadow:0 0 8px #fff}
@@ -252,18 +253,19 @@
         <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
         <div class="inventory-avatar">
           <div class="wardrobe-column">
-            <div id="wardrobe-hair" class="wardrobe-slot"></div>
-            <div id="wardrobe-top" class="wardrobe-slot"></div>
-            <div id="wardrobe-bottom" class="wardrobe-slot"></div>
+            <button id="wardrobe-hair" class="wardrobe-slot" onclick="openInventoryWardrobe('hair')"></button>
+            <button id="wardrobe-top" class="wardrobe-slot" onclick="openInventoryWardrobe('top')"></button>
+            <button id="wardrobe-bottom" class="wardrobe-slot" onclick="openInventoryWardrobe('bottom')"></button>
           </div>
           <div class="inventory-avatar-stage"><canvas id="inventory-character" width="80" height="64"></canvas></div>
           <div class="wardrobe-column">
-            <div id="wardrobe-outfit" class="wardrobe-slot"></div>
-            <div id="wardrobe-socks" class="wardrobe-slot"></div>
-            <div id="wardrobe-shoes" class="wardrobe-slot"></div>
+            <button id="wardrobe-outfit" class="wardrobe-slot" onclick="openInventoryWardrobe('outfit')"></button>
+            <button id="wardrobe-socks" class="wardrobe-slot" onclick="openInventoryWardrobe('socks')"></button>
+            <button id="wardrobe-shoes" class="wardrobe-slot" onclick="openInventoryWardrobe('shoes')"></button>
           </div>
         </div>
         <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
+        <div id="wardrobe-drawer" class="wardrobe-drawer"><div class="wardrobe-drawer-head"><span id="wardrobe-drawer-title">Eşyalar</span><button onclick="closeInventoryWardrobe()" style="width:auto;min-height:24px;padding:2px 8px">×</button></div><div id="wardrobe-items" class="wardrobe-items"></div></div>
         <div class="eq-grid">
           <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
           <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
@@ -522,7 +524,7 @@
     keys:[0,0,0,0,0,0,0,0],
     equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
     equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
-    unlockedWeapons:[],unlockedArmors:[],
+    unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],
     upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
     ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,
     settings:{music:0.15,sfx:1},
@@ -537,6 +539,7 @@
   let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
   let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null;
   let userSettings={music:0.15,sfx:1};
+  let inventoryWardrobeSlot=null;
   const uiCache={upgrades:"",inventory:"",market:false};
 
   function sanitizeState(raw){
@@ -555,6 +558,8 @@
     s.keys=Array.from({length:8},(_,i)=>Math.max(0,Math.floor(Number(raw?.keys?.[i])||0)));
     s.unlockedWeapons=[...new Set((raw?.unlockedWeapons||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<wepUniques.length))];
     s.unlockedArmors=[...new Set((raw?.unlockedArmors||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<armUniques.length))];
+    const equippedCosmetics=s.character?[s.character.hairId,s.character.topId,s.character.bottomId,s.character.outfitId,s.character.socksId,s.character.shoesId].filter(Boolean):[];
+    s.ownedCosmetics=[...new Set([...(raw?.ownedCosmetics||[]),...equippedCosmetics].filter(id=>!!assetById(id)))];
     s.unlockedAchievements=[...new Set((raw?.unlockedAchievements||[]).filter(id=>achievements.some(a=>a.id===id)))];
     Object.keys(s.upgrades).forEach(k=>s.upgrades[k]=Math.max(0,Math.floor(Number(s.upgrades[k])||0)));
     Object.keys(s.stats).forEach(k=>s.stats[k]=Math.max(0,Math.floor(Number(s.stats[k])||0)));
@@ -692,13 +697,27 @@
   window.buyMarketItem=buyMarketItem;
 
   function renderWardrobeSlot(id,label,asset){
-    const el=$(id);if(!el)return;el.classList.toggle("filled",!!asset);el.innerHTML=`<span class="wardrobe-slot-label">${label}</span><span class="wardrobe-slot-name">${asset?asset.displayName.replace(/^(Female|Male)\s+/i,""):"Boş"}</span>`;
+    const el=$(id);if(!el)return;el.classList.toggle("filled",!!asset);el.classList.toggle("selected",id==="wardrobe-"+inventoryWardrobeSlot);el.innerHTML=`<span class="wardrobe-slot-label">${label}</span><span class="wardrobe-slot-name">${asset?asset.displayName.replace(/^(Female|Male)\s+/i,""):"Boş"}</span>`;
+  }
+  const WARDROBE_LABELS={hair:"Saç",top:"Üst",bottom:"Alt",outfit:"Tam Kıyafet",socks:"Çorap",shoes:"Ayakkabı"};
+  function ownedWardrobeAssets(slot){return state.ownedCosmetics.map(assetById).filter(asset=>asset&&asset.gender===state.gender&&(slot==="hair"?asset.category==="hair":asset.category==="clothing"&&clothingSlot(asset)===slot))}
+  function renderInventoryWardrobe(){
+    const drawer=$("wardrobe-drawer");if(!drawer)return;if(!inventoryWardrobeSlot){drawer.classList.remove("open");return}drawer.classList.add("open");$("wardrobe-drawer-title").textContent=WARDROBE_LABELS[inventoryWardrobeSlot]+" Eşyaları";
+    const selectedId=state.character?.[inventoryWardrobeSlot+"Id"],assets=ownedWardrobeAssets(inventoryWardrobeSlot),empty=inventoryWardrobeSlot==="hair"?"":`<button class="wardrobe-item ${selectedId?"":"equipped"}" onclick="equipOwnedCosmetic('${inventoryWardrobeSlot}',null)"><span style="font-size:18px">×</span><span>Çıkar</span></button>`;
+    $("wardrobe-items").innerHTML=empty+assets.map(asset=>`<button class="wardrobe-item ${selectedId===asset.id?"equipped":""}" onclick="equipOwnedCosmetic('${inventoryWardrobeSlot}','${asset.id}')"><span class="wardrobe-item-sprite" style="background-image:url('${CDN_URL}${asset.runtimePath}')"></span><span>${asset.displayName.replace(/^(Female|Male)\s+/i,"")}</span></button>`).join("")||`<div class="tiny center" style="grid-column:1/-1">Bu slot için henüz eşyan yok.</div>`;
+  }
+  function openInventoryWardrobe(slot){inventoryWardrobeSlot=slot;uiCache.inventory="";updateUI(false)}
+  function closeInventoryWardrobe(){inventoryWardrobeSlot=null;uiCache.inventory="";updateUI(false)}
+  function equipOwnedCosmetic(slot,id){
+    if(!state.character||!WARDROBE_LABELS[slot]||(slot==="hair"&&!id))return;const asset=id?assetById(id):null;if(asset&&(!state.ownedCosmetics.includes(id)||asset.gender!==state.gender||(slot==="hair"?asset.category!=="hair":clothingSlot(asset)!==slot)))return;
+    state.character[slot+"Id"]=id;if(["top","bottom"].includes(slot)&&id)state.character.outfitId=null;state.character=normalizeCharacter(state.character,state.gender);battleRenderer?.setCharacter(state.character);inventoryRenderer?.setCharacter(state.character);playSound("equip",.45);uiCache.inventory="";queueSave();updateUI(false);
   }
   function renderInventory(){
     const w=state.equippedWeapon,a=state.equippedArmor;
     inventoryRenderer?.setCharacter(state.character);inventoryRenderer?.setAnimation("idle");
     renderWardrobeSlot("wardrobe-hair","Saç",assetById(state.character?.hairId));renderWardrobeSlot("wardrobe-top","Üst",assetById(state.character?.topId));renderWardrobeSlot("wardrobe-bottom","Alt",assetById(state.character?.bottomId));
     renderWardrobeSlot("wardrobe-outfit","Tam",assetById(state.character?.outfitId));renderWardrobeSlot("wardrobe-socks","Çorap",assetById(state.character?.socksId));renderWardrobeSlot("wardrobe-shoes","Ayakkabı",assetById(state.character?.shoesId));
+    renderInventoryWardrobe();
     const wImg=w.isUnique?wepUniques[w.idx]:wepTiers[w.t]?.[w.l]||wepTiers[0][0];
     const aImg=a.isUnique?armUniques[a.idx]:armTiers[a.t]?.[a.l]||armTiers[0][0];
     $("eq-weapon-img").style.backgroundImage=`url("${CDN_URL}${wImg}")`;
@@ -963,7 +982,7 @@
     const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
     const r=getRitualStats();$("ritual-cost").textContent=`Bedel: ${r.bloodCost} Kan + %${r.hpCostPercent} Can`;
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
-    const invSig=JSON.stringify([state.character,state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
+    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();checkRitualStatus();
     if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
@@ -1000,10 +1019,10 @@
   }
   function openCharacterCreator(){closeModal("settings");isCombatActive=false;creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
-    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);state.ownedCosmetics=[...new Set([...state.ownedCosmetics,state.character.hairId,state.character.topId,state.character.bottomId,state.character.outfitId,state.character.socksId,state.character.shoesId].filter(Boolean))];creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
     updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
   }
-  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
+  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,openInventoryWardrobe,closeInventoryWardrobe,equipOwnedCosmetic,finishCharacterCreation});
 
   $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
   $("btn-quest").onclick=questAction;
