@@ -53,7 +53,8 @@
     .bar{height:14px;border:1px solid var(--bordo3);background:#000d;border-radius:7px;overflow:hidden;position:relative}
     .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--mor3),var(--bordo2));transition:width .2s}
     .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
-    #player-sprite{position:absolute;left:30px;bottom:25px;width:48px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
+    #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
+    #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated}
     #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
@@ -91,8 +92,14 @@
     #nav{position:absolute;left:0;right:0;bottom:var(--safe-bottom);height:48px;background:#050002fa;border-top:1px solid var(--bordo3);display:flex;z-index:20}
     .nav{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--muted);font-weight:800}.nav.active{color:#fff;border-top:2px solid var(--bordo2);background:#ffffff05}.nav .icon{width:23px;height:23px;opacity:.7}.nav.active .icon{opacity:1}
     .overlay{display:none;position:absolute;inset:0;background:#000e;z-index:250;align-items:center;justify-content:center;padding:18px}.modal{width:100%;max-height:88%;overflow:auto}.close{position:absolute;left:-5px;top:-5px;width:28px;height:28px;background-size:contain;background-repeat:no-repeat}
-    #creation{display:flex;position:absolute;inset:0;background:#000;z-index:300;align-items:center;justify-content:center;flex-direction:column;text-align:center}
-    .char-row{display:flex;gap:16px}.char-btn{width:90px;height:110px;border:1px solid #333;border-radius:8px;background:#ffffff05;display:flex;align-items:center;justify-content:center}
+    #creation{display:flex;position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,#26000d,#050002 58%,#000);z-index:300;align-items:center;justify-content:flex-start;flex-direction:column;text-align:center;padding:14px 12px 22px;overflow-y:auto}
+    .creator-title{margin:0;color:#fff;font:900 17px/1.2 Georgia,serif;letter-spacing:.5px;text-shadow:0 0 10px #9e0024}
+    .gender-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:220px;margin:10px auto 8px}.gender-switch button{min-height:36px}.gender-switch button.active{border-color:var(--gold);color:#f1d26a;background:linear-gradient(#4a3500,#211700)}
+    .creator-stage{width:244px;height:196px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 67%);box-shadow:inset 0 0 25px #000,0 0 12px #58008255;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .creator-stage:after{content:"";position:absolute;left:42px;right:42px;bottom:22px;height:10px;border-radius:50%;background:#000a;filter:blur(3px)}
+    #creator-canvas{width:240px;height:192px;image-rendering:pixelated;position:relative;z-index:2}
+    .creator-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%;margin-top:10px}.creator-tab{min-height:34px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
+    .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}
     #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img{width:32px;height:32px;filter:grayscale(1);opacity:.3}.ach.unlocked img{filter:none;opacity:1}
     .tiny{font-size:9px;color:var(--muted)} .center{text-align:center}
@@ -104,12 +111,27 @@
   <div id="toast"></div>
 
   <div id="creation">
-    <img data-src="5uCOUOu.png" style="width:220px;image-rendering:pixelated;filter:drop-shadow(0 0 10px var(--bordo));margin-bottom:8px">
-    <h2 style="margin:0 0 4px;color:#fff">Kanın Sahibini Seç</h2>
-    <div class="tiny" style="margin-bottom:20px">Kadim Vadi'ye adım atmadan önce...</div>
-    <div class="char-row">
-      <div class="char-btn" onclick="selectGender('female')"><div class="char-preview" data-bg="VbwzaIQ.png" style="width:48px;height:64px"></div></div>
-      <div class="char-btn" onclick="selectGender('male')"><div class="char-preview" data-bg="vb9bSml.png" style="width:48px;height:64px"></div></div>
+    <h2 class="creator-title">Kanın Sahibine Biçim Ver</h2>
+    <div class="tiny">Kadim Vadi seni bu suretle hatırlayacak.</div>
+    <div class="gender-switch">
+      <button id="gender-female" onclick="setCreatorGender('female')">Kadın</button>
+      <button id="gender-male" onclick="setCreatorGender('male')">Erkek</button>
+    </div>
+    <div class="creator-stage"><canvas id="creator-canvas" width="80" height="64"></canvas></div>
+    <div class="creator-tabs">
+      <button class="creator-tab active" data-category="skin" onclick="setCreatorCategory('skin')">Ten</button>
+      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">Saç</button>
+      <button class="creator-tab" data-category="clothing" onclick="setCreatorCategory('clothing')">Kıyafet</button>
+      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
+    </div>
+    <div class="creator-picker">
+      <button onclick="cycleCreator(-1)" aria-label="Önceki">‹</button>
+      <div class="creator-choice"><b id="creator-choice-name">Yükleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
+      <button onclick="cycleCreator(1)" aria-label="Sonraki">›</button>
+    </div>
+    <div class="creator-actions">
+      <button onclick="randomizeCreator()">Rastgele</button>
+      <button class="primary" onclick="finishCharacterCreation()">Karakteri Oluştur</button>
     </div>
   </div>
 
@@ -119,7 +141,8 @@
       <h3 class="center" style="margin-top:0">Ayarlar</h3>
       <label>Müzik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
       <label>Efekt</label><input id="vol-sfx" type="range" min="0" max="1" step="0.1" value="1" onchange="updateVolumes()">
-      <button class="primary" style="margin-top:18px" onclick="hardResetGame()">Oyunu Sıfırla</button>
+      <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri Düzenle</button>
+      <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu Sıfırla</button>
       <div class="tiny center" style="margin-top:18px">SYLEX entertainment · demo build</div>
     </div>
   </div>
@@ -156,6 +179,7 @@
       <div class="bar"><div id="xp-bar" class="bar-fill"></div><div class="bar-label">XP</div></div>
     </div>
     <div id="player-sprite">
+      <canvas id="battle-character" width="80" height="64"></canvas>
       <div id="player-afk" class="afk" data-bg="xs7MP6T.png"></div>
       <div class="player-bars">
         <div class="mini-row"><img data-src="UTi6qfN.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
@@ -226,6 +250,8 @@
   "use strict";
 
   const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/";
+  const CHARACTER_ROOT = "character-v54/";
+  const CHARACTER_MANIFEST_URL = CDN_URL + CHARACTER_ROOT + "manifest.json";
   const SAVE_KEY = "kadim_rpg_v52";
   const BACKUP_KEY = "kadim_rpg_v52_backup";
 
@@ -237,12 +263,57 @@
   function initCDN(){
     document.querySelectorAll("[data-src]").forEach(el => el.src = CDN_URL + el.dataset.src);
     document.querySelectorAll("[data-bg]").forEach(el => el.style.backgroundImage = `url("${CDN_URL}${el.dataset.bg}")`);
-    document.querySelectorAll(".char-preview").forEach(el => {
-      el.style.backgroundRepeat="no-repeat"; el.style.imageRendering="pixelated";
-      el.style.animation="playerAnim .8s steps(6) infinite"; el.style.setProperty("--frames",6);
-    });
   }
   initCDN();
+
+  let characterManifest=null,characterAssets=[],creatorRenderer=null,battleRenderer=null,creatorCategory="skin",creatorDraft=null,creatorForcedOpen=false;
+  const characterImageCache=new Map();
+
+  function getCharacterImage(path){
+    if(!path)return null;
+    if(!characterImageCache.has(path)){
+      const image=new Image();image.decoding="async";image.src=CDN_URL+path;
+      image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw()});
+      characterImageCache.set(path,image);
+    }
+    return characterImageCache.get(path);
+  }
+
+  function assetById(id){return characterAssets.find(asset=>asset.id===id)||null}
+  function assetsFor(gender,category,variant="standard"){
+    return characterAssets.filter(asset=>asset.gender===gender&&asset.category===category&&asset.variant===variant);
+  }
+  function defaultCharacter(gender="female"){
+    return {gender,skinId:assetsFor(gender,"skin")[0]?.id||null,specialSkinId:null,hairId:assetsFor(gender,"hair")[0]?.id||null,clothingId:assetsFor(gender,"clothing")[0]?.id||null};
+  }
+  function normalizeCharacter(value,gender="female"){
+    const base=defaultCharacter(gender),next={...base,...(value&&typeof value==="object"?value:{})};next.gender=gender;
+    if(assetById(next.skinId)?.gender!==gender)next.skinId=base.skinId;
+    if(next.specialSkinId&&assetById(next.specialSkinId)?.gender!==gender)next.specialSkinId=null;
+    if(assetById(next.hairId)?.gender!==gender)next.hairId=base.hairId;
+    if(assetById(next.clothingId)?.gender!==gender)next.clothingId=base.clothingId;
+    return next;
+  }
+  function activeCharacterLayers(character){
+    if(!character)return[];
+    return [assetById(character.specialSkinId)||assetById(character.skinId),assetById(character.clothingId),assetById(character.hairId)].filter(Boolean);
+  }
+
+  class LayeredCharacterRenderer{
+    constructor(canvas,scale=1){this.canvas=canvas;this.ctx=canvas.getContext("2d");this.ctx.imageSmoothingEnabled=false;this.character=null;this.animation="idle";this.frame=0;this.last=0;this.scale=scale;this.running=false}
+    setCharacter(character){this.character=character;activeCharacterLayers(character).forEach(asset=>getCharacterImage(asset.runtimePath));this.draw()}
+    setAnimation(name){this.animation=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[name]?name:"idle";this.frame=0;this.last=performance.now();this.start()}
+    start(){if(this.running)return;this.running=true;requestAnimationFrame(time=>this.tick(time))}
+    stop(){this.running=false}
+    tick(time){if(!this.running)return;const def=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[this.animation];if(def&&time-this.last>=1000/(def.fps||6)){this.last=time;this.frame=(this.frame+1)%def.frames;this.draw()}requestAnimationFrame(t=>this.tick(t))}
+    draw(){const ctx=this.ctx;ctx.clearRect(0,0,80,64);const def=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[this.animation];if(!def)return;for(const asset of activeCharacterLayers(this.character)){const image=getCharacterImage(asset.runtimePath);if(image?.complete&&image.naturalWidth)ctx.drawImage(image,this.frame*80,def.row*64,80,64,0,0,80,64)}}
+  }
+
+  async function loadCharacterManifest(){
+    const response=await fetch(CHARACTER_MANIFEST_URL,{cache:"no-cache"});if(!response.ok)throw new Error(`Character manifest ${response.status}`);
+    characterManifest=await response.json();characterAssets=characterManifest.assets||[];
+    if(characterAssets.length!==182)console.warn("Unexpected character asset count",characterAssets.length);
+  }
 
   const isPhone = typeof PhoneSDK !== "undefined";
   const phone = isPhone ? PhoneSDK.createPhoneSDK() : {
@@ -339,7 +410,7 @@
   ];
 
   const defaultState = {
-    gender:null,soul:0,blood:0,dark:0,rune:0,prestige:0,xp:0,level:1,
+    gender:null,character:null,soul:0,blood:0,dark:0,rune:0,prestige:0,xp:0,level:1,
     questEndTime:0,questStartedAt:0,
     keys:[0,0,0,0,0,0,0,0],
     equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
@@ -368,6 +439,8 @@
     s.stats={...defaultState.stats,...(raw?.stats||{})};
     s.equippedWeapon={...defaultState.equippedWeapon,...(raw?.equippedWeapon||{})};
     s.equippedArmor={...defaultState.equippedArmor,...(raw?.equippedArmor||{})};
+    s.gender=["female","male"].includes(s.gender)?s.gender:null;
+    s.character=s.gender?normalizeCharacter(raw?.character,s.gender):null;
     ["soul","blood","dark","rune","prestige","xp","level","questEndTime","questStartedAt","ritualEndTime","pendingRitualRoll","ritualNextAvailable"].forEach(k=>{
       s[k]=Number(s[k]); if(!Number.isFinite(s[k])) s[k]=defaultState[k];
     });
@@ -572,11 +645,10 @@
   window.equipUnique=equipUnique;
 
   function applyCharacterSprite(anim){
-    if(!state.gender) return;
-    const el=$("player-sprite"),frames=frameCounts[anim]||6;
-    el.style.backgroundImage=`url("${CDN_URL}${sprites[state.gender][anim]}")`;
-    el.style.setProperty("--frames",frames); el.style.animation=`playerAnim ${anim==="dash"?".4s":".8s"} steps(${frames}) infinite`;
-    if(!["idle","dash"].includes(anim)&&!isDead) setTimeout(()=>applyCharacterSprite("idle"),450);
+    if(!state.gender||!battleRenderer)return;
+    const mapped={dash:"run",jump:"jump",death:"death",idle:"idle"}[anim]||"attack";
+    battleRenderer.setCharacter(state.character);battleRenderer.setAnimation(mapped);
+    if(!["idle","dash"].includes(anim)&&!isDead)setTimeout(()=>applyCharacterSprite("idle"),450);
   }
   function showDamage(target,amount,type){
     const el=document.createElement("div"); el.className=`damage ${type}`; el.textContent="-"+Math.max(0,Math.floor(amount));
@@ -702,7 +774,7 @@
   window.renderAchievements=renderAchievements;
 
   async function executePrestige(){
-    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements]};
+    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements]};
     state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
   }
   window.executePrestige=executePrestige;
@@ -725,7 +797,7 @@
   window.hardResetGame=hardResetGame;
 
   function updateUI(updateBg=true){
-    $("creation").style.display=state.gender?"none":"flex";$("res-soul").textContent=money(state.soul);$("res-blood").textContent=money(state.blood);$("res-dark").textContent=money(state.dark);$("res-rune").textContent=money(state.rune);$("res-prestige").textContent=state.prestige;
+    $("creation").style.display=state.gender&&!creatorForcedOpen?"none":"flex";$("res-soul").textContent=money(state.soul);$("res-blood").textContent=money(state.blood);$("res-dark").textContent=money(state.dark);$("res-rune").textContent=money(state.rune);$("res-prestige").textContent=state.prestige;
     const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
     const r=getRitualStats();$("ritual-cost").textContent=`Bedel: ${r.bloodCost} Kan + %${r.hpCostPercent} Can`;
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
@@ -734,10 +806,41 @@
     if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
 
-  async function selectGender(g){
-    state.gender=g;playSound("select",.8);if(sfx.bg.paused)sfx.bg.play().catch(()=>{});applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy();await saveState();updateUI()
+  function initCharacterSystem(){
+    creatorRenderer=new LayeredCharacterRenderer($("creator-canvas"));battleRenderer=new LayeredCharacterRenderer($("battle-character"));
+    creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorRenderer.setCharacter(creatorDraft);creatorRenderer.setAnimation("idle");
+    if(state.gender){state.character=normalizeCharacter(state.character,state.gender);battleRenderer.setCharacter(state.character);battleRenderer.setAnimation("idle")}
+    renderCreatorControls();
   }
-  window.selectGender=selectGender;
+  function creatorOptions(){
+    if(!creatorDraft)return[];
+    if(creatorCategory==="special")return [null,...assetsFor(creatorDraft.gender,"skin","special")];
+    return assetsFor(creatorDraft.gender,creatorCategory);
+  }
+  function creatorSelectedId(){return creatorCategory==="special"?creatorDraft.specialSkinId:creatorDraft[creatorCategory+"Id"]}
+  function renderCreatorControls(){
+    if(!creatorDraft)return;
+    $("gender-female").classList.toggle("active",creatorDraft.gender==="female");$("gender-male").classList.toggle("active",creatorDraft.gender==="male");
+    document.querySelectorAll(".creator-tab").forEach(el=>el.classList.toggle("active",el.dataset.category===creatorCategory));
+    const options=creatorOptions(),selected=creatorSelectedId(),index=Math.max(0,options.findIndex(asset=>(asset?.id||null)===selected)),asset=options[index];
+    $("creator-choice-name").textContent=asset?asset.displayName.replace(/^(Female|Male)\s+/i,""):"Normal Ten";$("creator-choice-count").textContent=`${index+1} / ${options.length}`;
+    creatorRenderer?.setCharacter(creatorDraft);
+  }
+  function setCreatorGender(gender){if(!["female","male"].includes(gender)||creatorDraft?.gender===gender)return;creatorDraft=defaultCharacter(gender);playSound("select",.5);renderCreatorControls()}
+  function setCreatorCategory(category){if(!["skin","hair","clothing","special"].includes(category))return;creatorCategory=category;renderCreatorControls()}
+  function cycleCreator(direction){
+    const options=creatorOptions();if(!options.length)return;const selected=creatorSelectedId();let index=options.findIndex(asset=>(asset?.id||null)===selected);index=(index+direction+options.length)%options.length;const id=options[index]?.id||null;
+    if(creatorCategory==="special")creatorDraft.specialSkinId=id;else creatorDraft[creatorCategory+"Id"]=id;playSound("tab",.35);renderCreatorControls();
+  }
+  function randomizeCreator(){
+    const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null;creatorDraft={gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:Math.random()<.18?pick(assetsFor(gender,"skin","special"))?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,clothingId:pick(assetsFor(gender,"clothing"))?.id||null};playSound("select",.6);renderCreatorControls();
+  }
+  function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
+  async function finishCharacterCreation(){
+    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    if(sfx.bg.paused)sfx.bg.play().catch(()=>{});updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
+  }
+  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
 
   $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
   $("btn-quest").onclick=questAction;
@@ -773,9 +876,11 @@
     renderMarket();
     try{
       await phone.whenReady();
+      await loadCharacterManifest();
       let saved=null;try{saved=await phone.storage.get(SAVE_KEY)}catch{}
       if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
       state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;
+      initCharacterSystem();
       if(state.gender){applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}
       updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
     }catch(e){
