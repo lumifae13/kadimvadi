@@ -82,6 +82,10 @@
     #enemy-sprite.slime-v55::before,#enemy-sprite.slime-v55::after{content:"";position:absolute;width:64px;height:64px;bottom:3px;background-image:inherit;background-size:512px 192px;background-repeat:no-repeat;animation:slimeIdle .8s linear infinite;z-index:-1;filter:brightness(.92)}#enemy-sprite.slime-v55::before{left:-34px;transform:scale(.72);animation-delay:-.2s}#enemy-sprite.slime-v55::after{right:-32px;transform:scale(.62);animation-delay:-.45s;filter:brightness(.78)}
     #enemy-sprite.boss-v55{right:22px;bottom:24px;width:80px;height:80px;background-size:80px 80px;background-position:center;animation:none;filter:drop-shadow(0 0 7px #b72054)}
     #enemy-sprite.boss-animated-v60{right:25px;bottom:-30px;width:100px;height:100px;animation:none;background-repeat:no-repeat;background-position:0 0;filter:drop-shadow(0 0 8px #b72054);transform:scale(-2,2);transform-origin:center bottom}#enemy-sprite.boss-animated-v60 #enemy-hp-wrap{transform:scale(.5);transform-origin:center bottom;width:140%;left:-20%;bottom:25px}
+    #enemy-sprite.region-sheet-enemy{right:18px;bottom:18px;width:96px;height:96px;background-repeat:no-repeat;animation:regionEnemyFrames var(--enemy-duration,.8s) steps(var(--enemy-frames,8)) infinite;transform-origin:center bottom;filter:drop-shadow(0 3px 3px #0008)}
+    #enemy-sprite.region-sheet-enemy.elite-enemy{filter:drop-shadow(0 0 7px #f1b83f)}#enemy-sprite.region-sheet-enemy.boss-region-enemy{right:22px;bottom:8px;filter:drop-shadow(0 0 10px #c23868)}
+    #enemy-sprite.region-sheet-enemy.grouped-enemy::before,#enemy-sprite.region-sheet-enemy.grouped-enemy::after{content:"";position:absolute;inset:0;background:inherit;background-size:inherit;background-repeat:no-repeat;animation:regionEnemyFrames var(--enemy-duration,.8s) steps(var(--enemy-frames,8)) infinite;z-index:-1;opacity:.78}#enemy-sprite.region-sheet-enemy.grouped-enemy::before{transform:translateX(-54px) scale(.72);animation-delay:-.17s}#enemy-sprite.region-sheet-enemy.grouped-enemy::after{transform:translateX(48px) scale(.64);animation-delay:-.38s;opacity:.58}
+    @keyframes regionEnemyFrames{from{background-position:0 0}to{background-position:var(--enemy-sheet-end) 0}}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
@@ -514,11 +518,11 @@
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
   const COMBAT_REGIONS=[
-    {id:"forest",min:1,name:"Karanlık Orman",scene:"cliffs",slimes:["slime-blue","slime-green"],hp:1,atk:1,loot:1},
-    {id:"marsh",min:10,name:"Zehir Bataklığı",scene:"cave",slimes:["slime-green","slime-venom"],hp:1.18,atk:1.1,loot:1.15},
-    {id:"ember",min:25,name:"Kor Yarığı",scene:"cave",slimes:["slime-red","slime-ember"],hp:1.38,atk:1.22,loot:1.35},
-    {id:"abyss",min:50,name:"Boşluk Geçidi",scene:"church",slimes:["slime-arcane","slime-venom","slime-ember"],hp:1.7,atk:1.42,loot:1.65},
-    {id:"ancient",min:75,name:"Kadim Çekirdek",scene:"church",slimes:["slime-arcane","slime-venom","slime-ember"],hp:2.05,atk:1.65,loot:2}
+    {id:"forest",min:1,name:"Karanlık Orman",scene:"cliffs",enemies:["forest-fox","forest-plant","forest-slime"],elites:["forest-shuriken"],bosses:["orc"],hp:1,atk:1,loot:1,drop:{equipment:.08,potion:.08,key:.28,rarity:0,elements:["arcane","physical"]}},
+    {id:"marsh",min:10,name:"Zehir Bataklığı",scene:"cave",enemies:["marsh-slime","marsh-plant"],elites:["marsh-poison","marsh-ghoul"],bosses:["marsh-heart"],hp:1.18,atk:1.1,loot:1.15,drop:{equipment:.1,potion:.12,key:.34,rarity:.04,elements:["poison","blood"]}},
+    {id:"ember",min:25,name:"Kor Yarığı",scene:"cave",enemies:["ember-slime","ember-ghoul"],elites:["ember-shuriken","ember-wizard"],bosses:["demon"],hp:1.38,atk:1.22,loot:1.35,drop:{equipment:.13,potion:.14,key:.4,rarity:.08,elements:["fire","physical"]}},
+    {id:"abyss",min:50,name:"Boşluk Geçidi",scene:"church",enemies:["abyss-ghoul","abyss-wizard"],elites:["abyss-angel","abyss-blue-wizard"],bosses:["blood-monster"],hp:1.7,atk:1.42,loot:1.65,drop:{equipment:.17,potion:.16,key:.5,rarity:.14,elements:["dark","blood"]}},
+    {id:"ancient",min:75,name:"Kadim Çekirdek",scene:"church",enemies:["ancient-angel","ancient-blue-wizard"],elites:["ancient-wizard","ancient-shuriken"],bosses:["ancient-seraph","demon","blood-monster"],hp:2.05,atk:1.65,loot:2,drop:{equipment:.22,potion:.18,key:.58,rarity:.2,elements:["arcane","dark","fire"]}}
   ];
   const REGION_SCENE_FILES={cliffs:["region-cliffs-sky.png","region-cliffs-clouds.png","region-cliffs-far.png","region-cliffs-water.png"],cave:["region-cave-back.png","region-cave-mid.png","region-cave-near.png","region-cave-front.png"],church:["region-cave-back.png","region-church-decor.png",null,"region-cave-front.png"]};
   const V55_SLIME_ENEMIES = [
@@ -539,11 +543,35 @@
     {id:"demon",name:"Kor Şeytan",kind:"boss",element:"fire",ability:{name:"Cehennem Alevi",every:3,damage:1.25,burn:.12},animations:{idle:{file:"boss-demon-idle.png",frames:6,fps:7},attack:{file:"boss-demon-attack01.png",frames:7,fps:13},hurt:{file:"boss-demon-hurt.png",frames:4,fps:13},death:{file:"boss-demon-death.png",frames:4,fps:8}}},
     {id:"blood-monster",name:"Kan Yaratığı",kind:"boss",element:"blood",ability:{name:"Kan Emici",every:3,damage:1.15,drain:.08},animations:{idle:{file:"boss-blood-monster-idle.png",frames:6,fps:7},attack:{file:"boss-blood-monster-attack01.png",frames:8,fps:14},hurt:{file:"boss-blood-monster-hurt.png",frames:4,fps:13},death:{file:"boss-blood-monster-death.png",frames:4,fps:8}}}
   ];
+  const REGION_ANIMATED_ENEMIES=[
+    {id:"forest-fox",name:"Yaban Tilkisi",kind:"normal",element:"physical",sprite:"region-fox.png",frames:8,fps:9,scale:.82,group:2,hpMult:.9,atkMult:1.05},
+    {id:"forest-plant",name:"Sıçrayan Filiz",kind:"normal",element:"poison",sprite:"region-plant-jump.png",frames:20,fps:14,scale:.78,group:3,hpMult:.82,atkMult:.92},
+    {id:"forest-slime",name:"Çayır Slime",kind:"normal",element:"poison",sprite:"region-slime-green.png",frames:30,fps:18,scale:.72,group:3,hpMult:.95,atkMult:.9},
+    {id:"forest-shuriken",name:"Uçurum Avcısı",kind:"elite",element:"physical",sprite:"region-shuriken-dude.png",frames:9,fps:10,scale:.92,hpMult:1.5,atkMult:1.35},
+    {id:"marsh-slime",name:"Bataklık Slime",kind:"normal",element:"poison",sprite:"region-slime-green.png",frames:30,fps:18,scale:.75,group:3,hpMult:1.05,atkMult:1},
+    {id:"marsh-plant",name:"Bataklık Filizi",kind:"normal",element:"poison",sprite:"region-plant-jump.png",frames:20,fps:14,scale:.8,group:2,hpMult:1.12,atkMult:1.08},
+    {id:"marsh-poison",name:"Zehirli Sarmaşık",kind:"elite",element:"poison",sprite:"region-plant-poison.png",frames:30,fps:18,scale:.9,hpMult:1.65,atkMult:1.42},
+    {id:"marsh-ghoul",name:"Çürümüş Ghoul",kind:"elite",element:"blood",sprite:"region-burning-ghoul.png",frames:8,fps:10,scale:.92,hpMult:1.55,atkMult:1.5},
+    {id:"marsh-heart",name:"Bataklığın Kalbi",kind:"boss",element:"poison",sprite:"region-plant-poison.png",frames:30,fps:18,scale:1.2,hpMult:2.1,atkMult:1.65,ability:{name:"Zehir Yağmuru",every:3,damage:1.2,burn:.08}},
+    {id:"ember-slime",name:"Kor Slime",kind:"normal",element:"fire",sprite:"region-slime-orange.png",frames:30,fps:18,scale:.76,group:3,hpMult:1.18,atkMult:1.16},
+    {id:"ember-ghoul",name:"Yanan Ghoul",kind:"normal",element:"fire",sprite:"region-burning-ghoul.png",frames:8,fps:11,scale:.9,group:2,hpMult:1.25,atkMult:1.25},
+    {id:"ember-shuriken",name:"Köz Avcısı",kind:"elite",element:"fire",sprite:"region-shuriken-dude.png",frames:9,fps:11,scale:.95,hpMult:1.7,atkMult:1.55},
+    {id:"ember-wizard",name:"Alev Rahibi",kind:"elite",element:"fire",sprite:"region-gothic-wizard.png",frames:5,fps:7,scale:1,hpMult:1.75,atkMult:1.62},
+    {id:"abyss-ghoul",name:"Boşluk Ghoul'u",kind:"normal",element:"dark",sprite:"region-burning-ghoul.png",frames:8,fps:10,scale:.94,group:2,hpMult:1.35,atkMult:1.3},
+    {id:"abyss-wizard",name:"Kayıp Büyücü",kind:"normal",element:"dark",sprite:"region-gothic-wizard.png",frames:5,fps:7,scale:.96,hpMult:1.4,atkMult:1.35},
+    {id:"abyss-angel",name:"Düşmüş Melek",kind:"elite",element:"blood",sprite:"region-angel.png",frames:8,fps:8,scale:1.02,hpMult:1.9,atkMult:1.75},
+    {id:"abyss-blue-wizard",name:"Mavi Muhafız",kind:"elite",element:"arcane",sprite:"region-blue-wizard.png",frames:20,fps:12,scale:1.02,hpMult:1.85,atkMult:1.78},
+    {id:"ancient-angel",name:"Kadim Melek",kind:"normal",element:"arcane",sprite:"region-angel.png",frames:8,fps:8,scale:1,group:2,hpMult:1.5,atkMult:1.42},
+    {id:"ancient-blue-wizard",name:"Kadim Büyücü",kind:"normal",element:"arcane",sprite:"region-blue-wizard.png",frames:20,fps:12,scale:1.02,hpMult:1.55,atkMult:1.48},
+    {id:"ancient-wizard",name:"Mühür Rahibi",kind:"elite",element:"dark",sprite:"region-gothic-wizard.png",frames:5,fps:7,scale:1.05,hpMult:2.05,atkMult:1.9},
+    {id:"ancient-shuriken",name:"Kadim Avcı",kind:"elite",element:"physical",sprite:"region-shuriken-dude.png",frames:9,fps:11,scale:1,hpMult:2,atkMult:1.95},
+    {id:"ancient-seraph",name:"Mühür Serafı",kind:"boss",element:"arcane",sprite:"region-angel.png",frames:8,fps:8,scale:1.25,hpMult:2.35,atkMult:1.9,ability:{name:"Kutsal Yargı",every:3,damage:1.5}}
+  ];
   const BOSS_PREVIEW_ID=new URLSearchParams(location.search).get("boss");
   const V55_RAW_URL="https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
-  let v55SlimesReady=false,v55BossesReady=false,animatedBossesReady=false,currentEnemyProfile=null,currentRegion=null,currentEnemyGroupSize=1,bossAnimationTimer=null,bossAnimationToken=0,enemyStrikeCount=0,pendingBossRespawn=false;
+  let v55SlimesReady=false,v55BossesReady=false,animatedBossesReady=false,regionEnemiesReady=false,currentEnemyProfile=null,currentRegion=null,currentEnemyGroupSize=1,bossAnimationTimer=null,bossAnimationToken=0,enemyStrikeCount=0,pendingBossRespawn=false;
   function preloadEnemySet(list,onReady){Promise.all(list.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=V55_RAW_URL+enemy.sprite}))).then(()=>onReady(true)).catch(()=>onReady(false))}
-  function preloadV55Enemies(){preloadEnemySet(V55_SLIME_ENEMIES,ready=>v55SlimesReady=ready);preloadEnemySet(V55_BOSS_ENEMIES,ready=>v55BossesReady=ready);preloadEnemySet(ANIMATED_BOSSES.flatMap(b=>Object.values(b.animations).map(a=>({sprite:a.file}))),ready=>animatedBossesReady=ready)}
+  function preloadV55Enemies(){preloadEnemySet(V55_SLIME_ENEMIES,ready=>v55SlimesReady=ready);preloadEnemySet(V55_BOSS_ENEMIES,ready=>v55BossesReady=ready);preloadEnemySet(ANIMATED_BOSSES.flatMap(b=>Object.values(b.animations).map(a=>({sprite:a.file}))),ready=>animatedBossesReady=ready);preloadEnemySet(REGION_ANIMATED_ENEMIES,ready=>regionEnemiesReady=ready)}
   const enemyAttackGif = "Yku2dxV.gif";
   const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
   const frameCounts = {idle:6,dash:4,jump:8,death:6};
@@ -1084,12 +1112,12 @@
   function weekKey(){const d=new Date(),start=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-start)/86400000)+start.getDay()+1)/7);return `${d.getFullYear()}-W${week}`}
   function ensureWeekly(){const key=weekKey();if(state.weekly.key!==key){state.weekly={key,bossClaimed:false};queueSave()}}
   function generateLootEquipment(isBoss){
-    if(state.level<5||Math.random()>(isBoss ? .72 : .1))return null;const roll=Math.random();let rarity=roll<.58?"common":roll<.86?"rare":roll<.97?"epic":"relic";if(rarity==="relic"&&state.level<25)rarity="epic";const type=Math.random()>.5?"weapon":"armor",elements=["arcane","poison","fire","dark","blood"],element=elements[Math.floor(Math.random()*elements.length)],def=RARITIES[rarity],power=Math.max(2,Math.floor(state.level*(type==="weapon"?1.7:1.1)*def.mult*(.85+Math.random()*.3))),index=Math.floor(Math.random()*(type==="weapon"?72:171));return {id:`drop-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,type,rarity,element,power,index,name:`${ELEMENT_NAMES[element]} ${type==="weapon"?"Silahı":"Zırhı"}`}
+    const table=(currentRegion||getCombatRegion()).drop||{},isElite=currentEnemyProfile?.kind==="elite",chance=isBoss ? .72 : isElite ? .28 : (table.equipment||.1);if(state.level<5||Math.random()>chance)return null;const roll=Math.min(.999,Math.random()+(table.rarity||0));let rarity=roll<.58?"common":roll<.86?"rare":roll<.97?"epic":"relic";if(rarity==="relic"&&state.level<25)rarity="epic";const type=Math.random()>.5?"weapon":"armor",elements=table.elements||["arcane","poison","fire","dark","blood"],element=elements[Math.floor(Math.random()*elements.length)],def=RARITIES[rarity],power=Math.max(2,Math.floor(state.level*(type==="weapon"?1.7:1.1)*def.mult*(.85+Math.random()*.3))),index=Math.floor(Math.random()*(type==="weapon"?72:171));return {id:`drop-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,type,rarity,element,power,index,name:`${ELEMENT_NAMES[element]} ${type==="weapon"?"Silahı":"Zırhı"}`}
   }
   function rollEnemyLoot(profile){
     const region=currentRegion||getCombatRegion(),lootMult=region.loot||1,isBoss=profile?.kind==="boss",found=[];
-    if(Math.random()<Math.min(.32,(isBoss ? .42 : .07)*lootMult)){const potion=profile?.element==="poison"?"shield":profile?.element==="fire"||profile?.element==="blood"?"blood":"health";state.consumables[potion]++;found.push("+1 "+CONSUMABLE_DEFS[potion].name)}
-    if(isBoss&&Math.random()<Math.min(.65,.32+lootMult*.08)){const tier=Math.min(7,Math.floor(state.level/12));state.keys[tier]++;found.push(`+1 Seviye ${tier+1} Sandık`)}
+    if(Math.random()<Math.min(.45,(isBoss ? .3 : (region.drop?.potion||.08))*lootMult)){const potion=profile?.element==="poison"?"shield":profile?.element==="fire"||profile?.element==="blood"?"blood":"health";state.consumables[potion]++;found.push("+1 "+CONSUMABLE_DEFS[potion].name)}
+    if(isBoss&&Math.random()<Math.min(.72,(region.drop?.key||.32)+lootMult*.06)){const tier=Math.min(7,Math.floor(state.level/12));state.keys[tier]++;found.push(`+1 Seviye ${tier+1} Sandık`)}
     if(isBoss&&Math.random()<.08){state.rune++;found.push("+1 Rün")}
     if(state.level>=25&&Math.random()<.08*lootMult){const darkGain=Math.max(1,Math.floor(lootMult));state.dark+=darkGain;found.push(`+${darkGain} Öz`)}
     if(isBoss&&state.level>=15&&Math.random()<.06){const petId=state.level>=35?"fox":"dog";if(!state.ownedPets.includes(petId)){state.ownedPets.push(petId);found.push("Yeni Pet: "+PETS[petId].name)}}
@@ -1098,16 +1126,22 @@
     showCombatLoot(found);return found;
   }
 
+  function setupRegionSheetEnemy(profile){
+    const el=$("enemy-sprite"),scale=profile.scale||1;currentEnemyProfile={...profile,renderer:"region-sheet"};currentEnemyGroupSize=profile.group||1;
+    el.classList.add("region-sheet-enemy");if(profile.kind==="elite")el.classList.add("elite-enemy");if(profile.kind==="boss")el.classList.add("boss-region-enemy");if(currentEnemyGroupSize>1)el.classList.add("grouped-enemy");
+    el.style.backgroundImage=`url("${V55_RAW_URL}${profile.sprite}")`;el.style.backgroundSize=`${profile.frames*96}px 96px`;el.style.setProperty("--enemy-frames",profile.frames);el.style.setProperty("--enemy-duration",`${profile.frames/profile.fps}s`);el.style.setProperty("--enemy-sheet-end",`${-profile.frames*96}px`);el.style.transform=`scale(${-scale},${scale})`;
+  }
+
   function spawnEnemy(){
     const el=$("enemy-sprite");
     currentRegion=getCombatRegion();applyCombatRegionScene(currentRegion);enemyStrikeCount=0;
-    const isBoss=(animatedBossesReady||v55BossesReady)&&(state.stats.kills%10===9||ANIMATED_BOSSES.some(b=>b.id===BOSS_PREVIEW_ID));
-    clearInterval(bossAnimationTimer);bossAnimationToken++;el.classList.remove("slime-v55","boss-v55","boss-animated-v60");el.style.backgroundSize="";el.style.transform="";el.style.filter="";
-    if(isBoss&&animatedBossesReady){currentEnemyGroupSize=1;const selected=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||ANIMATED_BOSSES[Math.floor(Math.random()*ANIMATED_BOSSES.length)];currentEnemyProfile={...selected,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true});playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
-    else if(isBoss){currentEnemyGroupSize=1;currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
-    else if(v55SlimesReady){currentEnemyGroupSize=3;const pool=V55_SLIME_ENEMIES.filter(s=>currentRegion.slimes.includes(s.id));currentEnemyProfile=pool[Math.floor(Math.random()*pool.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
+    const requestedBoss=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||REGION_ANIMATED_ENEMIES.find(b=>b.id===BOSS_PREVIEW_ID&&b.kind==="boss"),isBoss=(animatedBossesReady||regionEnemiesReady||v55BossesReady)&&(state.stats.kills%10===9||!!requestedBoss),isElite=!isBoss&&state.stats.kills%5===4;
+    clearInterval(bossAnimationTimer);bossAnimationToken++;el.classList.remove("slime-v55","boss-v55","boss-animated-v60","region-sheet-enemy","elite-enemy","boss-region-enemy","grouped-enemy");el.style.backgroundSize="";el.style.transform="";el.style.filter="";
+    if(isBoss){const bossId=requestedBoss?.id||currentRegion.bosses[Math.floor(Math.random()*currentRegion.bosses.length)],animated=ANIMATED_BOSSES.find(b=>b.id===bossId),regionBoss=REGION_ANIMATED_ENEMIES.find(b=>b.id===bossId);if(animated&&animatedBossesReady){currentEnemyGroupSize=1;currentEnemyProfile={...animated,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true})}else if(regionBoss&&regionEnemiesReady)setupRegionSheetEnemy(regionBoss);else{currentEnemyGroupSize=1;currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    else if(regionEnemiesReady){const ids=currentRegion[isElite?"elites":"enemies"],pool=REGION_ANIMATED_ENEMIES.filter(enemy=>ids.includes(enemy.id)),selected=pool[Math.floor(Math.random()*pool.length)];if(selected)setupRegionSheetEnemy(selected)}
+    else if(v55SlimesReady){currentEnemyGroupSize=3;currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
     else{currentEnemyGroupSize=1;currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
-    el.style.backgroundPosition="0 0";el.style.opacity="1";el.style.filter=currentEnemyProfile?.kind==="boss"?"":(currentEnemyProfile?.filter||"none");$("enemy-name").textContent=(currentEnemyGroupSize>1?currentEnemyGroupSize+"× ":"")+currentEnemyProfile.name;$("region-name").textContent=currentRegion.name;
+    el.style.backgroundPosition="0 0";el.style.opacity="1";if(currentEnemyProfile?.filter)el.style.filter=currentEnemyProfile.filter;$("enemy-name").textContent=(currentEnemyProfile.kind==="elite"?"ELİT · ":currentEnemyGroupSize>1?currentEnemyGroupSize+"× ":"")+currentEnemyProfile.name;$("region-name").textContent=currentRegion.name;
     updateCombatStats();currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
   }
 
@@ -1127,9 +1161,9 @@
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;if(isAnimatedBoss())playBossAnimation("death",{onDone:()=>{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}});else{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}playSound("e_death",.5);
-      const isBoss=currentEnemyProfile?.kind==="boss",bossMult=isBoss?5:1,groupReward=1+(currentEnemyGroupSize-1)*.2,regionLoot=currentRegion?.loot||1,petSoul=activePet().soul||0,pm=getPrestigeMultiplier(),soulGain=Math.floor((10+state.level*2*pm)*bossMult*regionLoot*groupReward*(1+petSoul)),bloodGain=(isBoss||Math.random()>.5)?Math.floor((5+state.level*pm*.5)*bossMult*regionLoot*groupReward):0;state.soul+=soulGain;state.blood+=bloodGain;const drops=rollEnemyLoot(currentEnemyProfile);awardPetXP(isBoss?25:3);
+      const isBoss=currentEnemyProfile?.kind==="boss",isElite=currentEnemyProfile?.kind==="elite",rewardMult=isBoss?5:isElite?2:1,groupReward=1+(currentEnemyGroupSize-1)*.2,regionLoot=currentRegion?.loot||1,petSoul=activePet().soul||0,pm=getPrestigeMultiplier(),soulGain=Math.floor((10+state.level*2*pm)*rewardMult*regionLoot*groupReward*(1+petSoul)),bloodGain=(isBoss||isElite||Math.random()>.5)?Math.floor((5+state.level*pm*.5)*rewardMult*regionLoot*groupReward):0;state.soul+=soulGain;state.blood+=bloodGain;const drops=rollEnemyLoot(currentEnemyProfile);awardPetXP(isBoss?25:isElite?9:3);
       ensureWeekly();let weekly="";if(isBoss&&!state.weekly.bossClaimed){state.weekly.bossClaimed=true;const tier=Math.min(7,Math.floor(state.level/12));state.keys[tier]++;state.soul+=300;weekly="Haftalık İlk Zafer: +300 Ruh · +1 Sandık"}
-      const changed=addXP(10*state.level*bossMult);if(isBoss){isCombatActive=false;pendingBossRespawn=!changed;$("loot-title").textContent=currentEnemyProfile.name+" Yenildi";$("loot-items").innerHTML=`<b style="color:#d1b3ff">+${soulGain} Ruh</b>${bloodGain?`<b style="color:#ff7777">+${bloodGain} Kan</b>`:""}${drops.map(x=>`<b style="color:var(--gold)">${x}</b>`).join("")}${weekly?`<b style="color:#ffcf5a">${weekly}</b>`:""}`;setTimeout(()=>openModal("loot"),650)}else if(!changed)setTimeout(spawnEnemy,900);queueSave();
+      const changed=addXP(10*state.level*rewardMult);if(isBoss){isCombatActive=false;pendingBossRespawn=!changed;$("loot-title").textContent=currentEnemyProfile.name+" Yenildi";$("loot-items").innerHTML=`<b style="color:#d1b3ff">+${soulGain} Ruh</b>${bloodGain?`<b style="color:#ff7777">+${bloodGain} Kan</b>`:""}${drops.map(x=>`<b style="color:var(--gold)">${x}</b>`).join("")}${weekly?`<b style="color:#ffcf5a">${weekly}</b>`:""}`;setTimeout(()=>openModal("loot"),650)}else if(!changed)setTimeout(spawnEnemy,900);queueSave();
     }else if(isAnimatedBoss()){const profileId=currentEnemyProfile.id;setTimeout(()=>{if(currentEnemyProfile?.id===profileId&&currentEnemyHp>0)playBossAnimation("hurt",{onDone:resumeBossIdle})},230)}
   }
 
