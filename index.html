@@ -46,6 +46,28 @@
       transition:opacity .25s,background-image .4s;
     }
     body.hide-battle .battle{opacity:0;pointer-events:none}
+    #region-scene{position:absolute;inset:0;z-index:0;overflow:hidden;background:#09060d;transition:filter .6s,background-color .6s}
+    .region-layer{position:absolute;inset:-2px;background-repeat:repeat-x;background-position:center bottom;background-size:auto 100%;image-rendering:pixelated;will-change:background-position,transform;pointer-events:none}
+    #region-layer-1{z-index:1}#region-layer-2{z-index:2}#region-layer-3{z-index:3}#region-layer-4{z-index:4}
+    #region-scene.scene-cliffs #region-layer-1{background-size:auto 130%;animation:regionDriftSlow 70s linear infinite}
+    #region-scene.scene-cliffs #region-layer-2{background-size:auto 105%;opacity:.8;animation:regionDriftClouds 42s linear infinite}
+    #region-scene.scene-cliffs #region-layer-3{background-size:auto 76%;animation:regionDriftSlow 58s linear infinite reverse}
+    #region-scene.scene-cliffs #region-layer-4{background-size:auto 42%;animation:regionWater 5s ease-in-out infinite}
+    #region-scene.scene-cave .region-layer{background-size:auto 100%}
+    #region-scene.scene-cave #region-layer-1{animation:regionDriftSlow 95s linear infinite}
+    #region-scene.scene-cave #region-layer-2{animation:regionDriftSlow 70s linear infinite reverse}
+    #region-scene.scene-cave #region-layer-3{animation:regionDriftSlow 52s linear infinite}
+    #region-scene.scene-cave #region-layer-4{animation:regionCavePulse 7s ease-in-out infinite}
+    #region-scene.scene-church{background:#100916}
+    #region-scene.scene-church #region-layer-1{background-size:auto 125%;filter:hue-rotate(245deg) brightness(.42);animation:regionDriftSlow 90s linear infinite}
+    #region-scene.scene-church #region-layer-2{background-size:auto 115%;animation:regionDriftSlow 65s linear infinite reverse}
+    #region-scene.scene-church #region-layer-3{background-image:radial-gradient(ellipse at 60% 80%,#92295366,transparent 48%);animation:regionFog 6s ease-in-out infinite}
+    #region-scene.scene-church #region-layer-4{background-size:auto 105%;filter:hue-rotate(250deg) brightness(.38);opacity:.58;animation:regionCavePulse 8s ease-in-out infinite}
+    #region-scene[data-region="marsh"]{filter:hue-rotate(65deg) saturate(1.25) brightness(.72)}
+    #region-scene[data-region="ember"]{filter:hue-rotate(325deg) saturate(1.65) brightness(.82)}
+    #region-scene[data-region="ancient"]{filter:hue-rotate(35deg) saturate(1.35) brightness(.9)}
+    @keyframes regionDriftSlow{to{background-position-x:-960px}}@keyframes regionDriftClouds{to{background-position-x:544px}}@keyframes regionWater{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}@keyframes regionCavePulse{0%,100%{opacity:.76;transform:scale(1)}50%{opacity:1;transform:scale(1.015)}}@keyframes regionFog{0%,100%{opacity:.45;transform:translateX(-5px)}50%{opacity:.9;transform:translateX(6px)}}
+    @media(prefers-reduced-motion:reduce){.region-layer{animation:none!important}}
     #hud{position:absolute;top:8px;left:10px;right:10px;z-index:30}
     .hud-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
     #player-title{margin:0;font-size:11px;color:#fff;text-shadow:0 1px 2px #000}
@@ -198,6 +220,9 @@
         <div class="panel"><b>Effect and FX Pixel All Free</b><br>BDragon1727</div>
         <div class="panel"><b>Hedgy's Swordtember 2020</b><br>The Wise Hedgehog · CC BY 4.0<br><a href="https://opengameart.org/content/hedgys-swordtember-2020" target="_blank" rel="noopener" style="color:var(--gold)">Kaynak ve lisans</a></div>
         <div class="panel"><b>16x16 Assorted RPG Icons</b><br>Shade / Merchant Shade</div>
+        <div class="panel"><b>Pixel Fantasy Caves & Magic Cliffs</b><br>Szadi art.</div>
+        <div class="panel"><b>Mossy Assets</b><br>Maaot</div>
+        <div class="panel"><b>GothicVania Church</b><br>Kaynak paket bilgisi doğrulanacak</div>
       </div>
     </div>
   </div>
@@ -246,6 +271,7 @@
   </div>
 
   <div class="battle" id="battle">
+    <div id="region-scene" class="scene-cliffs" data-region="forest"><i id="region-layer-1" class="region-layer"></i><i id="region-layer-2" class="region-layer"></i><i id="region-layer-3" class="region-layer"></i><i id="region-layer-4" class="region-layer"></i></div>
     <div id="hud">
       <div class="hud-row"><h3 id="player-title">Çırak Büyücü</h3><span class="badge">SV <span id="level-display">1</span></span></div>
       <div class="bar"><div id="xp-bar" class="bar-fill"></div><div class="bar-label">XP</div></div>
@@ -479,6 +505,7 @@
     sfx.bg.volume=userSettings.music;sfx.bg.play().catch(()=>{});
     if(!characterAssets.length)await loadCharacterManifest();
     await preloadCharacterAssets((done,total)=>{const percent=Math.round(done/total*100);$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`});
+    $("intro-progress-text").textContent="Bölgeler hazırlanıyor...";await preloadRegionScenes();
     $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
     if(state.gender){isCombatActive=activeTabId==="main";applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
     updateUI();
@@ -487,12 +514,13 @@
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
   const COMBAT_REGIONS=[
-    {id:"forest",min:1,name:"Karanlık Orman",slimes:["slime-blue","slime-green"],hp:1,atk:1,loot:1},
-    {id:"marsh",min:10,name:"Zehir Bataklığı",slimes:["slime-green","slime-venom"],hp:1.18,atk:1.1,loot:1.15},
-    {id:"ember",min:25,name:"Kor Yarığı",slimes:["slime-red","slime-ember"],hp:1.38,atk:1.22,loot:1.35},
-    {id:"abyss",min:50,name:"Boşluk Geçidi",slimes:["slime-arcane","slime-venom","slime-ember"],hp:1.7,atk:1.42,loot:1.65},
-    {id:"ancient",min:75,name:"Kadim Çekirdek",slimes:["slime-arcane","slime-venom","slime-ember"],hp:2.05,atk:1.65,loot:2}
+    {id:"forest",min:1,name:"Karanlık Orman",scene:"cliffs",slimes:["slime-blue","slime-green"],hp:1,atk:1,loot:1},
+    {id:"marsh",min:10,name:"Zehir Bataklığı",scene:"cave",slimes:["slime-green","slime-venom"],hp:1.18,atk:1.1,loot:1.15},
+    {id:"ember",min:25,name:"Kor Yarığı",scene:"cave",slimes:["slime-red","slime-ember"],hp:1.38,atk:1.22,loot:1.35},
+    {id:"abyss",min:50,name:"Boşluk Geçidi",scene:"church",slimes:["slime-arcane","slime-venom","slime-ember"],hp:1.7,atk:1.42,loot:1.65},
+    {id:"ancient",min:75,name:"Kadim Çekirdek",scene:"church",slimes:["slime-arcane","slime-venom","slime-ember"],hp:2.05,atk:1.65,loot:2}
   ];
+  const REGION_SCENE_FILES={cliffs:["region-cliffs-sky.png","region-cliffs-clouds.png","region-cliffs-far.png","region-cliffs-water.png"],cave:["region-cave-back.png","region-cave-mid.png","region-cave-near.png","region-cave-front.png"],church:["region-cave-back.png","region-church-decor.png",null,"region-cave-front.png"]};
   const V55_SLIME_ENEMIES = [
     {id:"slime-blue",name:"Mavi Slime",element:"arcane",sprite:"slime-blue.png",hpMult:1,atkMult:.9,filter:"none"},
     {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"slime-green.png",hpMult:.9,atkMult:1.08,filter:"none"},
@@ -735,6 +763,12 @@
 
   function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
   function getCombatRegion(){return [...COMBAT_REGIONS].reverse().find(r=>state.level>=r.min)||COMBAT_REGIONS[0]}
+  function applyCombatRegionScene(region=getCombatRegion()){
+    const scene=$("region-scene"),files=REGION_SCENE_FILES[region.scene]||REGION_SCENE_FILES.cliffs;scene.className=`scene-${region.scene}`;scene.dataset.region=region.id;
+    files.forEach((file,index)=>{$(`region-layer-${index+1}`).style.backgroundImage=file?`url("${RAW_ASSET_URL}${file}")`:""});
+    $("battle").style.backgroundImage="none";
+  }
+  async function preloadRegionScenes(){const files=[...new Set(Object.values(REGION_SCENE_FILES).flat().filter(Boolean))];await Promise.all(files.map(file=>new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=RAW_ASSET_URL+file})))}
   function getPrestigeMultiplier(){return 1+state.prestige*0.25}
   function getPrestigeRequiredLevel(){return (state.prestige+1)*10}
   function cumulativeLevel(tiers,tier,level,startTier=0){let total=0;for(let i=startTier;i<tier;i++)total+=tiers[i].length;return total+level}
@@ -1066,7 +1100,7 @@
 
   function spawnEnemy(){
     const el=$("enemy-sprite");
-    currentRegion=getCombatRegion();enemyStrikeCount=0;
+    currentRegion=getCombatRegion();applyCombatRegionScene(currentRegion);enemyStrikeCount=0;
     const isBoss=(animatedBossesReady||v55BossesReady)&&(state.stats.kills%10===9||ANIMATED_BOSSES.some(b=>b.id===BOSS_PREVIEW_ID));
     clearInterval(bossAnimationTimer);bossAnimationToken++;el.classList.remove("slime-v55","boss-v55","boss-animated-v60");el.style.backgroundSize="";el.style.transform="";el.style.filter="";
     if(isBoss&&animatedBossesReady){currentEnemyGroupSize=1;const selected=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||ANIMATED_BOSSES[Math.floor(Math.random()*ANIMATED_BOSSES.length)];currentEnemyProfile={...selected,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true});playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
@@ -1082,7 +1116,7 @@
     while(state.xp>=xpNeeded()){state.xp-=xpNeeded();state.level++;gained++}
     if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yükseldin!`:"Seviye yükseldin!")}
     const newTier=getTier(); updateUI(false);
-    if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{ $("battle").style.backgroundImage=`url("${CDN_URL}${newTier.bg}")`;isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
+    if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{applyCombatRegionScene();isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
     return false;
   }
   function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
@@ -1228,7 +1262,7 @@
   function updateUI(updateBg=true){
     ensureDailyMissions();
     $("creation").style.display=state.gender&&!creatorForcedOpen?"none":"flex";$("res-soul").textContent=money(state.soul);$("res-blood").textContent=money(state.blood);$("res-dark").textContent=money(state.dark);$("res-rune").textContent=money(state.rune);$("res-prestige").textContent=state.prestige;
-    const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
+    const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)applyCombatRegionScene();
     $("goddess-rep-bar").style.width=(state.goddess.reputation%100)+"%";
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
     const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.ownedPets,state.equippedPet,state.petProgress,state.itemInventory,state.equippedLootItems,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
