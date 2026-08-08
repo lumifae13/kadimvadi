@@ -54,7 +54,7 @@
     .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--mor3),var(--bordo2));transition:width .2s}
     .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
     #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
-    #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(1.5);transform-origin:center bottom}
+    #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(-1.5,1.5);transform-origin:center bottom}
     #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
@@ -101,7 +101,7 @@
     .creator-stage{width:244px;height:196px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 67%);box-shadow:inset 0 0 25px #000,0 0 12px #58008255;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
     .creator-stage:after{content:"";position:absolute;left:42px;right:42px;bottom:22px;height:10px;border-radius:50%;background:#000a;filter:blur(3px)}
     #creator-canvas{width:240px;height:192px;image-rendering:pixelated;position:relative;z-index:2}
-    .creator-tabs{display:flex;gap:4px;width:100%;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.creator-tabs::-webkit-scrollbar{display:none}.creator-tab{min-width:54px;min-height:34px;padding:0 4px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
+    .creator-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%;margin-top:10px}.creator-tab{min-width:0;min-height:31px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
     .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}
     #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img{width:32px;height:32px;filter:grayscale(1);opacity:.3}.ach.unlocked img{filter:none;opacity:1}
@@ -115,38 +115,38 @@
 
   <div id="intro">
     <img id="intro-logo" data-src="5uCOUOu.png" alt="Kadim Vadi">
-    <div class="tiny">Karanlık seni bekliyor.</div>
-    <button id="intro-start" class="primary" onclick="startGameIntro()">Başla</button>
+    <div class="tiny">KaranlÄ±k seni bekliyor.</div>
+    <button id="intro-start" class="primary" onclick="startGameIntro()">BaÅŸla</button>
     <div class="intro-progress"><div id="intro-progress-bar"></div></div>
-    <div id="intro-progress-text" class="tiny" style="margin-top:6px">Dokun ve kadere adım at.</div>
+    <div id="intro-progress-text" class="tiny" style="margin-top:6px">Dokun ve kadere adÄ±m at.</div>
   </div>
 
   <div id="creation">
-    <h2 class="creator-title">Kanın Sahibine Biçim Ver</h2>
-    <div class="tiny">Kadim Vadi seni bu suretle hatırlayacak.</div>
+    <h2 class="creator-title">KanÄ±n Sahibine BiÃ§im Ver</h2>
+    <div class="tiny">Kadim Vadi seni bu suretle hatÄ±rlayacak.</div>
     <div class="gender-switch">
-      <button id="gender-female" onclick="setCreatorGender('female')">Kadın</button>
+      <button id="gender-female" onclick="setCreatorGender('female')">KadÄ±n</button>
       <button id="gender-male" onclick="setCreatorGender('male')">Erkek</button>
     </div>
     <div class="creator-stage"><canvas id="creator-canvas" width="80" height="64"></canvas></div>
     <div class="creator-tabs">
       <button class="creator-tab active" data-category="skin" onclick="setCreatorCategory('skin')">Ten</button>
-      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">Saç</button>
-      <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">İçlik</button>
-      <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Üst</button>
+      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">SaÃ§</button>
+      <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">Ä°Ã§lik</button>
+      <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Ãœst</button>
       <button class="creator-tab" data-category="bottom" onclick="setCreatorCategory('bottom')">Alt</button>
       <button class="creator-tab" data-category="footwear" onclick="setCreatorCategory('footwear')">Ayak</button>
       <button class="creator-tab" data-category="outfit" onclick="setCreatorCategory('outfit')">Tam</button>
-      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
+      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Ã–zel</button>
     </div>
     <div class="creator-picker">
-      <button onclick="cycleCreator(-1)" aria-label="Önceki">‹</button>
-      <div class="creator-choice"><b id="creator-choice-name">Yükleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
-      <button onclick="cycleCreator(1)" aria-label="Sonraki">›</button>
+      <button onclick="cycleCreator(-1)" aria-label="Ã–nceki">â€¹</button>
+      <div class="creator-choice"><b id="creator-choice-name">YÃ¼kleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
+      <button onclick="cycleCreator(1)" aria-label="Sonraki">â€º</button>
     </div>
     <div class="creator-actions">
       <button onclick="randomizeCreator()">Rastgele</button>
-      <button class="primary" onclick="finishCharacterCreation()">Karakteri Oluştur</button>
+      <button class="primary" onclick="finishCharacterCreation()">Karakteri OluÅŸtur</button>
     </div>
   </div>
 
@@ -154,19 +154,19 @@
     <div class="panel modal" style="position:relative">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('settings')"></div>
       <h3 class="center" style="margin-top:0">Ayarlar</h3>
-      <label>Müzik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
+      <label>MÃ¼zik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
       <label>Efekt</label><input id="vol-sfx" type="range" min="0" max="1" step="0.1" value="1" onchange="updateVolumes()">
-      <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri Düzenle</button>
-      <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu Sıfırla</button>
-      <div class="tiny center" style="margin-top:18px">SYLEX entertainment · demo build</div>
+      <button style="margin-top:18px" onclick="openCharacterCreator()">Karakteri DÃ¼zenle</button>
+      <button class="primary" style="margin-top:8px" onclick="hardResetGame()">Oyunu SÄ±fÄ±rla</button>
+      <div class="tiny center" style="margin-top:18px">SYLEX entertainment Â· demo build</div>
     </div>
   </div>
 
   <div id="achievements" class="overlay">
     <div class="panel modal" style="position:relative">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('achievements')"></div>
-      <h3 class="center" style="margin:0;color:var(--gold)">Başarımlar</h3>
-      <div class="tiny center" style="margin-bottom:12px">Açılan: <span id="ach-count">0 / 15</span></div>
+      <h3 class="center" style="margin:0;color:var(--gold)">BaÅŸarÄ±mlar</h3>
+      <div class="tiny center" style="margin-bottom:12px">AÃ§Ä±lan: <span id="ach-count">0 / 15</span></div>
       <div id="ach-list" style="display:grid;gap:8px"></div>
     </div>
   </div>
@@ -175,8 +175,8 @@
     <div class="panel gold modal" style="position:relative;text-align:center">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('prestige-confirm')"></div>
       <h3 style="color:var(--gold)">Reenkarnasyon</h3>
-      <p>Öz, Rün, başarımlar ve istatistikler korunur; diğer ilerleme sıfırlanır. Her Kadim Ruh üretimi +%25 artırır.</p>
-      <div style="display:flex;gap:8px"><button onclick="closeModal('prestige-confirm')">İptal</button><button class="gold" onclick="executePrestige()">Onayla</button></div>
+      <p>Ã–z, RÃ¼n, baÅŸarÄ±mlar ve istatistikler korunur; diÄŸer ilerleme sÄ±fÄ±rlanÄ±r. Her Kadim Ruh Ã¼retimi +%25 artÄ±rÄ±r.</p>
+      <div style="display:flex;gap:8px"><button onclick="closeModal('prestige-confirm')">Ä°ptal</button><button class="gold" onclick="executePrestige()">Onayla</button></div>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
 
   <div class="battle" id="battle">
     <div id="hud">
-      <div class="hud-row"><h3 id="player-title">Çırak Büyücü</h3><span class="badge">SV <span id="level-display">1</span></span></div>
+      <div class="hud-row"><h3 id="player-title">Ã‡Ä±rak BÃ¼yÃ¼cÃ¼</h3><span class="badge">SV <span id="level-display">1</span></span></div>
       <div class="bar"><div id="xp-bar" class="bar-fill"></div><div class="bar-label">XP</div></div>
     </div>
     <div id="player-sprite">
@@ -216,512 +216,19 @@
 
   <div id="content">
     <section id="tab-main" class="tab active">
-      <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
-      <div class="panel"><div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
-      <div class="panel purple"><div class="head"><span>Kan Ritüeli</span><span class="badge">Şans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>Ritüel Yap</button></div>
+      <div class="panel"><div class="head"><span>KaranlÄ±k Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh HasadÄ±</button></div>
+      <div class="panel"><div class="head"><span>Eski KalÄ±ntÄ±lar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
+      <div class="panel purple"><div class="head"><span>Kan RitÃ¼eli</span><span class="badge">Åans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>RitÃ¼el Yap</button></div>
     </section>
 
     <section id="tab-chest" class="tab">
       <div class="panel">
-        <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
+        <div class="head"><span>KuÅŸanÄ±lan Ekipman</span><span class="badge">GÃ¼Ã§</span></div>
         <div class="eq-grid">
-          <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
-          <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
-        </div>
-        <div class="head"><span>Ganimet Sandığı</span></div>
-        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Her anahtar nadiren Yadigâr verebilir.</div>
-        <div id="keys" class="keys-grid"></div>
-      </div>
-      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div><div class="tiny center" style="margin-bottom:10px">Tüm anahtarlardan nadiren düşebilen Kadim Yadigârlar. Kuşanmak için dokun.</div><div id="uniques" class="unique-grid"></div></div>
-    </section>
-
-    <section id="tab-camp" class="tab">
-      <div class="panel"><div class="head"><span>Kadim Sunak</span><span class="badge">Pasif</span></div><div id="upgrades"></div></div>
-      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Reenkarnasyon</span></div><div class="tiny center" style="margin-bottom:10px">Her Kadim Ruh üretimi +%25 artırır. Mevcut: <b id="res-prestige" style="color:var(--gold)">0</b></div><button id="btn-prestige" class="gold" disabled></button></div>
-    </section>
-
-    <section id="tab-mini" class="tab">
-      <div class="panel purple"><div class="head"><span>Boyut Kapısı</span><span class="badge">Rün</span></div><div class="tiny center">Işık mor bölgedeyken vur. Başarı Karanlık Öz kazandırır.</div><div class="mg"><div class="mg-target"></div><div id="mg-cursor" class="mg-cursor"></div></div><button id="btn-mg" class="special">Boyutu Arala (1 Rün)</button><div id="mg-result" class="center" style="min-height:18px;margin-top:8px;font-weight:900"></div></div>
-      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Sistem</span></div><button onclick="openModal('settings')" style="margin-bottom:8px">Ayarlar</button><button class="gold" onclick="renderAchievements();openModal('achievements')">Başarımlar</button></div>
-    </section>
-
-    <section id="tab-shop" class="tab">
-      <div class="panel purple"><div class="head"><span>Karaborsa</span></div><div class="tiny center" style="margin-bottom:10px">Tüm ödemeler IC bankadan düşer.</div><div id="market"></div></div>
-    </section>
-  </div>
-
-  <div id="nav">
-    <div class="nav active" onclick="switchTab('main',this)"><span class="icon" data-bg="rZ2HD2E.png"></span>Macera</div>
-    <div class="nav" onclick="switchTab('chest',this)"><span class="icon" data-bg="N1OwHln.png"></span>Kasa</div>
-    <div class="nav" onclick="switchTab('camp',this)"><span class="icon" data-bg="Ripj8GR.png"></span>Sunak</div>
-    <div class="nav" onclick="switchTab('mini',this)"><span class="icon" data-bg="IRT0WDZ.png"></span>Boyut</div>
-    <div class="nav" onclick="switchTab('shop',this)"><span class="icon" data-bg="z4bPDWO.png"></span>Borsa</div>
-  </div>
-</div>
-
-<script src="https://phone-gw.downtownrpg.com/api/sdk/0.2/child.umd.js"></script>
-<script>
-(() => {
-  "use strict";
-
-  const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/";
-  const RAW_ASSET_URL = "https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
-  const CHARACTER_ROOT = "character-v54/";
-  const SAVE_KEY = "kadim_rpg_v54_alpha";
-  const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
-  const EMBEDDED_CHARACTER_MANIFEST = {"sheetLayouts":{"character-80x64-v1":{"image":{"width":800,"height":448,"format":"png","colorMode":"RGBA"},"frame":{"width":80,"height":64},"columns":10,"rows":7,"animations":{"idle":{"row":0,"frames":5,"fps":6,"loop":true},"walk":{"row":1,"frames":8,"fps":10,"loop":true},"run":{"row":2,"frames":8,"fps":12,"loop":true},"jump":{"row":3,"frames":4,"fps":10,"loop":false},"fall":{"row":4,"frames":4,"fps":10,"loop":true},"attack":{"row":5,"frames":6,"fps":12,"loop":false},"death":{"row":6,"frames":10,"fps":8,"loop":false}}}},"assets":[{"id":"female.skin.female-skin1","gender":"female","category":"skin","variant":"standard","displayName":"Female Skin1","runtimePath":"character-v54/female/skin/female-skin1.png"},{"id":"female.skin.female-skin2","gender":"female","category":"skin","variant":"standard","displayName":"Female Skin2","runtimePath":"character-v54/female/skin/female-skin2.png"},{"id":"female.skin.female-skin3","gender":"female","category":"skin","variant":"standard","displayName":"Female Skin3","runtimePath":"character-v54/female/skin/female-skin3.png"},{"id":"female.skin.female-skin4","gender":"female","category":"skin","variant":"standard","displayName":"Female Skin4","runtimePath":"character-v54/female/skin/female-skin4.png"},{"id":"female.skin.female-skin5","gender":"female","category":"skin","variant":"standard","displayName":"Female Skin5","runtimePath":"character-v54/female/skin/female-skin5.png"},{"id":"male.skin.male-skin1","gender":"male","category":"skin","variant":"standard","displayName":"Male Skin1","runtimePath":"character-v54/male/skin/male-skin1.png"},{"id":"male.skin.male-skin2","gender":"male","category":"skin","variant":"standard","displayName":"Male Skin2","runtimePath":"character-v54/male/skin/male-skin2.png"},{"id":"male.skin.male-skin3","gender":"male","category":"skin","variant":"standard","displayName":"Male Skin3","runtimePath":"character-v54/male/skin/male-skin3.png"},{"id":"male.skin.male-skin4","gender":"male","category":"skin","variant":"standard","displayName":"Male Skin4","runtimePath":"character-v54/male/skin/male-skin4.png"},{"id":"male.skin.male-skin5","gender":"male","category":"skin","variant":"standard","displayName":"Male Skin5","runtimePath":"character-v54/male/skin/male-skin5.png"},{"id":"female.clothing.blue-corset-v2","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Corset v2","runtimePath":"character-v54/female/clothing/blue-corset-v2.png"},{"id":"female.clothing.blue-corset","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Corset","runtimePath":"character-v54/female/clothing/blue-corset.png"},{"id":"female.clothing.blue-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Panties and Bra","runtimePath":"character-v54/female/clothing/blue-panties-and-bra.png"},{"id":"female.clothing.boots","gender":"female","category":"clothing","variant":"standard","displayName":"Boots","runtimePath":"character-v54/female/clothing/boots.png"},{"id":"female.clothing.corset-v2","gender":"female","category":"clothing","variant":"standard","displayName":"Corset v2","runtimePath":"character-v54/female/clothing/corset-v2.png"},{"id":"female.clothing.corset","gender":"female","category":"clothing","variant":"standard","displayName":"Corset","runtimePath":"character-v54/female/clothing/corset.png"},{"id":"female.clothing.green-corset-v2","gender":"female","category":"clothing","variant":"standard","displayName":"Green Corset v2","runtimePath":"character-v54/female/clothing/green-corset-v2.png"},{"id":"female.clothing.green-corset","gender":"female","category":"clothing","variant":"standard","displayName":"Green Corset","runtimePath":"character-v54/female/clothing/green-corset.png"},{"id":"female.clothing.green-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Green Panties and Bra","runtimePath":"character-v54/female/clothing/green-panties-and-bra.png"},{"id":"female.clothing.green-socks","gender":"female","category":"clothing","variant":"standard","displayName":"Green Socks","runtimePath":"character-v54/female/clothing/green-socks.png"},{"id":"female.clothing.orange-corset-v2","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Corset v2","runtimePath":"character-v54/female/clothing/orange-corset-v2.png"},{"id":"female.clothing.orange-corset","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Corset","runtimePath":"character-v54/female/clothing/orange-corset.png"},{"id":"female.clothing.orange-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Panties and Bra","runtimePath":"character-v54/female/clothing/orange-panties-and-bra.png"},{"id":"female.clothing.orange-socks","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Socks","runtimePath":"character-v54/female/clothing/orange-socks.png"},{"id":"female.clothing.purple-corset-v2","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Corset v2","runtimePath":"character-v54/female/clothing/purple-corset-v2.png"},{"id":"female.clothing.purple-corset","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Corset","runtimePath":"character-v54/female/clothing/purple-corset.png"},{"id":"female.clothing.purple-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Panties and Bra","runtimePath":"character-v54/female/clothing/purple-panties-and-bra.png"},{"id":"female.clothing.purple-socks","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Socks","runtimePath":"character-v54/female/clothing/purple-socks.png"},{"id":"female.clothing.red-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Red Panties and Bra","runtimePath":"character-v54/female/clothing/red-panties-and-bra.png"},{"id":"female.clothing.red-socks","gender":"female","category":"clothing","variant":"standard","displayName":"Red Socks","runtimePath":"character-v54/female/clothing/red-socks.png"},{"id":"female.clothing.skirt","gender":"female","category":"clothing","variant":"standard","displayName":"Skirt","runtimePath":"character-v54/female/clothing/skirt.png"},{"id":"female.clothing.skyblue-panties-and-bra","gender":"female","category":"clothing","variant":"standard","displayName":"Skyblue Panties and Bra","runtimePath":"character-v54/female/clothing/skyblue-panties-and-bra.png"},{"id":"female.clothing.skyblue-socks","gender":"female","category":"clothing","variant":"standard","displayName":"Skyblue Socks","runtimePath":"character-v54/female/clothing/skyblue-socks.png"},{"id":"female.clothing.socks","gender":"female","category":"clothing","variant":"standard","displayName":"Socks","runtimePath":"character-v54/female/clothing/socks.png"},{"id":"female.hair.female-hair1","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair1","runtimePath":"character-v54/female/hair/female-hair1.png"},{"id":"female.hair.female-hair2","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair2","runtimePath":"character-v54/female/hair/female-hair2.png"},{"id":"female.hair.female-hair3","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair3","runtimePath":"character-v54/female/hair/female-hair3.png"},{"id":"female.hair.female-hair4","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair4","runtimePath":"character-v54/female/hair/female-hair4.png"},{"id":"female.hair.female-hair5","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair5","runtimePath":"character-v54/female/hair/female-hair5.png"},{"id":"male.clothing.blue-pants","gender":"male","category":"clothing","variant":"standard","displayName":"Blue Pants","runtimePath":"character-v54/male/clothing/blue-pants.png"},{"id":"male.clothing.blue-shirt-v2","gender":"male","category":"clothing","variant":"standard","displayName":"Blue Shirt v2","runtimePath":"character-v54/male/clothing/blue-shirt-v2.png"},{"id":"male.clothing.boots","gender":"male","category":"clothing","variant":"standard","displayName":"Boots","runtimePath":"character-v54/male/clothing/boots.png"},{"id":"male.clothing.green-pants","gender":"male","category":"clothing","variant":"standard","displayName":"Green Pants","runtimePath":"character-v54/male/clothing/green-pants.png"},{"id":"male.clothing.green-shirt-v2","gender":"male","category":"clothing","variant":"standard","displayName":"Green Shirt v2","runtimePath":"character-v54/male/clothing/green-shirt-v2.png"},{"id":"male.clothing.green-underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Green Underwear","runtimePath":"character-v54/male/clothing/green-underwear.png"},{"id":"male.clothing.orange-pants","gender":"male","category":"clothing","variant":"standard","displayName":"Orange Pants","runtimePath":"character-v54/male/clothing/orange-pants.png"},{"id":"male.clothing.orange-shirt-v2","gender":"male","category":"clothing","variant":"standard","displayName":"orange Shirt v2","runtimePath":"character-v54/male/clothing/orange-shirt-v2.png"},{"id":"male.clothing.orange-underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Orange Underwear","runtimePath":"character-v54/male/clothing/orange-underwear.png"},{"id":"male.clothing.pants","gender":"male","category":"clothing","variant":"standard","displayName":"Pants","runtimePath":"character-v54/male/clothing/pants.png"},{"id":"male.clothing.purple-pants","gender":"male","category":"clothing","variant":"standard","displayName":"Purple Pants","runtimePath":"character-v54/male/clothing/purple-pants.png"},{"id":"male.clothing.purple-shirt-v2","gender":"male","category":"clothing","variant":"standard","displayName":"Purple Shirt v2","runtimePath":"character-v54/male/clothing/purple-shirt-v2.png"},{"id":"male.clothing.purple-underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Purple Underwear","runtimePath":"character-v54/male/clothing/purple-underwear.png"},{"id":"male.clothing.red-underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Red Underwear","runtimePath":"character-v54/male/clothing/red-underwear.png"},{"id":"male.clothing.shirt-v2","gender":"male","category":"clothing","variant":"standard","displayName":"Shirt v2","runtimePath":"character-v54/male/clothing/shirt-v2.png"},{"id":"male.clothing.shirt","gender":"male","category":"clothing","variant":"standard","displayName":"Shirt","runtimePath":"character-v54/male/clothing/shirt.png"},{"id":"male.clothing.shoes","gender":"male","category":"clothing","variant":"standard","displayName":"Shoes","runtimePath":"character-v54/male/clothing/shoes.png"},{"id":"male.clothing.skyblue-underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Skyblue Underwear","runtimePath":"character-v54/male/clothing/skyblue-underwear.png"},{"id":"male.clothing.underwear","gender":"male","category":"clothing","variant":"standard","displayName":"Underwear","runtimePath":"character-v54/male/clothing/underwear.png"},{"id":"male.hair.male-hair1","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair1","runtimePath":"character-v54/male/hair/male-hair1.png"},{"id":"male.hair.male-hair2","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair2","runtimePath":"character-v54/male/hair/male-hair2.png"},{"id":"male.hair.male-hair3","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair3","runtimePath":"character-v54/male/hair/male-hair3.png"},{"id":"male.hair.male-hair4","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair4","runtimePath":"character-v54/male/hair/male-hair4.png"},{"id":"male.hair.male-hair5","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair5","runtimePath":"character-v54/male/hair/male-hair5.png"},{"id":"male.hair.fancy-hair","gender":"male","category":"hair","variant":"standard","displayName":"Fancy Hair","runtimePath":"character-v54/male/hair/fancy-hair.png"},{"id":"male.hair.male-hair10","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair10","runtimePath":"character-v54/male/hair/male-hair10.png"},{"id":"male.hair.male-hair11","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair11","runtimePath":"character-v54/male/hair/male-hair11.png"},{"id":"male.hair.male-hair12","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair12","runtimePath":"character-v54/male/hair/male-hair12.png"},{"id":"male.hair.male-hair13","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair13","runtimePath":"character-v54/male/hair/male-hair13.png"},{"id":"male.hair.male-hair14","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair14","runtimePath":"character-v54/male/hair/male-hair14.png"},{"id":"male.hair.male-hair15","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair15","runtimePath":"character-v54/male/hair/male-hair15.png"},{"id":"male.hair.male-hair16","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair16","runtimePath":"character-v54/male/hair/male-hair16.png"},{"id":"male.hair.male-hair17","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair17","runtimePath":"character-v54/male/hair/male-hair17.png"},{"id":"male.hair.male-hair18","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair18","runtimePath":"character-v54/male/hair/male-hair18.png"},{"id":"male.hair.male-hair19","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair19","runtimePath":"character-v54/male/hair/male-hair19.png"},{"id":"male.hair.male-hair20","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair20","runtimePath":"character-v54/male/hair/male-hair20.png"},{"id":"male.hair.male-hair21","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair21","runtimePath":"character-v54/male/hair/male-hair21.png"},{"id":"male.hair.male-hair22","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair22","runtimePath":"character-v54/male/hair/male-hair22.png"},{"id":"male.hair.male-hair23","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair23","runtimePath":"character-v54/male/hair/male-hair23.png"},{"id":"male.hair.male-hair24","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair24","runtimePath":"character-v54/male/hair/male-hair24.png"},{"id":"male.hair.male-hair25","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair25","runtimePath":"character-v54/male/hair/male-hair25.png"},{"id":"male.hair.male-hair26","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair26","runtimePath":"character-v54/male/hair/male-hair26.png"},{"id":"male.hair.male-hair27","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair27","runtimePath":"character-v54/male/hair/male-hair27.png"},{"id":"male.hair.male-hair28","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair28","runtimePath":"character-v54/male/hair/male-hair28.png"},{"id":"male.hair.male-hair29","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair29","runtimePath":"character-v54/male/hair/male-hair29.png"},{"id":"male.hair.male-hair30","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair30","runtimePath":"character-v54/male/hair/male-hair30.png"},{"id":"male.hair.male-hair6","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair6","runtimePath":"character-v54/male/hair/male-hair6.png"},{"id":"male.hair.male-hair7","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair7","runtimePath":"character-v54/male/hair/male-hair7.png"},{"id":"male.hair.male-hair8","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair8","runtimePath":"character-v54/male/hair/male-hair8.png"},{"id":"male.hair.male-hair9","gender":"male","category":"hair","variant":"standard","displayName":"Male Hair9","runtimePath":"character-v54/male/hair/male-hair9.png"},{"id":"male.hair.queen-hair","gender":"male","category":"hair","variant":"standard","displayName":"Queen hair","runtimePath":"character-v54/male/hair/queen-hair.png"},{"id":"male.hair.shield-maiden-hair","gender":"male","category":"hair","variant":"standard","displayName":"Shield Maiden hair","runtimePath":"character-v54/male/hair/shield-maiden-hair.png"},{"id":"female.hair.female-hair10","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair10","runtimePath":"character-v54/female/hair/female-hair10.png"},{"id":"female.hair.female-hair11","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair11","runtimePath":"character-v54/female/hair/female-hair11.png"},{"id":"female.hair.female-hair12","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair12","runtimePath":"character-v54/female/hair/female-hair12.png"},{"id":"female.hair.female-hair13","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair13","runtimePath":"character-v54/female/hair/female-hair13.png"},{"id":"female.hair.female-hair14","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair14","runtimePath":"character-v54/female/hair/female-hair14.png"},{"id":"female.hair.female-hair15","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair15","runtimePath":"character-v54/female/hair/female-hair15.png"},{"id":"female.hair.female-hair16","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair16","runtimePath":"character-v54/female/hair/female-hair16.png"},{"id":"female.hair.female-hair17","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair17","runtimePath":"character-v54/female/hair/female-hair17.png"},{"id":"female.hair.female-hair18","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair18","runtimePath":"character-v54/female/hair/female-hair18.png"},{"id":"female.hair.female-hair19","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair19","runtimePath":"character-v54/female/hair/female-hair19.png"},{"id":"female.hair.female-hair20","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair20","runtimePath":"character-v54/female/hair/female-hair20.png"},{"id":"female.hair.female-hair21","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair21","runtimePath":"character-v54/female/hair/female-hair21.png"},{"id":"female.hair.female-hair22","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair22","runtimePath":"character-v54/female/hair/female-hair22.png"},{"id":"female.hair.female-hair23","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair23","runtimePath":"character-v54/female/hair/female-hair23.png"},{"id":"female.hair.female-hair24","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair24","runtimePath":"character-v54/female/hair/female-hair24.png"},{"id":"female.hair.female-hair25","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair25","runtimePath":"character-v54/female/hair/female-hair25.png"},{"id":"female.hair.female-hair26","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair26","runtimePath":"character-v54/female/hair/female-hair26.png"},{"id":"female.hair.female-hair27","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair27","runtimePath":"character-v54/female/hair/female-hair27.png"},{"id":"female.hair.female-hair28","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair28","runtimePath":"character-v54/female/hair/female-hair28.png"},{"id":"female.hair.female-hair29","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair29","runtimePath":"character-v54/female/hair/female-hair29.png"},{"id":"female.hair.female-hair30","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair30","runtimePath":"character-v54/female/hair/female-hair30.png"},{"id":"female.hair.female-hair31","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair31","runtimePath":"character-v54/female/hair/female-hair31.png"},{"id":"female.hair.female-hair32","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair32","runtimePath":"character-v54/female/hair/female-hair32.png"},{"id":"female.hair.female-hair33","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair33","runtimePath":"character-v54/female/hair/female-hair33.png"},{"id":"female.hair.female-hair34","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair34","runtimePath":"character-v54/female/hair/female-hair34.png"},{"id":"female.hair.female-hair35","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair35","runtimePath":"character-v54/female/hair/female-hair35.png"},{"id":"female.hair.female-hair6","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair6","runtimePath":"character-v54/female/hair/female-hair6.png"},{"id":"female.hair.female-hair7","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair7","runtimePath":"character-v54/female/hair/female-hair7.png"},{"id":"female.hair.female-hair8","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair8","runtimePath":"character-v54/female/hair/female-hair8.png"},{"id":"female.hair.female-hair9","gender":"female","category":"hair","variant":"standard","displayName":"Female Hair9","runtimePath":"character-v54/female/hair/female-hair9.png"},{"id":"female.clothing.armored-corset","gender":"female","category":"clothing","variant":"standard","displayName":"Armored Corset","runtimePath":"character-v54/female/clothing/armored-corset.png"},{"id":"female.clothing.black-thigh-high-boots","gender":"female","category":"clothing","variant":"standard","displayName":"Black Thigh-High Boots","runtimePath":"character-v54/female/clothing/black-thigh-high-boots.png"},{"id":"female.clothing.blue-bikini","gender":"female","category":"clothing","variant":"standard","displayName":"Blue bikini","runtimePath":"character-v54/female/clothing/blue-bikini.png"},{"id":"female.clothing.blue-bodice-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Bodice Long Sleeves","runtimePath":"character-v54/female/clothing/blue-bodice-long-sleeves.png"},{"id":"female.clothing.blue-bodice-mid-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Bodice Mid Sleeves","runtimePath":"character-v54/female/clothing/blue-bodice-mid-sleeves.png"},{"id":"female.clothing.blue-bodice","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Bodice","runtimePath":"character-v54/female/clothing/blue-bodice.png"},{"id":"female.clothing.blue-corset-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Corset Long Sleeves","runtimePath":"character-v54/female/clothing/blue-corset-long-sleeves.png"},{"id":"female.clothing.blue-corset-v2-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Blue Corset v2 Long Sleeves","runtimePath":"character-v54/female/clothing/blue-corset-v2-long-sleeves.png"},{"id":"female.clothing.blue-dress","gender":"female","category":"clothing","variant":"standard","displayName":"Blue dress","runtimePath":"character-v54/female/clothing/blue-dress.png"},{"id":"female.clothing.brown-thigh-high-boots","gender":"female","category":"clothing","variant":"standard","displayName":"Brown Thigh-High Boots","runtimePath":"character-v54/female/clothing/brown-thigh-high-boots.png"},{"id":"female.clothing.corset-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Corset Long Sleeves","runtimePath":"character-v54/female/clothing/corset-long-sleeves.png"},{"id":"female.clothing.corset-v2-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Corset v2 Long Sleeves","runtimePath":"character-v54/female/clothing/corset-v2-long-sleeves.png"},{"id":"female.clothing.fancy-blue-dress","gender":"female","category":"clothing","variant":"standard","displayName":"Fancy Blue Dress","runtimePath":"character-v54/female/clothing/fancy-blue-dress.png"},{"id":"female.clothing.green-bikini","gender":"female","category":"clothing","variant":"standard","displayName":"Green bikini","runtimePath":"character-v54/female/clothing/green-bikini.png"},{"id":"female.clothing.green-bodice-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Green Bodice Long Sleeves","runtimePath":"character-v54/female/clothing/green-bodice-long-sleeves.png"},{"id":"female.clothing.green-bodice-mid-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Green Bodice Mid Sleeves","runtimePath":"character-v54/female/clothing/green-bodice-mid-sleeves.png"},{"id":"female.clothing.green-bodice","gender":"female","category":"clothing","variant":"standard","displayName":"Green Bodice","runtimePath":"character-v54/female/clothing/green-bodice.png"},{"id":"female.clothing.green-corset-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Green Corset Long Sleeves","runtimePath":"character-v54/female/clothing/green-corset-long-sleeves.png"},{"id":"female.clothing.green-corset-v2-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Green Corset v2 Long Sleeves","runtimePath":"character-v54/female/clothing/green-corset-v2-long-sleeves.png"},{"id":"female.clothing.long-dress-blue","gender":"female","category":"clothing","variant":"standard","displayName":"Long dress blue","runtimePath":"character-v54/female/clothing/long-dress-blue.png"},{"id":"female.clothing.long-dress-green","gender":"female","category":"clothing","variant":"standard","displayName":"Long dress green","runtimePath":"character-v54/female/clothing/long-dress-green.png"},{"id":"female.clothing.long-dress-orange","gender":"female","category":"clothing","variant":"standard","displayName":"Long dress orange","runtimePath":"character-v54/female/clothing/long-dress-orange.png"},{"id":"female.clothing.long-dress-purple","gender":"female","category":"clothing","variant":"standard","displayName":"Long dress purple","runtimePath":"character-v54/female/clothing/long-dress-purple.png"},{"id":"female.clothing.long-dress-red","gender":"female","category":"clothing","variant":"standard","displayName":"Long dress red","runtimePath":"character-v54/female/clothing/long-dress-red.png"},{"id":"female.clothing.orange-bikini","gender":"female","category":"clothing","variant":"standard","displayName":"Orange bikini","runtimePath":"character-v54/female/clothing/orange-bikini.png"},{"id":"female.clothing.orange-bodice-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Bodice Long Sleeves","runtimePath":"character-v54/female/clothing/orange-bodice-long-sleeves.png"},{"id":"female.clothing.orange-bodice-mid-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Bodice Mid Sleeves","runtimePath":"character-v54/female/clothing/orange-bodice-mid-sleeves.png"},{"id":"female.clothing.orange-bodice","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Bodice","runtimePath":"character-v54/female/clothing/orange-bodice.png"},{"id":"female.clothing.orange-corset-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Corset Long Sleeves","runtimePath":"character-v54/female/clothing/orange-corset-long-sleeves.png"},{"id":"female.clothing.orange-corset-v2-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Orange Corset v2 Long Sleeves","runtimePath":"character-v54/female/clothing/orange-corset-v2-long-sleeves.png"},{"id":"female.clothing.pink-thigh-high-boots","gender":"female","category":"clothing","variant":"standard","displayName":"Pink Thigh-High Boots","runtimePath":"character-v54/female/clothing/pink-thigh-high-boots.png"},{"id":"female.clothing.purple-bikini","gender":"female","category":"clothing","variant":"standard","displayName":"Purple bikini","runtimePath":"character-v54/female/clothing/purple-bikini.png"},{"id":"female.clothing.purple-bodice-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Bodice Long Sleeves","runtimePath":"character-v54/female/clothing/purple-bodice-long-sleeves.png"},{"id":"female.clothing.purple-bodice-mid-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Bodice Mid Sleeves","runtimePath":"character-v54/female/clothing/purple-bodice-mid-sleeves.png"},{"id":"female.clothing.purple-bodice","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Bodice","runtimePath":"character-v54/female/clothing/purple-bodice.png"},{"id":"female.clothing.purple-corset-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Corset Long Sleeves","runtimePath":"character-v54/female/clothing/purple-corset-long-sleeves.png"},{"id":"female.clothing.purple-corset-v2-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Purple Corset v2 Long Sleeves","runtimePath":"character-v54/female/clothing/purple-corset-v2-long-sleeves.png"},{"id":"female.clothing.queen-dress","gender":"female","category":"clothing","variant":"standard","displayName":"Queen Dress","runtimePath":"character-v54/female/clothing/queen-dress.png"},{"id":"female.clothing.red-bikini","gender":"female","category":"clothing","variant":"standard","displayName":"Red bikini","runtimePath":"character-v54/female/clothing/red-bikini.png"},{"id":"female.clothing.red-bodice-long-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Red Bodice Long Sleeves","runtimePath":"character-v54/female/clothing/red-bodice-long-sleeves.png"},{"id":"female.clothing.red-bodice-mid-sleeves","gender":"female","category":"clothing","variant":"standard","displayName":"Red Bodice Mid Sleeves","runtimePath":"character-v54/female/clothing/red-bodice-mid-sleeves.png"},{"id":"female.clothing.red-bodice","gender":"female","category":"clothing","variant":"standard","displayName":"Red Bodice","runtimePath":"character-v54/female/clothing/red-bodice.png"},{"id":"female.clothing.red-thigh-high-boots","gender":"female","category":"clothing","variant":"standard","displayName":"Red Thigh-High Boots","runtimePath":"character-v54/female/clothing/red-thigh-high-boots.png"},{"id":"female.clothing.short-skirt","gender":"female","category":"clothing","variant":"standard","displayName":"Short Skirt","runtimePath":"character-v54/female/clothing/short-skirt.png"},{"id":"male.clothing.blue-swim-trunks","gender":"male","category":"clothing","variant":"standard","displayName":"Blue swim trunks","runtimePath":"character-v54/male/clothing/blue-swim-trunks.png"},{"id":"male.clothing.chainmail","gender":"male","category":"clothing","variant":"standard","displayName":"Chainmail","runtimePath":"character-v54/male/clothing/chainmail.png"},{"id":"male.clothing.green-swim-trunks","gender":"male","category":"clothing","variant":"standard","displayName":"Green swim trunks","runtimePath":"character-v54/male/clothing/green-swim-trunks.png"},{"id":"male.clothing.orange-swim-trunks","gender":"male","category":"clothing","variant":"standard","displayName":"Orange swim trunks","runtimePath":"character-v54/male/clothing/orange-swim-trunks.png"},{"id":"male.clothing.purple-swim-trunks","gender":"male","category":"clothing","variant":"standard","displayName":"Purple swim trunks","runtimePath":"character-v54/male/clothing/purple-swim-trunks.png"},{"id":"male.clothing.red-swim-trunks","gender":"male","category":"clothing","variant":"standard","displayName":"Red swim trunks","runtimePath":"character-v54/male/clothing/red-swim-trunks.png"},{"id":"male.clothing.split-hose","gender":"male","category":"clothing","variant":"standard","displayName":"Split hose","runtimePath":"character-v54/male/clothing/split-hose.png"},{"id":"female.special-skin.female-demon","gender":"female","category":"skin","variant":"special","displayName":"Female Demon skin","runtimePath":"character-v54/female/special-skin/female-demon-skin.png"},{"id":"female.special-skin.female-devil","gender":"female","category":"skin","variant":"special","displayName":"Female Devil skin","runtimePath":"character-v54/female/special-skin/female-devil-skin.png"},{"id":"female.special-skin.female-ghost","gender":"female","category":"skin","variant":"special","displayName":"Female Ghost skin","runtimePath":"character-v54/female/special-skin/female-ghost-skin.png"},{"id":"female.special-skin.female-orc","gender":"female","category":"skin","variant":"special","displayName":"Female Orc skin","runtimePath":"character-v54/female/special-skin/female-orc-skin.png"},{"id":"female.special-skin.female-zombie","gender":"female","category":"skin","variant":"special","displayName":"Female Zombie skin","runtimePath":"character-v54/female/special-skin/female-zombie-skin.png"},{"id":"male.special-skin.male-demon","gender":"male","category":"skin","variant":"special","displayName":"Male Demon skin","runtimePath":"character-v54/male/special-skin/male-demon-skin.png"},{"id":"male.special-skin.male-devil","gender":"male","category":"skin","variant":"special","displayName":"Male Devil skin","runtimePath":"character-v54/male/special-skin/male-devil-skin.png"},{"id":"male.special-skin.male-ghost","gender":"male","category":"skin","variant":"special","displayName":"Male Ghost skin","runtimePath":"character-v54/male/special-skin/male-ghost-skin.png"},{"id":"male.special-skin.male-orc","gender":"male","category":"skin","variant":"special","displayName":"Male Orc skin","runtimePath":"character-v54/male/special-skin/male-orc-skin.png"},{"id":"male.special-skin.male-zombie","gender":"male","category":"skin","variant":"special","displayName":"Male Zombie skin","runtimePath":"character-v54/male/special-skin/male-zombie-skin.png"}]};
-
-  const $ = id => document.getElementById(id);
-  const clone = obj => JSON.parse(JSON.stringify(obj));
-  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-  const money = n => Math.floor(Number(n)||0);
-
-  function initCDN(){
-    document.querySelectorAll("[data-src]").forEach(el => el.src = CDN_URL + el.dataset.src);
-    document.querySelectorAll("[data-bg]").forEach(el => el.style.backgroundImage = `url("${CDN_URL}${el.dataset.bg}")`);
-  }
-  initCDN();
-
-  let characterManifest=null,characterAssets=[],creatorRenderer=null,battleRenderer=null,creatorCategory="skin",creatorDraft=null,creatorForcedOpen=false;
-  const characterImageCache=new Map();
-
-  function getCharacterImage(path){
-    if(!path)return null;
-    if(!characterImageCache.has(path)){
-      const image=new Image();image.decoding="async";
-      image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>{if(!image.dataset.rawFallback){image.dataset.rawFallback="1";image.src=RAW_ASSET_URL+path}else resolve(false)})});
-      image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw()});
-      image.src=CDN_URL+path;
-      characterImageCache.set(path,image);
-    }
-    return characterImageCache.get(path);
-  }
-  async function preloadCharacterAssets(onProgress){
-    let finished=0;const total=characterAssets.length;
-    await Promise.all(characterAssets.map(async asset=>{const image=getCharacterImage(asset.runtimePath);await image._ready;finished++;onProgress?.(finished,total)}));
-  }
-
-  function assetById(id){return characterAssets.find(asset=>asset.id===id)||null}
-  function assetsFor(gender,category,variant="standard"){
-    return characterAssets.filter(asset=>asset.gender===gender&&asset.category===category&&asset.variant===variant);
-  }
-  function clothingSlot(asset){
-    const name=asset.displayName.toLowerCase();
-    if(/dress/.test(name))return "outfit";
-    if(/boots|shoes|socks/.test(name))return "footwear";
-    if(/skirt|pants|split hose/.test(name))return "bottom";
-    if(/underwear|panties|bikini|swim trunks/.test(name))return "basewear";
-    return "top";
-  }
-  function clothingAssets(gender,slot){return assetsFor(gender,"clothing").filter(asset=>clothingSlot(asset)===slot)}
-  const SPECIAL_SKIN_ACHIEVEMENTS={zombie:"first_blood",ghost:"death_wish",orc:"serial_killer",demon:"cultist",devil:"level_50"};
-  const SPECIAL_SKIN_REWARDS={first_blood:"Zombie Skin",death_wish:"Ghost Skin",serial_killer:"Orc Skin",cultist:"Demon Skin",level_50:"Devil Skin"};
-  function specialAchievementId(asset){const name=asset?.displayName.toLowerCase()||"",key=Object.keys(SPECIAL_SKIN_ACHIEVEMENTS).find(value=>name.includes(value));return key?SPECIAL_SKIN_ACHIEVEMENTS[key]:null}
-  function isSpecialSkinUnlocked(asset){const requirement=specialAchievementId(asset);return !requirement||state.unlockedAchievements.includes(requirement)}
-  function defaultCharacter(gender="female"){
-    return {gender,skinId:assetsFor(gender,"skin")[0]?.id||null,specialSkinId:null,hairId:assetsFor(gender,"hair")[0]?.id||null,basewearId:clothingAssets(gender,"basewear")[0]?.id||null,topId:clothingAssets(gender,"top")[0]?.id||null,bottomId:clothingAssets(gender,"bottom")[0]?.id||null,footwearId:clothingAssets(gender,"footwear")[0]?.id||null,outfitId:null};
-  }
-  function normalizeCharacter(value,gender="female"){
-    const base=defaultCharacter(gender),next={...base,...(value&&typeof value==="object"?value:{})};next.gender=gender;
-    if(assetById(next.skinId)?.gender!==gender)next.skinId=base.skinId;
-    if(next.specialSkinId&&(assetById(next.specialSkinId)?.gender!==gender||!isSpecialSkinUnlocked(assetById(next.specialSkinId))))next.specialSkinId=null;
-    if(assetById(next.hairId)?.gender!==gender)next.hairId=base.hairId;
-    for(const slot of ["basewear","top","bottom","footwear"]){const asset=assetById(next[slot+"Id"]);if(!asset||asset.gender!==gender||clothingSlot(asset)!==slot)next[slot+"Id"]=base[slot+"Id"]}
-    if(next.outfitId){const asset=assetById(next.outfitId);if(!asset||asset.gender!==gender||clothingSlot(asset)!=="outfit")next.outfitId=null}
-    return next;
-  }
-  function activeCharacterLayers(character){
-    if(!character)return[];
-    const outfit=assetById(character.outfitId),clothes=outfit?[assetById(character.basewearId),outfit,assetById(character.footwearId)]:[assetById(character.basewearId),assetById(character.bottomId),assetById(character.topId),assetById(character.footwearId)];
-    return [assetById(character.specialSkinId)||assetById(character.skinId),...clothes,assetById(character.hairId)].filter(Boolean);
-  }
-
-  class LayeredCharacterRenderer{
-    constructor(canvas,scale=1){this.canvas=canvas;this.ctx=canvas.getContext("2d");this.ctx.imageSmoothingEnabled=false;this.character=null;this.animation="idle";this.frame=0;this.last=0;this.scale=scale;this.running=false}
-    setCharacter(character){this.character=character;activeCharacterLayers(character).forEach(asset=>getCharacterImage(asset.runtimePath));this.draw()}
-    setAnimation(name){this.animation=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[name]?name:"idle";this.frame=0;this.last=performance.now();this.start()}
-    start(){if(this.running)return;this.running=true;requestAnimationFrame(time=>this.tick(time))}
-    stop(){this.running=false}
-    tick(time){if(!this.running)return;const def=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[this.animation];if(def&&time-this.last>=1000/(def.fps||6)){this.last=time;this.frame=(this.frame+1)%def.frames;this.draw()}requestAnimationFrame(t=>this.tick(t))}
-    draw(){const ctx=this.ctx;ctx.clearRect(0,0,80,64);const def=characterManifest?.sheetLayouts?.["character-80x64-v1"]?.animations?.[this.animation];if(!def)return;for(const asset of activeCharacterLayers(this.character)){const image=getCharacterImage(asset.runtimePath);if(image?.complete&&image.naturalWidth)ctx.drawImage(image,this.frame*80,def.row*64,80,64,0,0,80,64)}}
-  }
-
-  async function loadCharacterManifest(){
-    characterManifest=EMBEDDED_CHARACTER_MANIFEST;characterAssets=characterManifest.assets||[];
-    if(characterAssets.length!==182)console.warn("Unexpected character asset count",characterAssets.length);
-  }
-
-  const isPhone = typeof PhoneSDK !== "undefined" && window.parent !== window;
-  const phone = isPhone ? PhoneSDK.createPhoneSDK() : {
-    whenReady: async () => ({characterId:"LOCAL"}),
-    storage: { get: async()=>null, set: async()=>true },
-    bank: { charge: async()=>true },
-    phone: { notify: async()=>true }
-  };
-
-  const sfx = {
-    bg:new Audio("https://files.catbox.moe/74c7yc.mp3"),
-    p_atk:new Audio("https://files.catbox.moe/jxe6g6.wav"), e_atk:new Audio("https://files.catbox.moe/yqtnmq.wav"),
-    loot:new Audio("https://files.catbox.moe/sr74q7.wav"), lvlup:new Audio("https://files.catbox.moe/459gkz.wav"),
-    equip:new Audio("https://files.catbox.moe/ozg7s8.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
-    mapchange:new Audio("https://files.catbox.moe/xnmhb5.wav"), chest:new Audio("https://files.catbox.moe/az4wl5.wav"),
-    e_death:new Audio("https://files.catbox.moe/t30v8r.wav"), p_death:new Audio("https://files.catbox.moe/k9gftq.wav"),
-    tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
-    ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
-    rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
-    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
-  };
-  sfx.bg.loop = true;
-
-  async function startGameIntro(){
-    if(introStarted)return;introStarted=true;const button=$("intro-start");button.disabled=true;button.textContent="Hazırlanıyor...";
-    sfx.bg.volume=userSettings.music;sfx.bg.play().catch(()=>{});
-    if(!characterAssets.length)await loadCharacterManifest();
-    await preloadCharacterAssets((done,total)=>{const percent=Math.round(done/total*100);$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`});
-    $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
-    if(state.gender){isCombatActive=true;applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
-    updateUI();
-  }
-  window.startGameIntro=startGameIntro;
-
-  const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
-  const enemyAttackGif = "Yku2dxV.gif";
-  const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
-  const frameCounts = {idle:6,dash:4,jump:8,death:6};
-  const wepTiers = [["Sobgyzp.png","KmKYn2j.png","iLrkoIP.png","OnNJZib.png","DJwL46V.png"],["ufRauzO.png","BF39DDd.png","XlAL5e0.png","9Rd7Vcx.png","U4SvLci.png"],["79U9ddN.png","z1NAu65.png","eka9oKj.png","4gVPxxU.png","LEgUUIi.png"]];
-  const armTiers = [["uiCTITp.png","0d6QvWe.png","AQiwNcp.png"],["chUVP49.png","rNXPeal.png","AGIHoXb.png","PZQ243K.png","AsFMSdt.png"],["0XVH5cj.png","OUgWUkQ.png","7M085ds.png","HigNrFC.png","fthODln.png"],["3WSmAuR.png","o70Kunf.png","IajSD07.png","ZwLdEMM.png"],["5l21f1v.png","k83JT0E.png","0lCeYQm.png","XjqYjpm.png","pz4wL1Q.png","KYrj5bB.png"],["a4a2sIF.png","t0YTMlA.png","Uo9HsOn.png","tljYYCo.png","4iMw6Nv.png","a7afDq0.png"]];
-  const wepUniques = ["S2x99Uo.png","FXXkBlx.png","gV4nwGa.png","usBDlxr.png","EVoaOUW.png","4jGKsVI.png","kfADGqF.png","iu2RLfz.png","6aoTbXQ.png"];
-  const armUniques = ["VjkYGmr.png","aikRPrn.png","8K02ZOU.png","evwFKwB.png","mmyrNMr.png","mMEjivM.png","y4PTmZh.png","DKk5Axs.png"];
-  const wepUniqueNames = ["Kanlı Tırpan","Kader Kılıcı","Ruh Yiyen","Gölge Hançeri","Kızıl Gürz","Kadim Asa","Gece Kılıcı","Buzul Balta","Şeytan Mızrağı"];
-  const armUniqueNames = ["Gölgeler Cübbesi","Kızıl Zırh","Kadim Kalkan","Ruh Koruması","Gece Pelerini","Kemik Zırh","Lanetli Deri","Buzul Plaka"];
-  const chestKeys = ["3pCe51s.png","LgBYg2I.png","LxANbXQ.png","pql7Og9.png","cu4AHcV.png","cJ3vWM9.png","J1fjm0c.png","R3paBEL.png"];
-  const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
-  const chestSoulBase = [80,140,220,350,550,850,1250,1800];
-
-  const altarUpgrades = [
-    {id:"book",name:"Kadim Bilgelik",desc:"Anahtar düşürme şansını artırır.",imgs:["csY0vyb.png","1IOTuZe.png","HchptsM.png","3IzzE4S.png"],type:"soul",baseCost:50,mult:2.5},
-    {id:"dust",name:"Kozmik Toz",desc:"Saniyede Ruh üretir.",imgs:["Y9xlskS.png","MEvfNBv.png","ViCqShl.png","cmLNF4B.png","Iz3gWYq.png","1HNJ42F.png","xUYBV1O.png","vhawAm2.png"],type:"blood",baseCost:100,mult:1.8},
-    {id:"scroll",name:"Kanlı Parşömen",desc:"Saniyede Kan üretir.",imgs:["V5QEvwy.png","QEYitFc.png","TOgbKV4.png","ZGWqw1W.png","dXcl3wH.png","z5k8XDk.png","QRXsNtE.png"],type:"dark",baseCost:10,mult:2.0},
-    {id:"potion",name:"Yaşam İksiri",desc:"Maksimum Canı artırır.",imgs:["XCjwkjr.png","DgmO02h.png","lm6RHXG.png","uF7ztGJ.png","JEG4iJU.png","B6YG0in.png","AYSkDbA.png","oMYS51o.png"],type:"soul",baseCost:150,mult:1.5},
-    {id:"coin",name:"Ganimet Zenginliği",desc:"Görev ganimetini seviye başına +%20 artırır.",imgs:["M7X9WOQ.png","oy6iNYy.png","qQwN1mW.png","Eq2ngN6.png","kBQEANO.png"],type:"blood",baseCost:200,mult:1.7}
-  ];
-  const roman = ["","I","II","III","IV","V","VI","VII","VIII","IX","X"];
-
-  const marketItems = [
-    {name:"Küçük Bilgi Tomarı",desc:"+100 XP · 2,4 dk emek",icon:"3xcyzvh.png",price:40,action:()=>addXP(100)},
-    {name:"Bilge Tomarı",desc:"+500 XP · 9,6 dk emek",icon:"0O2SqwA.png",price:160,action:()=>addXP(500)},
-    {name:"Kadim Tomar",desc:"+2000 XP · 31 dk emek",icon:"dqc0ybc.png",price:520,action:()=>addXP(2000)},
-    {name:"Efsanevi Tomar",desc:"+5000 XP · 1,1 sa emek",icon:"EdOIbwE.png",price:1100,action:()=>addXP(5000)},
-    {name:"Tanrısal Tomar",desc:"+15000 XP · 2,7 sa emek",icon:"CneQ9wH.png",price:2700,action:()=>addXP(15000)},
-    {name:"Sıradan Ruh",desc:"+250 Ruh · 4,8 dk emek",icon:"72DNCNJ.png",price:80,action:()=>state.soul+=250},
-    {name:"Zengin Ruh",desc:"+1000 Ruh · 16,8 dk emek",icon:"xpRIjnf.png",price:280,action:()=>state.soul+=1000},
-    {name:"Kadim Ruh Kümesi",desc:"+5000 Ruh · 1,2 sa emek",icon:"GIrbWTa.png",price:1200,action:()=>state.soul+=5000},
-    {name:"Damla Kan",desc:"+100 Kan · 4,8 dk emek",icon:"hBTvz3U.png",price:80,action:()=>state.blood+=100},
-    {name:"Kan Şişesi",desc:"+500 Kan · 19,2 dk emek",icon:"Sy5NAsX.png",price:320,action:()=>state.blood+=500},
-    {name:"Kan Kadehi",desc:"+2000 Kan · 1,1 sa emek",icon:"VDmfS8Z.png",price:1100,action:()=>state.blood+=2000},
-    {name:"Kan Havuzu",desc:"+5000 Kan · 2,5 sa emek",icon:"wBPrZad.png",price:2500,action:()=>state.blood+=5000},
-    {name:"Karanlık Taş",desc:"+10 Öz · 9 dk emek",icon:"uXvTGJC.png",price:150,action:()=>state.dark+=10},
-    {name:"Karanlık Kristal",desc:"+50 Öz · 33 dk emek",icon:"jUC5lFz.png",price:550,action:()=>state.dark+=50},
-    {name:"Karanlık Yürek",desc:"+200 Öz · 1,7 sa emek",icon:"v8b6RUf.png",price:1700,action:()=>state.dark+=200},
-    {name:"Karanlık Küp",desc:"+750 Öz · 4,5 sa emek",icon:"o7eQsNh.png",price:4500,action:()=>state.dark+=750},
-    {name:"Karanlık Göz",desc:"+2000 Öz · 7,5 sa emek",icon:"AgrVJ1H.png",price:7500,action:()=>state.dark+=2000},
-    {name:"Rün Kırığı",desc:"+1 Rün · 15 dk emek",icon:"UwxjWcn.png",price:250,action:()=>state.rune+=1},
-    {name:"Rün Kesesi",desc:"+3 Rün · 39 dk emek",icon:"Pipa3Ag.png",price:650,action:()=>state.rune+=3},
-    {name:"Rün Sandığı",desc:"+10 Rün · 1,8 sa emek",icon:"TT7vr06.png",price:1800,action:()=>state.rune+=10}
-  ];
-
-  const achievements = [
-    {id:"first_blood",name:"İlk Kan",desc:"İlk düşmanını alt et.",icon:"twxqpzw.png",type:"kill",req:1},
-    {id:"serial_killer",name:"Gölge Katili",desc:"1.000 düşman alt et.",icon:"NDrPFl8.png",type:"kill",req:1000},
-    {id:"death_wish",name:"Azim mi, Delilik mi?",desc:"10 kez öl.",icon:"ZEfdj9s.png",type:"death",req:10},
-    {id:"undead",name:"Ölümsüzlüğe Doğru",desc:"100 kez öl.",icon:"N6VLHwv.png",type:"death",req:100},
-    {id:"clicker",name:"Yorulmaz Parmaklar",desc:"Ruh Hasadı'na 1.000 kez bas.",icon:"yv6es4J.png",type:"click",req:1000},
-    {id:"click_god",name:"Tık Tanrısı",desc:"Ruh Hasadı'na 50.000 kez bas.",icon:"Evxp84Y.png",type:"click",req:50000},
-    {id:"explorer",name:"Mezar Soyguncusu",desc:"50 Kalıntı görevi tamamla.",icon:"bAXdexU.png",type:"quest",req:50},
-    {id:"cultist",name:"Kızıl Kültist",desc:"100 ritüel tamamla.",icon:"pfsf0Qj.png",type:"ritual",req:100},
-    {id:"wealth",name:"Karaborsa Baronu",desc:"Karaborsadan 25 satın alım yap.",icon:"D11BDxH.png",type:"shop",req:25},
-    {id:"chest_opener",name:"Hazine Avcısı",desc:"50 sandık aç.",icon:"bsmif0s.png",type:"chest",req:50},
-    {id:"dimension",name:"Boyut Gezgini",desc:"Boyut Kapısını 50 kez başarıyla aç.",icon:"zfJ5L5I.png",type:"mg_win",req:50},
-    {id:"blacksmith",name:"Kadim Demirci",desc:"Silahını 50 kez güçlendir.",icon:"uIRlL4e.png",type:"upg_w",req:50},
-    {id:"tank",name:"Sarsılmaz Duvar",desc:"Zırhını 25 kez güçlendir.",icon:"T5MZ1kg.png",type:"upg_a",req:25},
-    {id:"lucky",name:"Şeytan Tüyü",desc:"Bir Yadigâr düşür.",icon:"F7MaUi9.png",type:"unique",req:1},
-    {id:"level_50",name:"Kadim Bilge",desc:"Seviye 50 ol.",icon:"CTPayn5.png",type:"level",req:50}
-  ];
-
-  const levelTiers = [
-    {min:1,title:"Çırak Büyücü",bg:"4vPe6ET.png"},
-    {min:10,title:"Kanlı Kültist",bg:"0iXQcMW.png"},
-    {min:25,title:"Gölge Lordu",bg:"n0m4VHm.png"},
-    {min:50,title:"Karanlık Gezgin",bg:"tfHQ2S9.png"},
-    {min:75,title:"Kadim Varlık",bg:"vwS3cGl.png"}
-  ];
-
-  const defaultState = {
-    gender:null,character:null,soul:0,blood:0,dark:0,rune:0,prestige:0,xp:0,level:1,
-    questEndTime:0,questStartedAt:0,
-    keys:[0,0,0,0,0,0,0,0],
-    equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
-    equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
-    unlockedWeapons:[],unlockedArmors:[],
-    upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
-    ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,
-    settings:{music:0.15,sfx:1},
-    stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,mg_win:0,uniques:0},
-    unlockedAchievements:[]
-  };
-
-  let state = clone(defaultState);
-  let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
-  let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
-  let isDead=false,isMapChanging=false,isCombatActive=false,isAFK=false,introStarted=false,lastInteractTime=Date.now();
-  let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
-  let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null;
-  let userSettings={music:0.15,sfx:1};
-  const uiCache={upgrades:"",inventory:"",market:false};
-
-  function sanitizeState(raw){
-    const s = {...clone(defaultState), ...(raw && typeof raw==="object" ? raw : {})};
-    s.settings={...defaultState.settings,...(raw?.settings||{})};
-    s.upgrades={...defaultState.upgrades,...(raw?.upgrades||{})};
-    s.stats={...defaultState.stats,...(raw?.stats||{})};
-    s.equippedWeapon={...defaultState.equippedWeapon,...(raw?.equippedWeapon||{})};
-    s.equippedArmor={...defaultState.equippedArmor,...(raw?.equippedArmor||{})};
-    s.gender=["female","male"].includes(s.gender)?s.gender:null;
-    s.character=s.gender?normalizeCharacter(raw?.character,s.gender):null;
-    ["soul","blood","dark","rune","prestige","xp","level","questEndTime","questStartedAt","ritualEndTime","pendingRitualRoll","ritualNextAvailable"].forEach(k=>{
-      s[k]=Number(s[k]); if(!Number.isFinite(s[k])) s[k]=defaultState[k];
-    });
-    s.level=Math.max(1,Math.floor(s.level)); s.prestige=Math.max(0,Math.floor(s.prestige));
-    s.keys=Array.from({length:8},(_,i)=>Math.max(0,Math.floor(Number(raw?.keys?.[i])||0)));
-    s.unlockedWeapons=[...new Set((raw?.unlockedWeapons||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<wepUniques.length))];
-    s.unlockedArmors=[...new Set((raw?.unlockedArmors||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<armUniques.length))];
-    s.unlockedAchievements=[...new Set((raw?.unlockedAchievements||[]).filter(id=>achievements.some(a=>a.id===id)))];
-    Object.keys(s.upgrades).forEach(k=>s.upgrades[k]=Math.max(0,Math.floor(Number(s.upgrades[k])||0)));
-    Object.keys(s.stats).forEach(k=>s.stats[k]=Math.max(0,Math.floor(Number(s.stats[k])||0)));
-    s.settings.music=clamp(Number(s.settings.music)||0,0,1); s.settings.sfx=clamp(Number(s.settings.sfx)||0,0,1);
-    return s;
-  }
-
-  function playSound(name,vol=1){
-    const src=sfx[name]; if(!src) return;
-    const a=src.cloneNode(); a.volume=clamp(vol*userSettings.sfx,0,1); a.play().catch(()=>{});
-  }
-  function updateVolumes(){
-    userSettings.music=Number($("vol-music").value); userSettings.sfx=Number($("vol-sfx").value);
-    sfx.bg.volume=userSettings.music; state.settings={...userSettings}; queueSave();
-  }
-  window.updateVolumes=updateVolumes;
-
-  function showToast(msg){
-    const el=$("toast"); el.textContent=msg; el.style.opacity="1";
-    clearTimeout(showToast.t); showToast.t=setTimeout(()=>el.style.opacity="0",2200);
-  }
-  function openModal(id){$(id).style.display="flex"}
-  function closeModal(id){$(id).style.display="none"}
-  window.openModal=openModal; window.closeModal=closeModal;
-
-  function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
-  function getPrestigeMultiplier(){return 1+state.prestige*0.25}
-  function getPrestigeRequiredLevel(){return (state.prestige+1)*10}
-  function cumulativeLevel(tiers,tier,level,startTier=0){let total=0;for(let i=startTier;i<tier;i++)total+=tiers[i].length;return total+level}
-  function xpNeeded(){return state.level*state.level*100}
-
-  function equipmentUpgradeCost(type,eq){
-    if(eq.isUnique) return 0;
-    if(type==="armor"){
-      if(eq.t===0) return [80,120,150][eq.l]??150;
-      const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
-      return Math.floor(180*Math.pow(1.20,effective));
-    }
-    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
-    return Math.floor(150*Math.pow(1.45,effective));
-  }
-  function weaponAttack(eq){
-    if(eq.isUnique) return 95+(eq.idx*18)+(state.level*2);
-    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
-    return 7+(effective*7)+(state.level*2);
-  }
-  function armorDefense(eq){
-    if(eq.isUnique) return 50+(eq.idx*15);
-    if(eq.t===0) return 0;
-    const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
-    return (effective+1)*4;
-  }
-  function getDamageMitigation(){return playerDef<=0?0:playerDef/(playerDef+180)}
-
-  function updatePlayerBars(){
-    $("player-hp-bar").style.width=clamp(playerMaxHp?playerHp/playerMaxHp*100:0,0,100)+"%";
-    $("player-shield-bar").style.width=clamp(playerMaxShield?playerShield/playerMaxShield*100:0,0,100)+"%";
-  }
-  function updateCombatStats(){
-    currentEnemyMaxHp=Math.floor(state.level*18);
-    enemyAttack=Math.floor(state.level*4);
-    playerAtk=weaponAttack(state.equippedWeapon);
-    playerDef=armorDefense(state.equippedArmor);
-    playerMaxHp=50+(state.level*10)+((state.upgrades.potion||0)*30);
-    playerHp=Math.min(playerHp,playerMaxHp);
-    playerMaxShield=Math.floor(playerDef*4);
-    playerShield=Math.min(playerShield,playerMaxShield);
-    updatePlayerBars();
-  }
-
-  function getQuestStats(){
-    const duration=Math.min(180,30+state.level*3);
-    const lootMult=1+(state.upgrades.coin||0)*0.20;
-    return {
-      duration,
-      xp:Math.floor(75+state.level*12),
-      soul:Math.floor((25+state.level*8)*getPrestigeMultiplier()*lootMult),
-      blood:Math.floor((8+state.level*3)*getPrestigeMultiplier()*lootMult),
-      keyChance:Math.min(0.45,0.15+(state.upgrades.book||0)*0.05)
-    };
-  }
-  function getRitualStats(){
-    const bracket=Math.floor((state.level-1)/10);
-    return {
-      bloodCost:10+bracket*5,
-      hpCostPercent:Math.min(35,8+bracket*3),
-      cooldownMS:(12+bracket*3)*1000,
-      rewardMult:getPrestigeMultiplier()*(1+Math.min(state.level,75)*0.03)
-    };
-  }
-  function getDimensionReward(){
-    return Math.ceil(5*getPrestigeMultiplier()*(1+Math.min(state.level,75)*0.02));
-  }
-  function getChestRewards(keyIndex){
-    const levelMult=1+Math.min(state.level,75)*0.06;
-    const soul=Math.floor(chestSoulBase[keyIndex]*levelMult*getPrestigeMultiplier());
-    return {soul,blood:Math.floor(soul*0.24)};
-  }
-
-  function renderMarket(){
-    if(uiCache.market) return; uiCache.market=true;
-    $("market").innerHTML=marketItems.map((item,i)=>`
-      <div class="shop-item">
-        <div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${item.icon}')"></span>
-          <div><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div></div>
-        </div>
-        <button class="primary market-buy" onclick="buyMarketItem(${i})">$${item.price}</button>
-      </div>`).join("");
-  }
-
-  const bankErrorMessages={
-    USER_DENIED:"Ödeme iptal edildi.",
-    INSUFFICIENT_FUNDS:"IC banka bakiyen yetersiz.",
-    NO_LINKED_BANK_ACCOUNT:"Uygulamaya şirket banka hesabı bağlanmamış.",
-    PERMISSION_DENIED:"Banka ödeme izni verilmemiş.",
-    PHONE_NOT_FOUND:"Telefon bulunamadı.",
-    PROTOCOL_MISMATCH:"Telefon SDK sürümü uyumsuz.",
-    UNKNOWN_ACTION:"Telefon bu ödeme işlemini desteklemiyor."
-  };
-  function lockMarket(v){document.querySelectorAll(".market-buy").forEach(b=>{b.disabled=v;v?b.setAttribute("aria-busy","true"):b.removeAttribute("aria-busy")})}
-  async function buyMarketItem(i){
-    if(marketPurchasePending) return;
-    const item=marketItems[i]; if(!item) return;
-    marketPurchasePending=true; lockMarket(true); let charged=false;
-    try{
-      await phone.bank.charge({amount:item.price,note:"Karaborsa: "+item.name});
-      charged=true; item.action(); state.stats.shop++; playSound("buy",.5);
-      await saveState(); updateUI(); showToast("Satın alım başarılı!");
-    }catch(e){
-      showToast(charged?"Ödeme alındı; ödül cihazda korundu. Kayıt tekrar denenecek.":(bankErrorMessages[e?.code]||"Ödeme gerçekleştirilemedi."));
-      if(charged) queueSave();
-    }finally{marketPurchasePending=false;lockMarket(false)}
-  }
-  window.buyMarketItem=buyMarketItem;
-
-  function renderInventory(){
-    const w=state.equippedWeapon,a=state.equippedArmor;
-    const wImg=w.isUnique?wepUniques[w.idx]:wepTiers[w.t]?.[w.l]||wepTiers[0][0];
-    const aImg=a.isUnique?armUniques[a.idx]:armTiers[a.t]?.[a.l]||armTiers[0][0];
-    $("eq-weapon-img").style.backgroundImage=`url("${CDN_URL}${wImg}")`;
-    $("eq-armor-img").style.backgroundImage=`url("${CDN_URL}${aImg}")`;
-    $("eq-weapon-name").textContent=w.isUnique?wepUniqueNames[w.idx]:`Asa S${w.t+1}-${w.l+1}`;
-    $("eq-armor-name").textContent=a.isUnique?armUniqueNames[a.idx]:`Cübbe S${a.t+1}-${a.l+1}`;
-    $("eq-weapon-name").style.color=w.isUnique?"var(--gold)":"#fff"; $("eq-armor-name").style.color=a.isUnique?"var(--gold)":"#fff";
-    $("eq-weapon-stat").textContent=`ATK: ${playerAtk}`; $("eq-armor-stat").textContent=`DEF: ${playerDef} · Azaltım %${Math.round(getDamageMitigation()*100)}`;
-    const wMax=w.t===wepTiers.length-1&&w.l===wepTiers[w.t].length-1;
-    const aMax=a.t===armTiers.length-1&&a.l===armTiers[a.t].length-1;
-    $("eq-weapon-upg").innerHTML=w.isUnique?`<button disabled>YADİGÂR</button>`:wMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('weapon')">${equipmentUpgradeCost("weapon",w)} RUH</button>`;
-    $("eq-armor-upg").innerHTML=a.isUnique?`<button disabled>YADİGÂR</button>`:aMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('armor')">${equipmentUpgradeCost("armor",a)} RUH</button>`;
-    $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})"><img src="${CDN_URL}${img}" style="width:24px;image-rendering:pixelated"><span class="key-count">x${state.keys[i]}</span></div>`).join("");
-    $("uniques").innerHTML=
-      wepUniques.map((img,i)=>`<div class="unique ${state.unlockedWeapons.includes(i)?"":"locked"} ${w.isUnique&&w.idx===i?"equipped":""}" onclick="equipUnique('weapon',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("")+
-      armUniques.map((img,i)=>`<div class="unique ${state.unlockedArmors.includes(i)?"":"locked"} ${a.isUnique&&a.idx===i?"equipped":""}" onclick="equipUnique('armor',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("");
-  }
-
-  async function upgradeEquipment(type){
-    const isWeapon=type==="weapon"; const eq=isWeapon?state.equippedWeapon:state.equippedArmor; if(eq.isUnique)return;
-    const tiers=isWeapon?wepTiers:armTiers; const maxT=tiers.length-1,maxL=tiers[eq.t].length-1;
-    if(eq.t===maxT&&eq.l===maxL) return;
-    const cost=equipmentUpgradeCost(type,eq); if(state.soul<cost){showToast("Yetersiz Ruh!");return}
-    state.soul-=cost;
-    if(eq.l<maxL) eq.l++; else {eq.t++;eq.l=0}
-    state.stats[isWeapon?"weapon_upg":"armor_upg"]++;
-    playSound(isWeapon?"weapon_upg":"robe_upg",.8); playEffectAt("player-sprite","5492udk.gif",1,10);
-    updateCombatStats(); await saveState(); updateUI(); showToast("Eşya güçlendirildi!");
-  }
-  window.upgradeEquipment=upgradeEquipment;
-
-  async function openChest(keyIndex){
-    if(state.keys[keyIndex]<=0){showToast("Bu anahtardan yok!");return}
-    state.keys[keyIndex]--; state.stats.chests++; playSound("chest",.6);
-    const gotUnique=Math.random()<uniqueChances[keyIndex];
-    if(gotUnique){
-      const isWeapon=Math.random()>.5,uArr=isWeapon?wepUniques:armUniques,uState=isWeapon?state.unlockedWeapons:state.unlockedArmors;
-      const missing=uArr.map((_,i)=>i).filter(i=>!uState.includes(i));
-      const idx=(missing.length?missing:uArr.map((_,i)=>i))[Math.floor(Math.random()*(missing.length||uArr.length))];
-      const wasNew=!uState.includes(idx); if(wasNew){uState.push(idx);state.stats.uniques++}
-      $("loot-title").textContent=wasNew?"Kadim Yadigâr Bulundu!":"Tanıdık Yadigâr";
-      $("loot-items").innerHTML=`<img src="${CDN_URL}${uArr[idx]}" style="width:42px;filter:drop-shadow(0 0 6px var(--gold))"><b style="color:var(--gold)">${wasNew?"Depoya eklendi":"Zaten sende vardı"}</b>`;
-    }else{
-      const r=getChestRewards(keyIndex); state.soul+=r.soul; state.blood+=r.blood;
-      $("loot-title").textContent="Kasa Ganimeti";
-      $("loot-items").innerHTML=`<b style="color:#d1b3ff">+${r.soul} Ruh</b><b style="color:#ff6666">+${r.blood} Kan</b>`;
-    }
-    playSound("loot",.6); openModal("loot"); updateCombatStats(); await saveState(); updateUI();
-  }
-  window.openChest=openChest;
-
-  function equipUnique(type,idx){
-    if(type==="weapon"&&state.unlockedWeapons.includes(idx)) state.equippedWeapon={isUnique:true,t:0,l:0,idx};
-    else if(type==="armor"&&state.unlockedArmors.includes(idx)) state.equippedArmor={isUnique:true,t:0,l:0,idx};
-    else return;
-    playSound("equip",.7); updateCombatStats(); queueSave(); updateUI();
-  }
-  window.equipUnique=equipUnique;
-
-  function applyCharacterSprite(anim){
-    if(!state.gender||!battleRenderer)return;
-    const mapped={dash:"run",jump:"jump",death:"death",idle:"idle"}[anim]||"attack";
-    battleRenderer.setCharacter(state.character);battleRenderer.setAnimation(mapped);
-    if(!["idle","dash"].includes(anim)&&!isDead)setTimeout(()=>applyCharacterSprite("idle"),450);
-  }
-  function showDamage(target,amount,type){
-    const el=document.createElement("div"); el.className=`damage ${type}`; el.textContent="-"+Math.max(0,Math.floor(amount));
-    el.style.left=target==="enemy-sprite"?`calc(75% + ${Math.floor(Math.random()*20)-10}px)`:`calc(20% + ${Math.floor(Math.random()*20)-10}px)`;
-    $("battle").appendChild(el); setTimeout(()=>el.remove(),800);
-  }
-  function playEffectAt(targetId,gif,scale=1,offsetY=0){
-    const target=$(targetId); if(!target)return; const eff=document.createElement("img"); eff.src=CDN_URL+gif;
-    Object.assign(eff.style,{position:"absolute",width:(100*scale)+"px",height:(100*scale)+"px",left:"50%",top:`calc(50% + ${offsetY}px)`,transform:"translate(-50%,-50%)",zIndex:"100",pointerEvents:"none"});
-    target.appendChild(eff); setTimeout(()=>eff.remove(),800);
-  }
-  function shootProjectile(type){
-    const p=document.createElement("img"); p.src=CDN_URL+(type==="player"?"mZbPRLE.gif":enemyAttackGif); p.style.position="absolute";p.style.bottom="42px";p.style.width="32px";p.style.zIndex="40";p.style.transition=".3s linear";
-    if(type==="player"){p.style.left="60px";setTimeout(()=>p.style.left="200px",10);playSound("p_atk",.15)}else{p.style.right="60px";p.style.transform="scaleX(-1)";setTimeout(()=>p.style.right="200px",10);playSound("e_atk",.15)}
-    $("battle").appendChild(p);setTimeout(()=>p.remove(),320);
-  }
-
-  function spawnEnemy(){
-    const el=$("enemy-sprite"); el.style.backgroundImage=`url("${CDN_URL}${enemyList[Math.floor(Math.random()*enemyList.length)]}")`; el.style.opacity="1";
-    updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
-  }
-
-  function addXP(amount){
+          <div class="eq"><div class="tiny">SÄ°LAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" styl…17759 tokens truncated…  function addXP(amount){
     const oldTier=getTier(); state.xp+=Math.max(0,Number(amount)||0); let gained=0;
     while(state.xp>=xpNeeded()){state.xp-=xpNeeded();state.level++;gained++}
-    if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yükseldin!`:"Seviye yükseldin!")}
+    if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yÃ¼kseldin!`:"Seviye yÃ¼kseldin!")}
     const newTier=getTier(); updateUI(false);
     if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{ $("battle").style.backgroundImage=`url("${CDN_URL}${newTier.bg}")`;isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
     return false;
@@ -729,7 +236,7 @@
 
   function damageEnemy(){
     if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
-    state.stats.clicks++; currentEnemyHp-=playerAtk; shootProjectile("player");showDamage("enemy-sprite",playerAtk,"hp");
+    state.stats.clicks++; currentEnemyHp-=playerAtk;applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",playerAtk,"hp");
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;$("enemy-sprite").style.opacity="0";playSound("e_death",.5);
@@ -738,7 +245,7 @@
     }
   }
 
-  function killPlayer(message="ÖLDÜN!"){
+  function killPlayer(message="Ã–LDÃœN!"){
     if(isDead)return;isDead=true;state.stats.deaths++;playerHp=0;playSound("p_death",.8);showToast(message);$("player-sprite").style.opacity="0";updatePlayerBars();
     setTimeout(()=>{isDead=false;playerHp=playerMaxHp;playerShield=playerMaxShield;$("player-sprite").style.opacity="1";applyCharacterSprite("idle");updatePlayerBars()},5000);
   }
@@ -754,11 +261,11 @@
     const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"); $("quest-duration").textContent=q.duration+" SN";
     if(state.questEndTime>now){
       const total=Math.max(1000,(state.questEndTime-(state.questStartedAt||now)));const rem=state.questEndTime-now;const pct=clamp(100-rem/total*100,0,100);
-      btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
+      btn.disabled=true;btn.className="";btn.textContent=`AraÅŸtÄ±rÄ±lÄ±yor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
     }else if(state.questEndTime>0){
       btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
     }else{
-      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>Gölgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>GÃ¶lgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
   async function questAction(){
@@ -767,37 +274,37 @@
       state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html="";
       if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
       else{state.soul+=q.soul;state.blood+=q.blood;html=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
-      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="Kalıntı Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="KalÄ±ntÄ± Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
     }else if(state.questEndTime<=0){playSound("quest_start",.5);state.questStartedAt=now;state.questEndTime=now+q.duration*1000}
     checkQuestStatus();await saveState();updateUI();
   }
 
   function checkRitualStatus(){
     const btn=$("btn-ritual"),now=Date.now();
-    if(state.ritualEndTime>now){btn.disabled=true;btn.className="";btn.textContent="Ritüel sürüyor..."}
+    if(state.ritualEndTime>now){btn.disabled=true;btn.className="";btn.textContent="RitÃ¼el sÃ¼rÃ¼yor..."}
     else if(state.ritualEndTime>0){btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!"}
     else if(state.ritualNextAvailable>now){btn.disabled=true;btn.className="";btn.textContent=`Bekleniyor (${Math.ceil((state.ritualNextAvailable-now)/1000)}s)`}
-    else{btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}XWcKSug.png')"></span>Ritüel Yap`}
+    else{btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}XWcKSug.png')"></span>RitÃ¼el Yap`}
   }
   async function ritualAction(){
     if(isDead)return;const now=Date.now(),r=getRitualStats();
     if(state.ritualEndTime>0&&state.ritualEndTime<=now){
       state.ritualEndTime=0;state.stats.rituals++;const roll=state.pendingRitualRoll;let html="";
-      if(roll<.12){state.rune++;html=`<b style="color:#ff7a98">+1 Rün Kırığı</b>`}
-      else if(roll<.40){const d=Math.max(1,Math.floor(3*r.rewardMult));state.dark+=d;html=`<b style="color:#b84dff">+${d} Karanlık Öz</b>`}
+      if(roll<.12){state.rune++;html=`<b style="color:#ff7a98">+1 RÃ¼n KÄ±rÄ±ÄŸÄ±</b>`}
+      else if(roll<.40){const d=Math.max(1,Math.floor(3*r.rewardMult));state.dark+=d;html=`<b style="color:#b84dff">+${d} KaranlÄ±k Ã–z</b>`}
       else{const s=Math.floor((180+state.level*8)*r.rewardMult);state.soul+=s;html=`<b style="color:#d1b3ff">+${s} Ruh</b>`}
-      $("loot-title").textContent="Kan Ritüeli Sonucu";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);await saveState();updateUI();return;
+      $("loot-title").textContent="Kan RitÃ¼eli Sonucu";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);await saveState();updateUI();return;
     }
     if(state.ritualNextAvailable>now)return;
     if(state.blood<r.bloodCost){showToast("Yetersiz Kan!");return}
     state.blood-=r.bloodCost;const hpCost=Math.max(10,Math.floor(playerMaxHp*r.hpCostPercent/100));playerHp-=hpCost;showDamage("player-sprite",hpCost,"hp");updatePlayerBars();
-    if(playerHp<=0){killPlayer("Ritüel seni tüketti...");await saveState();updateUI();return}
+    if(playerHp<=0){killPlayer("RitÃ¼el seni tÃ¼ketti...");await saveState();updateUI();return}
     state.ritualNextAvailable=now+r.cooldownMS;state.ritualEndTime=now+3000;state.pendingRitualRoll=Math.random();playSound("ritual",.7);playEffectAt("player-sprite","BvKsn1n.gif",1.4,-10);await saveState();updateUI();
   }
 
   function renderUpgrades(){
     const sig=JSON.stringify([state.upgrades,money(state.soul),money(state.blood),money(state.dark)]);if(uiCache.upgrades===sig)return;uiCache.upgrades=sig;
-    $("upgrades").innerHTML=altarUpgrades.map(def=>{const lvl=state.upgrades[def.id]||0,max=lvl>=def.imgs.length-1,cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl)),unit=def.type==="soul"?"Ruh":def.type==="blood"?"Kan":"Öz";
+    $("upgrades").innerHTML=altarUpgrades.map(def=>{const lvl=state.upgrades[def.id]||0,max=lvl>=def.imgs.length-1,cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl)),unit=def.type==="soul"?"Ruh":def.type==="blood"?"Kan":"Ã–z";
       return `<div class="shop-item"><div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${def.imgs[Math.min(lvl,def.imgs.length-1)]}')"></span><div><div class="shop-name">${def.name} <span style="color:var(--gold)">${max?"MAKS":roman[lvl]||lvl}</span></div><div class="shop-desc">${def.desc}</div></div></div><button onclick="buyAltarUpgrade('${def.id}')" ${max?"disabled":""}>${max?"MAX":cost+" "+unit}</button></div>`}).join("");
   }
   async function buyAltarUpgrade(id){
@@ -811,18 +318,18 @@
     const s=state.stats;return ({kill:s.kills,click:s.clicks,death:s.deaths,quest:s.quests,ritual:s.rituals,shop:s.shop,chest:s.chests,mg_win:s.mg_win,upg_w:s.weapon_upg,upg_a:s.armor_upg,unique:s.uniques,level:state.level})[a.type]||0;
   }
   function checkAchievements(){
-    let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);const reward=SPECIAL_SKIN_REWARDS[a.id];showToast(reward?`🏆 ${a.name} · ${reward} açıldı!`:"🏆 "+a.name);playSound("equip",.8);changed=true}}
+    let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);const reward=SPECIAL_SKIN_REWARDS[a.id];showToast(reward?`ğŸ† ${a.name} Â· ${reward} aÃ§Ä±ldÄ±!`:"ğŸ† "+a.name);playSound("equip",.8);changed=true}}
     if(changed){queueSave();renderAchievements()}
   }
   function renderAchievements(){
     $("ach-count").textContent=`${state.unlockedAchievements.length} / ${achievements.length}`;
-    $("ach-list").innerHTML=achievements.map(a=>{const u=state.unlockedAchievements.includes(a.id),reward=SPECIAL_SKIN_REWARDS[a.id];return `<div class="ach ${u?"unlocked":""}"><img src="${CDN_URL}${a.icon}"><div><b>${a.name}</b><div class="tiny">${u?a.desc:"Sırrını öğrenmek için oynamaya devam et."}${reward?` · Ödül: ${reward}`:""}</div></div></div>`}).join("");
+    $("ach-list").innerHTML=achievements.map(a=>{const u=state.unlockedAchievements.includes(a.id),reward=SPECIAL_SKIN_REWARDS[a.id];return `<div class="ach ${u?"unlocked":""}"><img src="${CDN_URL}${a.icon}"><div><b>${a.name}</b><div class="tiny">${u?a.desc:"SÄ±rrÄ±nÄ± Ã¶ÄŸrenmek iÃ§in oynamaya devam et."}${reward?` Â· Ã–dÃ¼l: ${reward}`:""}</div></div></div>`}).join("");
   }
   window.renderAchievements=renderAchievements;
 
   async function executePrestige(){
     closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements]};
-    state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
+    state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim GÃ¼Ã§ uyandÄ±.")
   }
   window.executePrestige=executePrestige;
 
@@ -838,7 +345,7 @@
   }
   function queueSave(){if(saveQueued)return;saveQueued=true;setTimeout(()=>{saveQueued=false;saveState().catch(()=>{})},400)}
   async function hardResetGame(){
-    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");return}
+    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("SÄ±fÄ±rlamak iÃ§in 4 saniye iÃ§inde tekrar bas.");return}
     state=sanitizeState(clone(defaultState));try{localStorage.removeItem(BACKUP_KEY)}catch{};await saveState().catch(()=>{});location.reload()
   }
   window.hardResetGame=hardResetGame;
@@ -850,7 +357,7 @@
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
     const invSig=JSON.stringify([state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();checkRitualStatus();
-    if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
+    if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 RÃ¼n)":"RÃ¼n Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
 
   function initCharacterSystem(){
@@ -886,7 +393,7 @@
   function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
     if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=true;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
-    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
+    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazÄ±r.":"Karakter gÃ¶rÃ¼nÃ¼mÃ¼ gÃ¼ncellendi.");
   }
   Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
 
@@ -895,12 +402,12 @@
   $("btn-ritual").onclick=ritualAction;
   $("btn-mg").onclick=async function(){
     if(!mgActive){
-      if(state.rune<1){showToast("Yeterli Rün Yok!");return}
+      if(state.rune<1){showToast("Yeterli RÃ¼n Yok!");return}
       state.rune--;await saveState();mgActive=true;mgPos=0;mgDir=1;mgSpeed=1.8+Math.random();this.textContent="KIR!";this.className="primary";$("mg-result").textContent="";
       const loop=()=>{if(!mgActive)return;mgPos+=mgDir*mgSpeed;if(mgPos>=96){mgPos=96;mgDir=-1}if(mgPos<=0){mgPos=0;mgDir=1}$("mg-cursor").style.left=mgPos+"%";mgAnim=requestAnimationFrame(loop)};loop();
     }else{
       mgActive=false;cancelAnimationFrame(mgAnim);const win=mgPos>=42.5&&mgPos<=57.5;
-      if(win){const d=getDimensionReward();state.dark+=d;state.stats.mg_win++;addXP(300);$("mg-result").textContent=`BAŞARILI! +${d} Öz`;$("mg-result").style.color="var(--mor2)";playEffectAt("player-sprite","UbY50AM.gif")}
+      if(win){const d=getDimensionReward();state.dark+=d;state.stats.mg_win++;addXP(300);$("mg-result").textContent=`BAÅARILI! +${d} Ã–z`;$("mg-result").style.color="var(--mor2)";playEffectAt("player-sprite","UbY50AM.gif")}
       else{$("mg-result").textContent="ISKALADIN!";$("mg-result").style.color="var(--muted)"}
       await saveState();updateUI();
     }
@@ -932,7 +439,7 @@
       if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
       updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
     }catch(e){
-      console.error("Phone SDK init error",e);showToast("Telefon SDK başlatılamadı.");state=sanitizeState(clone(defaultState));updateUI();
+      console.error("Phone SDK init error",e);showToast("Telefon SDK baÅŸlatÄ±lamadÄ±.");state=sanitizeState(clone(defaultState));updateUI();
     }
   }
   boot();
@@ -940,3 +447,4 @@
 </script>
 </body>
 </html>
+
