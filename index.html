@@ -691,7 +691,8 @@
     {id:"dust",name:"Kozmik Toz",desc:"Saniyede Ruh üretir.",imgs:["Y9xlskS.png","MEvfNBv.png","ViCqShl.png","cmLNF4B.png","Iz3gWYq.png","1HNJ42F.png","xUYBV1O.png","vhawAm2.png"],type:"blood",baseCost:100,mult:1.8},
     {id:"scroll",name:"Kanlı Parşömen",desc:"Saniyede Kan üretir.",imgs:["V5QEvwy.png","QEYitFc.png","TOgbKV4.png","ZGWqw1W.png","dXcl3wH.png","z5k8XDk.png","QRXsNtE.png"],type:"dark",baseCost:10,mult:2.0},
     {id:"potion",name:"Yaşam İksiri",desc:"Maksimum Canı artırır.",imgs:["XCjwkjr.png","DgmO02h.png","lm6RHXG.png","uF7ztGJ.png","JEG4iJU.png","B6YG0in.png","AYSkDbA.png","oMYS51o.png"],type:"soul",baseCost:150,mult:1.5},
-    {id:"coin",name:"Ganimet Zenginliği",desc:"Görev ganimetini seviye başına +%20 artırır.",imgs:["M7X9WOQ.png","oy6iNYy.png","qQwN1mW.png","Eq2ngN6.png","kBQEANO.png"],type:"blood",baseCost:200,mult:1.7}
+    {id:"coin",name:"Ganimet Zenginliği",desc:"Görev ganimetini seviye başına +%20 artırır.",imgs:["M7X9WOQ.png","oy6iNYy.png","qQwN1mW.png","Eq2ngN6.png","kBQEANO.png"],type:"blood",baseCost:200,mult:1.7},
+    {id:"speed",name:"Kanlı Hız",desc:"Otomatik saldırı hızını artırır.",imgs:["fb1079.png","fb1079.png","fb1079.png","fb1079.png","fb1079.png","fb1079.png","fb1079.png"],type:"dark",baseCost:25,mult:1.9}
   ];
   const roman = ["","I","II","III","IV","V","VI","VII","VIII","IX","X"];
 
@@ -741,9 +742,9 @@
   const COSMETIC_BUNDLES=[
     {id:"bundle:elf",name:"Elf Mirası",desc:"10 ten uyumlu elf kulağı · %38 avantaj",price:750,section:"Paketler",assetIds:ELF_EAR_IDS},
     {id:"bundle:demon",name:"İblis Suretleri",desc:"Kadın + erkek Demon Skin · %25 avantaj",price:1200,section:"Paketler",assetIds:DEMON_IDS},
-    {id:"bundle:dresses",name:"Saray Gardırobu",desc:`${DRESS_IDS.length} elbisenin tamamı · %40 avantaj`,price:1850,section:"Paketler",assetIds:DRESS_IDS},
+    {id:"bundle:dresses",name:"Saray Gardırobu",desc:`${DRESS_IDS.length} elbisenin tamamı · %40 avantaj`,price:1850,section:"Paketler",gender:"female",assetIds:DRESS_IDS},
     {id:"bundle:shadow",name:"Gölge Gezgini",desc:"Veba maskeleri, cadı şapkası ve mor pelerin",price:760,section:"Paketler",assetIds:["female.mask.female-plague-mask","male.mask.male-plague-mask","female.hat.witch-hat","unisex.back.cape-purple"]},
-    {id:"bundle:adventurer",name:"Maceracı Seti",desc:"Chain mail, sırt çantaları ve muhafız miğferi",price:650,section:"Paketler",assetIds:["male.clothing.chainmail","unisex.back.backpack","unisex.back.small-backpack","male.hat.guard-helmet"]}
+    {id:"bundle:adventurer",name:"Maceracı Seti",desc:"Chain mail, sırt çantaları ve muhafız miğferi",price:650,section:"Paketler",gender:"male",assetIds:["male.clothing.chainmail","unisex.back.backpack","unisex.back.small-backpack","male.hat.guard-helmet"]}
   ];
   const COSMETIC_MARKET_OFFERS=[
     ...VARIANT_OFFERS,
@@ -803,7 +804,7 @@
     equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
     equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
     unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],purchasedMarketOffers:[],petAccessVersion:2,ownedPets:[],equippedPet:null,petProgress:{},itemInventory:[],equippedLootItems:{weapon:null,armor:null},gems:{arcane:0,poison:0,fire:0,dark:0,blood:0},consumables:{health:0,shield:0,blood:0},
-    upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
+    upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0,speed:0},
     ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,ritualDay:"",weekly:{key:"",bossClaimed:false},goddess:{day:"",reputation:0,claimed:[],bonusClaimed:false,streak:0,lastCompleteDay:"",shopClaims:[],baseline:{kills:0,quests:0,rituals:0}},
     settings:{music:0.15,sfx:1},
     stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,loot_weapon:0,loot_armor:0,mg_win:0,uniques:0},
@@ -968,7 +969,7 @@
 
   function renderMarket(){
     const signature=JSON.stringify([characterAssets.length,state.gender,state.character?.skinId,state.ownedCosmetics,state.purchasedMarketOffers,marketVariantSelection]);if(uiCache.market===signature)return;uiCache.market=signature;
-    const visible=ALL_COSMETIC_OFFERS.filter(o=>o.id.startsWith("bundle:")||!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))];
+    const visible=ALL_COSMETIC_OFFERS.filter(o=>!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))];
     const previewAsset=asset=>{const gender=asset.gender==="unisex"?(state.gender||"female"):asset.gender,base=assetsFor(gender,"skin")[0],layers=asset.category==="skin"?[asset]:asset.category==="back"?[asset,base]:[base,asset];return `<span class="market-character">${layers.filter(Boolean).map(layer=>`<i style="background-image:url('${RAW_ASSET_URL}${layer.runtimePath}')"></i>`).join("")}</span>`};
     const preview=offer=>offerPurchaseIds(offer).slice(0,2).map(id=>assetById(id)).filter(Boolean).map(previewAsset).join("");
     const dots=offer=>offer.variantIds?`<div class="variant-dots">${offer.variantIds.map((id,i)=>`<button class="variant-dot ${selectedVariantId(offer)===id?"active":""}" style="background:${MARKET_VARIANT_SWATCHES[offer.id]?.[i]||"#777"}" title="Renk ${i+1}" onclick="selectMarketVariant('${offer.id}','${id}')"></button>`).join("")}</div><div class="market-progress">${offer.variantIds.filter(id=>state.ownedCosmetics.includes(id)).length}/${offer.variantIds.length} sende</div>`:"";
@@ -1094,7 +1095,7 @@
   async function salvageLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.soul+=RARITIES[item.rarity].salvage;state.itemInventory=state.itemInventory.filter(i=>i.id!==id);if(state.equippedLootItems[item.type]===id)state.equippedLootItems[item.type]=null;updateCombatStats();uiCache.inventory="";await saveState();updateUI(false);showToast(`+${RARITIES[item.rarity].salvage} Ruh`)}
   function openEquipmentDetail(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;detailItemId=id;const current=equippedDropItem(item.type),delta=item.power-(current?.power||0),compatible=item.type!=="weapon"||!item.classId||item.classId===state.playerClass;$("equipment-detail-name").textContent=item.name;$("equipment-detail-icon").style.cssText=equipmentIconStyle(item,4);$("equipment-detail-body").innerHTML=`<div style="color:${RARITIES[item.rarity].color};font-weight:900">${RARITIES[item.rarity].name} · ${item.type==="weapon"?"ATK":"DEF"} +${item.power}</div><div class="tiny">${item.classId?`Sınıf: ${CLASS_DEFS[item.classId].name} · ${WEAPON_TYPE_NAMES[item.weaponType]}<br>`:""}${ELEMENT_NAMES[item.element]} elementi<br>${lootBonusLabels(item).join(" · ")||"Ek özellik yok"}<br>${current?`Mevcut eşyaya göre ${delta>=0?"+":""}${delta}`:"Bu slotta ganimet kuşanılmamış."}</div>`;$("equipment-detail-actions").innerHTML=`<button class="primary" onclick="equipLootItem('${id}')" ${compatible?"":"disabled"}>${compatible?"KUŞAN":"SINIF UYUMSUZ"}</button><button onclick="salvageLootItem('${id}');closeModal('equipment-detail')">PARÇALA</button>`;openModal("equipment-detail")}
   function setGemTarget(type){if(!["weapon","armor"].includes(type))return;gemInfusionTarget=type;renderGemInfusion()}
-  function renderGemInfusion(){const el=$("gem-infusion");if(!el)return;const item=equippedDropItem(gemInfusionTarget);el.innerHTML=`<button class="gem-button ${gemInfusionTarget==="weapon"?"primary":""}" onclick="setGemTarget('weapon')">SİLAH</button><button class="gem-button ${gemInfusionTarget==="armor"?"primary":""}" onclick="setGemTarget('armor')">ZIRH</button><span></span>`+Object.keys(state.gems).map(element=>`<button class="gem-button" onclick="infuseEquipped('${element}')" ${item&&state.gems[element]>0&&state.rune>0&&item.element!==element?"":"disabled"}><i class="gem" style="color:${ELEMENT_COLORS[element]};background:${ELEMENT_COLORS[element]}"></i>${ELEMENT_NAMES[element]} x${state.gems[element]}</button>`).join("")}
+  function renderGemInfusion(){     const el=$("gem-infusion");if(!el)return;const item=equippedDropItem(gemInfusionTarget);     el.innerHTML=`<button class="gem-button ${gemInfusionTarget==="weapon"?"primary":""}" onclick="setGemTarget('weapon')">SİLAH</button><button class="gem-button ${gemInfusionTarget==="armor"?"primary":""}" onclick="setGemTarget('armor')">ZIRH</button><span></span>` +      Object.keys(state.gems).map(element=>`<button class="gem-button" onclick="infuseEquipped('${element}')" ${item&&state.gems[element]>0&&state.rune>0&&item.element!==element?"":"disabled"}><div style="width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;box-shadow:0 0 5px ${ELEMENT_COLORS[element]};background:${ELEMENT_COLORS[element]}"></div>${ELEMENT_NAMES[element]} x${state.gems[element]}</button>`).join("");   }
   async function infuseEquipped(element){const item=equippedDropItem(gemInfusionTarget);if(!item||!state.gems[element]||state.rune<1||item.element===element)return;state.gems[element]--;state.rune--;item.element=element;item.name=`${{arcane:"Yıldız",poison:"Sarmaşık",fire:"Kor",dark:"Boşluk",blood:"Kızıl"}[element]} ${item.type==="weapon"?WEAPON_TYPE_NAMES[item.weaponType]||"Silah":"Muhafız Zırhı"}`;playSound("equip",.65);updateCombatStats();uiCache.inventory="";await saveState();updateUI(false);showToast(`${ELEMENT_NAMES[element]} gemi işlendi.`)}
   Object.assign(window,{equipPet,feedPet,equipLootItem,salvageLootItem,openEquipmentDetail,setGemTarget,infuseEquipped});
 
@@ -1289,14 +1290,19 @@
   window.buyGoddessOffer=buyGoddessOffer;
 
   function checkQuestStatus(){
-    const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"),risk=QUEST_RISKS[state.questRisk]||QUEST_RISKS.safe;$("quest-duration").textContent=state.questEndTime?`${risk.name} · ${q.duration} SN`:"Yol Seç";
+    const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"),choices=$("expedition-choices"),durationEl=$("quest-duration");
+    if(!btn || !choices || !durationEl) return;
+    const risk=QUEST_RISKS[state.questRisk]||QUEST_RISKS.safe;
+    durationEl.textContent=state.questEndTime?`${risk.name} · ${Math.ceil((state.questEndTime-now)/1000)} SN`:"Yol Seç";
     if(state.questEndTime>now){
       const total=Math.max(1000,(state.questEndTime-(state.questStartedAt||now)));const rem=state.questEndTime-now;const pct=clamp(100-rem/total*100,0,100);
-      $("expedition-choices").style.display="none";btn.style.display="flex";btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
+      choices.style.display="none";btn.style.display="flex";btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
     }else if(state.questEndTime>0){
-      $("expedition-choices").style.display="none";btn.style.display="flex";btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
+      choices.style.display="none";btn.style.display="flex";btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
     }else{
-      btn.style.display="none";$("expedition-choices").style.display="grid";if(!$("expedition-choices").dataset.ready){$("expedition-choices").innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");$("expedition-choices").dataset.ready="1"}$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+      btn.style.display="none";choices.style.display="grid";
+      choices.innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");
+      $("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
   async function startExpedition(riskId){if(state.questEndTime>0||!QUEST_RISKS[riskId])return;state.questRisk=riskId;state.questType=Object.keys(QUEST_TYPES)[Math.floor(Math.random()*Object.keys(QUEST_TYPES).length)];state.questStartedAt=Date.now();state.questEndTime=state.questStartedAt+getQuestStats().duration*1000;playSound("quest_start",.5);await saveState();renderGoddessHub()}
@@ -1358,8 +1364,21 @@
   Object.assign(window,{openPrestigeModal,selectPrestigeClass,executePrestige});
 
   function switchTab(id,el){
-    playSound("tab",.5);document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));$("tab-"+id).classList.add("active");el?.classList.add("active");
-    activeTabId=id;isCombatActive=id==="main"&&!!state.gender&&introStarted;document.body.classList.toggle("hide-battle",id!=="main");if(id==="main"){isAFK=false;lastInteractTime=Date.now();$("player-afk").style.display="none";$("enemy-afk").style.display="none"}
+    playSound("tab",.5);
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));
+    $("tab-"+id).classList.add("active");
+    el?.classList.add("active");
+    activeTabId=id;
+    isCombatActive=id==="main"&&!!state.gender&&introStarted;
+    document.body.classList.toggle("hide-battle",id!=="main");
+    if(id==="main"){
+      isAFK=false;
+      lastInteractTime=Date.now();
+      $("player-afk").style.display="none";
+      $("enemy-afk").style.display="none";
+      checkQuestStatus(); // Macera sekmesine dönüldüğünde kalıntıları tazeler
+    }
   }
   window.switchTab=switchTab;
 
@@ -1452,14 +1471,23 @@
   },2000);
 
 
-  setTimeout(() => {
-    setInterval(() => {
-      if(isCombatActive&&!isMapChanging&&!isAFK&&!isDead&&currentEnemyHp>0){
-        damageEnemy(true); 
+  let autoAttackTimer = null;
+  function startAutoAttack() {
+    if(autoAttackTimer) clearTimeout(autoAttackTimer);
+    // Sunak geliştirmesi: Her seviyede 200ms daha hızlı (2000ms'den 800ms'ye kadar düşebilir)
+    let attackSpeed = Math.max(800, 2000 - ((state.upgrades.speed || 0) * 200)); 
+    
+    autoAttackTimer = setTimeout(() => {
+      if(isCombatActive && !isMapChanging && !isAFK && !isDead && currentEnemyHp > 0){
+        damageEnemy(true);
         updateUI(false);
       }
-    }, 2000); 
-  }, 1000);
+      startAutoAttack(); // Döngüyü tekrarla
+    }, attackSpeed);
+  }
+  
+  // Oyuna başlarken gecikmeli tetikle
+  setTimeout(startAutoAttack, 1000);
 
   setInterval(()=>{
     if((state.upgrades.dust||0)>0&&!isDead)state.soul+=(state.upgrades.dust||0)*5;
