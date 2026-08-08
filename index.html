@@ -937,12 +937,19 @@
   function getQuestStats(){
     const risk=QUEST_RISKS[state.questRisk]||QUEST_RISKS.safe,duration=Math.ceil(Math.min(180,30+state.level*3)*risk.duration);
     const lootMult=(1+(state.upgrades.coin||0)*0.20)*risk.reward,type=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;
+    
+    // Seviye 10+ için risk türüne göre Karanlık Öz çıkma ihtimali ve miktarı
+    const darkChance = state.level >= 10 ? (state.questRisk === 'forbidden' ? 0.45 : state.questRisk === 'mist' ? 0.25 : 0.08) : 0;
+    const darkAmount = Math.max(1, Math.floor(state.level / 15 * risk.reward));
+
     return {
       duration,
       xp:Math.floor(75+state.level*12),
       soul:Math.floor((25+state.level*8)*getPrestigeMultiplier()*lootMult*type.soulMult),
       blood:Math.floor((8+state.level*3)*getPrestigeMultiplier()*lootMult*type.bloodMult),
-      keyChance:Math.min(0.75,0.15+(state.upgrades.book||0)*0.05+type.keyBonus+risk.key)
+      keyChance:Math.min(0.75,0.15+(state.upgrades.book||0)*0.05+type.keyBonus+risk.key),
+      darkChance,
+      darkAmount
     };
   }
   function getRitualStats(){
@@ -1300,16 +1307,35 @@
       choices.innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");
       $("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
-  }
-  async function startExpedition(riskId){if(state.questEndTime>0||!QUEST_RISKS[riskId])return;state.questRisk=riskId;state.questType=Object.keys(QUEST_TYPES)[Math.floor(Math.random()*Object.keys(QUEST_TYPES).length)];state.questStartedAt=Date.now();state.questEndTime=state.questStartedAt+getQuestStats().duration*1000;playSound("quest_start",.5);await saveState();renderGoddessHub()}
-  window.startExpedition=startExpedition;
   async function questAction(){
     const now=Date.now(),q=getQuestStats();
     if(state.questEndTime>0&&state.questEndTime<=now){
-      const completedType=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html=`<span class="atlas-icon" style="${atlasIconStyle(completedType.atlas,completedType.index,2)}"></span>`;
-      if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html+=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
-      else{state.soul+=q.soul;state.blood+=q.blood;html+=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
-      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent=completedType.name+" Ganimeti";$("loot-items").innerHTML=html;state.questType=null;state.questRisk=null;closeModal("goddess-hub");openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+      const completedType=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;
+      state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);
+      let html=`<span class="atlas-icon" style="${atlasIconStyle(completedType.atlas,completedType.index,2)}"></span>`;
+      
+      if(Math.random()<q.keyChance){
+        const tiers=Math.min(8,Math.floor(state.level/10)+1);
+        const k=Math.floor(Math.random()*tiers);
+        state.keys[k]++;
+        html+=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`;
+      } else {
+        state.soul+=q.soul; state.blood+=q.blood;
+        html+=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`;
+      }
+
+      // Seviye 10+ ve şans tutarsa Ekstra Karanlık Öz Ödülü
+      if(state.level >= 10 && Math.random() < q.darkChance){
+        state.dark += q.darkAmount;
+        html+=`<b style="color:#b84dff">+${q.darkAmount} Karanlık Öz</b>`;
+      }
+
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;
+      $("loot-title").textContent=completedType.name+" Ganimeti";
+      $("loot-items").innerHTML=html;
+      state.questType=null;state.questRisk=null;
+      closeModal("goddess-hub");openModal("loot");
+      playSound("loot",.6);applyCharacterSprite("jump");
     }
     checkQuestStatus();await saveState();renderGoddessHub();updateUI();
   }
