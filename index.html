@@ -252,15 +252,15 @@
         <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
         <div class="inventory-avatar">
           <div class="wardrobe-column">
-            <button id="wardrobe-hair" class="wardrobe-slot" onclick="openWardrobeSlot('hair')"></button>
-            <button id="wardrobe-top" class="wardrobe-slot" onclick="openWardrobeSlot('top')"></button>
-            <button id="wardrobe-bottom" class="wardrobe-slot" onclick="openWardrobeSlot('bottom')"></button>
+            <div id="wardrobe-hair" class="wardrobe-slot"></div>
+            <div id="wardrobe-top" class="wardrobe-slot"></div>
+            <div id="wardrobe-bottom" class="wardrobe-slot"></div>
           </div>
           <div class="inventory-avatar-stage"><canvas id="inventory-character" width="80" height="64"></canvas></div>
           <div class="wardrobe-column">
-            <button id="wardrobe-outfit" class="wardrobe-slot" onclick="openWardrobeSlot('outfit')"></button>
-            <button id="wardrobe-socks" class="wardrobe-slot" onclick="openWardrobeSlot('socks')"></button>
-            <button id="wardrobe-shoes" class="wardrobe-slot" onclick="openWardrobeSlot('shoes')"></button>
+            <div id="wardrobe-outfit" class="wardrobe-slot"></div>
+            <div id="wardrobe-socks" class="wardrobe-slot"></div>
+            <div id="wardrobe-shoes" class="wardrobe-slot"></div>
           </div>
         </div>
         <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
@@ -425,7 +425,7 @@
     if(!characterAssets.length)await loadCharacterManifest();
     await preloadCharacterAssets((done,total)=>{const percent=Math.round(done/total*100);$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`});
     $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
-    if(state.gender){isCombatActive=true;applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
+    if(state.gender){isCombatActive=activeTabId==="main";applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
     updateUI();
   }
   window.startGameIntro=startGameIntro;
@@ -533,7 +533,7 @@
   let state = clone(defaultState);
   let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
   let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
-  let isDead=false,isMapChanging=false,isCombatActive=false,isAFK=false,introStarted=false,lastInteractTime=Date.now();
+  let isDead=false,isMapChanging=false,isCombatActive=false,isAFK=false,introStarted=false,activeTabId="main",lastInteractTime=Date.now();
   let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
   let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null;
   let userSettings={music:0.15,sfx:1};
@@ -943,7 +943,7 @@
 
   function switchTab(id,el){
     playSound("tab",.5);document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));$("tab-"+id).classList.add("active");el?.classList.add("active");
-    isCombatActive=id==="main"&&!!state.gender&&introStarted;document.body.classList.toggle("hide-battle",id!=="main");
+    activeTabId=id;isCombatActive=id==="main"&&!!state.gender&&introStarted;document.body.classList.toggle("hide-battle",id!=="main");if(id==="main"){isAFK=false;lastInteractTime=Date.now();$("player-afk").style.display="none";$("enemy-afk").style.display="none"}
   }
   window.switchTab=switchTab;
 
@@ -998,13 +998,12 @@
   function randomizeCreator(){
     const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null,unlockedSpecial=assetsFor(gender,"skin","special").filter(isSpecialSkinUnlocked),useOutfit=Math.random()<.22;creatorDraft={gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:unlockedSpecial.length&&Math.random()<.18?pick(unlockedSpecial)?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,basewearId:pick(clothingAssets(gender,"basewear"))?.id||null,topId:pick(clothingAssets(gender,"top"))?.id||null,bottomId:pick(clothingAssets(gender,"bottom"))?.id||null,socksId:pick(clothingAssets(gender,"socks"))?.id||null,shoesId:pick(clothingAssets(gender,"shoes"))?.id||null,outfitId:useOutfit?pick(clothingAssets(gender,"outfit"))?.id||null:null};playSound("select",.6);renderCreatorControls();
   }
-  function openCharacterCreator(){closeModal("settings");creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
-  function openWardrobeSlot(category){openCharacterCreator();creatorCategory=category;renderCreatorControls()}
+  function openCharacterCreator(){closeModal("settings");isCombatActive=false;creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorCategory="skin";renderCreatorControls();updateUI(false)}
   async function finishCharacterCreation(){
-    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=true;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    if(!creatorDraft)return;const isNew=!state.gender;state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
     updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();updateUI();showToast(isNew?"Karakterin hazır.":"Karakter görünümü güncellendi.");
   }
-  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,openWardrobeSlot,finishCharacterCreation});
+  Object.assign(window,{setCreatorGender,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,finishCharacterCreation});
 
   $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
   $("btn-quest").onclick=questAction;
