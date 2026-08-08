@@ -386,14 +386,14 @@
   const sfx = {
     bg:new Audio("https://files.catbox.moe/74c7yc.mp3"),
     p_atk:new Audio("https://files.catbox.moe/jxe6g6.wav"), e_atk:new Audio("https://files.catbox.moe/yqtnmq.wav"),
-    loot:new Audio("https://files.catbox.moe/sr74q7.wav"), lvlup:new Audio("https://files.catbox.moe/459gkz.wav"),
-    equip:new Audio("https://files.catbox.moe/ozg7s8.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
+    loot:new Audio(CDN_URL+"gem.wav"), lvlup:new Audio(CDN_URL+"level-complete.wav"),
+    equip:new Audio(CDN_URL+"equip.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
     mapchange:new Audio("https://files.catbox.moe/xnmhb5.wav"), chest:new Audio("https://files.catbox.moe/az4wl5.wav"),
-    e_death:new Audio("https://files.catbox.moe/t30v8r.wav"), p_death:new Audio("https://files.catbox.moe/k9gftq.wav"),
-    tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
+    e_death:new Audio(CDN_URL+"enemy-defeat.wav"), p_death:new Audio(CDN_URL+"player-defeat.wav"),
+    tab:new Audio(CDN_URL+"ui-select.wav"), select:new Audio(CDN_URL+"ui-select.wav"),
     ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
     rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
-    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
+    weapon_upg:new Audio(CDN_URL+"upgrade.wav"), robe_upg:new Audio(CDN_URL+"upgrade.wav")
   };
   sfx.bg.loop = true;
 
@@ -410,9 +410,9 @@
 
   const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
   const V55_SLIME_ENEMIES = [
-    {id:"slime-blue",name:"Mavi Slime",element:"arcane",sprite:"asset-v55/enemies/slimes/slime-blue.png"},
-    {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"asset-v55/enemies/slimes/slime-green.png"},
-    {id:"slime-red",name:"Ateş Slime",element:"fire",sprite:"asset-v55/enemies/slimes/slime-red.png"}
+    {id:"slime-blue",name:"Mavi Slime",element:"arcane",sprite:"slime-blue.png"},
+    {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"slime-green.png"},
+    {id:"slime-red",name:"Ateş Slime",element:"fire",sprite:"slime-red.png"}
   ];
   let v55SlimesReady=false,currentEnemyProfile=null;
   function preloadV55Enemies(){Promise.all(V55_SLIME_ENEMIES.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=CDN_URL+enemy.sprite}))).then(()=>{v55SlimesReady=true}).catch(()=>{v55SlimesReady=false})}
