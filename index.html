@@ -1308,6 +1308,19 @@
       $("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
+
+  async function startExpedition(riskId){
+    if(state.questEndTime>0||!QUEST_RISKS[riskId])return;
+    state.questRisk=riskId;
+    state.questType=Object.keys(QUEST_TYPES)[Math.floor(Math.random()*Object.keys(QUEST_TYPES).length)];
+    state.questStartedAt=Date.now();
+    state.questEndTime=state.questStartedAt+getQuestStats().duration*1000;
+    playSound("quest_start",.5);
+    checkQuestStatus();
+    await saveState();
+    updateUI();
+  }
+  window.startExpedition = startExpedition;
   
   async function questAction(){
     const now=Date.now(),q=getQuestStats();
@@ -1336,11 +1349,15 @@
       $("loot-title").textContent=completedType.name+" Ganimeti";
       $("loot-items").innerHTML=html;
       state.questType=null;state.questRisk=null;
-      closeModal("goddess-hub");openModal("loot");
+      openModal("loot");
       playSound("loot",.6);applyCharacterSprite("jump");
     }
-    checkQuestStatus();await saveState();renderGoddessHub();updateUI();
+    checkQuestStatus();
+    await saveState();
+    updateUI();
   }
+  window.questAction=questAction;
+  
   function renderRitualChoices(){const used=state.ritualDay===localDayKey();$("ritual-choices").innerHTML=[
     ["vitality","Can Adağı","%25 can · yüksek Ruh"],["blood","Kan Adağı","30 Kan · Rün/Öz şansı"],["essence","Öz Yemini","5 Öz · 15 İtibar"]
   ].map(([id,name,desc])=>`<button class="ritual-choice" onclick="performGoddessRitual('${id}')" ${used?"disabled":""}><span>${name}<br><small>${used?"Bugünkü adak sunuldu":desc}</small></span></button>`).join("")}
