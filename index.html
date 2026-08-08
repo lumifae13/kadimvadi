@@ -59,7 +59,7 @@
     #enemy-sprite.slime-v55{width:64px;height:64px;background-size:512px 192px;animation:slimeIdle .8s linear infinite}
     #enemy-sprite.slime-v55::before,#enemy-sprite.slime-v55::after{content:"";position:absolute;width:64px;height:64px;bottom:3px;background-image:inherit;background-size:512px 192px;background-repeat:no-repeat;animation:slimeIdle .8s linear infinite;z-index:-1;filter:brightness(.92)}#enemy-sprite.slime-v55::before{left:-34px;transform:scale(.72);animation-delay:-.2s}#enemy-sprite.slime-v55::after{right:-32px;transform:scale(.62);animation-delay:-.45s;filter:brightness(.78)}
     #enemy-sprite.boss-v55{right:22px;bottom:24px;width:80px;height:80px;background-size:80px 80px;background-position:center;animation:none;filter:drop-shadow(0 0 7px #b72054)}
-    #enemy-sprite.boss-animated-v60{right:25px;bottom:20px;width:100px;height:100px;animation:none;background-repeat:no-repeat;background-position:0 0;filter:drop-shadow(0 0 8px #b72054);transform:scale(-2,2);transform-origin:center bottom}#enemy-sprite.boss-animated-v60 #enemy-hp-wrap{transform:scale(.5);transform-origin:center bottom;width:140%;left:-20%;bottom:-5px}
+    #enemy-sprite.boss-animated-v60{right:25px;bottom:-30px;width:100px;height:100px;animation:none;background-repeat:no-repeat;background-position:0 0;filter:drop-shadow(0 0 8px #b72054);transform:scale(-2,2);transform-origin:center bottom}#enemy-sprite.boss-animated-v60 #enemy-hp-wrap{transform:scale(.5);transform-origin:center bottom;width:140%;left:-20%;bottom:25px}
     @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
     @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
     @keyframes slimeIdle{0%,24.99%{background-position:0 0}25%,49.99%{background-position:-64px 0}50%,74.99%{background-position:-128px 0}75%,100%{background-position:-192px 0}}
@@ -105,6 +105,7 @@
     .atlas-icon{display:inline-block;width:32px;height:32px;background-repeat:no-repeat;image-rendering:pixelated;flex:0 0 auto}
     .consumable-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.consumable-card{padding:6px 3px;border:1px solid #34202d;border-radius:6px;background:#080004;text-align:center}.consumable-card .atlas-icon{display:block;margin:0 auto 3px}.consumable-card button{min-height:25px;padding:2px;font-size:8px;margin-top:4px}
     #battle-pet{position:absolute;left:73px;bottom:19px;width:32px;height:32px;z-index:15;background-repeat:no-repeat;image-rendering:pixelated;display:none;filter:drop-shadow(0 0 3px #000);animation:petIdle .75s steps(1) infinite}@keyframes petIdle{from{background-position:0 0}to{background-position:var(--pet-end,-160px) 0}}.pet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pet-card{padding:5px;border:1px solid #34202d;border-radius:6px;background:#080004;text-align:center;opacity:.35}.pet-card.owned{opacity:1}.pet-card.equipped{border-color:var(--gold);box-shadow:inset 0 0 9px #b38b2255}.pet-preview{width:48px;height:40px;margin:auto;background-repeat:no-repeat;background-position:0 0;background-size:auto 48px;image-rendering:pixelated}.trait-line{margin-top:3px;color:#d9b4ff;font-size:8px;line-height:1.25}
+    .pet-card button{min-height:23px;margin-top:3px;padding:1px;font-size:7px}.drop-inventory{display:grid;gap:5px}.drop-item{display:grid;grid-template-columns:34px 1fr auto;gap:7px;align-items:center;padding:6px;border:1px solid #30202a;border-radius:6px;background:#070003}.drop-item.rare{border-color:#326fa1}.drop-item.epic{border-color:#813cb1}.drop-item.relic{border-color:#a8811f}.drop-item button{width:auto;min-width:48px;min-height:26px;padding:2px 5px;font-size:7px}.rarity{font-size:7px;font-weight:900;text-transform:uppercase}.goddess-shop{display:grid;grid-template-columns:1fr 1fr;gap:5px}.goddess-offer{padding:6px;border:1px solid #5f4515;border-radius:6px;background:#130b00}.goddess-offer button{min-height:27px;margin-top:4px;font-size:8px}.streak-badge{color:#ffcf5a;font-weight:900}
     .goddess-card{display:grid;grid-template-columns:62px 1fr;gap:9px;align-items:center;background:linear-gradient(135deg,#2a1308,#12000d);border-color:#9a6724}.goddess-portrait{width:62px;height:62px;border:1px solid var(--gold);border-radius:7px;background:center/cover no-repeat;image-rendering:pixelated;box-shadow:0 0 12px #e7a52b45}.goddess-card h3{margin:0;color:#f4c65b;font-size:13px}.goddess-dialogue{font-size:9px;color:#ead9bd;margin:3px 0 7px}.goddess-rep{height:7px;border:1px solid #6b4315;background:#090202;border-radius:5px;overflow:hidden}.goddess-rep>i{display:block;height:100%;background:linear-gradient(90deg,#9f5f19,#ffdc68)}
     .daily-grid{display:grid;gap:6px}.daily-mission{display:grid;grid-template-columns:30px 1fr auto;gap:7px;align-items:center;padding:7px;border:1px solid #352231;border-radius:6px;background:#090006}.daily-mission.done{border-color:#927022;background:#171000}.daily-mission button{width:auto;min-width:58px;min-height:28px;font-size:8px;padding:0 6px}.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.choice-card{min-height:82px!important;padding:6px 3px!important;display:block!important;text-transform:none!important;font-size:9px!important}.choice-card b{display:block;color:#f1d26a;margin-bottom:4px}.choice-card span{display:block;color:var(--muted);font-size:8px;line-height:1.25}.ritual-grid{display:grid;gap:5px}.ritual-choice{min-height:42px;justify-content:flex-start;text-align:left;text-transform:none}.ritual-choice small{color:var(--muted);font-weight:400}.dimension-seals{display:flex;justify-content:center;gap:6px;margin:8px 0}.dimension-seal{width:18px;height:18px;border:1px solid #71329a;border-radius:50%;background:#170020}.dimension-seal.hit{background:#a43cff;box-shadow:0 0 8px #b84dff}.dimension-seal.miss{background:#3d0b17;border-color:#9b2948}
     .mg{height:36px;margin:16px 0;background:#000;border:2px solid var(--mor);border-radius:18px;position:relative;overflow:hidden}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#58008255;border-left:2px solid var(--mor2);border-right:2px solid var(--mor2)}.mg-cursor{position:absolute;left:0;top:0;width:4px;height:100%;background:#fff;box-shadow:0 0 8px #fff}
@@ -239,6 +240,8 @@
       <button id="btn-quest" class="special" style="display:none"></button>
       <div class="head" style="margin-top:14px"><span>Kan Sunağı</span><span class="badge">Günde 1</span></div>
       <div id="ritual-choices" class="ritual-grid"></div>
+      <div class="head" style="margin-top:14px"><span>İtibar Mağazası</span><span id="goddess-streak" class="badge">Seri 0</span></div>
+      <div id="goddess-shop" class="goddess-shop"></div>
     </div>
   </div>
 
@@ -307,6 +310,8 @@
         </div>
         <div class="head" style="margin-top:14px"><span>Yoldaş Pet</span><span class="badge">Pasif</span></div>
         <div id="pets" class="pet-grid"></div>
+        <div class="head" style="margin-top:14px"><span>Düşen Ekipmanlar</span><span id="drop-inventory-count" class="badge">0 / 30</span></div>
+        <div id="drop-inventory" class="drop-inventory"></div>
         <div class="head"><span>Ganimet Sandığı</span></div>
         <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
         <div id="keys" class="keys-grid"></div>
@@ -508,7 +513,7 @@
   ];
   const BOSS_PREVIEW_ID=new URLSearchParams(location.search).get("boss");
   const V55_RAW_URL="https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
-  let v55SlimesReady=false,v55BossesReady=false,animatedBossesReady=false,currentEnemyProfile=null,currentRegion=null,bossAnimationTimer=null,bossAnimationToken=0,enemyStrikeCount=0;
+  let v55SlimesReady=false,v55BossesReady=false,animatedBossesReady=false,currentEnemyProfile=null,currentRegion=null,currentEnemyGroupSize=1,bossAnimationTimer=null,bossAnimationToken=0,enemyStrikeCount=0,pendingBossRespawn=false;
   function preloadEnemySet(list,onReady){Promise.all(list.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=V55_RAW_URL+enemy.sprite}))).then(()=>onReady(true)).catch(()=>onReady(false))}
   function preloadV55Enemies(){preloadEnemySet(V55_SLIME_ENEMIES,ready=>v55SlimesReady=ready);preloadEnemySet(V55_BOSS_ENEMIES,ready=>v55BossesReady=ready);preloadEnemySet(ANIMATED_BOSSES.flatMap(b=>Object.values(b.animations).map(a=>({sprite:a.file}))),ready=>animatedBossesReady=ready)}
   const enemyAttackGif = "Yku2dxV.gif";
@@ -532,6 +537,8 @@
   const DAILY_MISSIONS=[{id:"kills",name:"Vadi Avı",desc:"12 düşman yen",stat:"kills",req:12,atlas:"weapons",index:18},{id:"quest",name:"Kalıntı İzleri",desc:"1 sefer tamamla",stat:"quests",req:1,atlas:"cave",index:3},{id:"ritual",name:"Kan Yemini",desc:"1 adak sun",stat:"rituals",req:1,atlas:"potions",index:14}];
   const PETS={wisp:{name:"Kor Wisp",file:"pet-wisp.png",frames:5,bonus:"Ruh +%5",unlock:"100 Tanrıça İtibarı",soul:.05},dog:{name:"Vadi Köpeği",file:"pet-dog.png",frames:6,bonus:"Can +%8",unlock:"Sv.15+ boss ganimeti",hp:.08},fox:{name:"Kor Tilkisi",file:"pet-fox.png",frames:6,bonus:"Saldırı +%6",unlock:"Sv.35+ boss ganimeti",attack:.06}};
   const ELEMENT_NAMES={arcane:"Arkane",poison:"Zehir",fire:"Ateş",dark:"Boşluk",blood:"Kan",physical:"Fiziksel"};
+  const RARITIES={common:{name:"Normal",mult:1,color:"#aaa",salvage:20},rare:{name:"Nadir",mult:1.35,color:"#64b8ff",salvage:55},epic:{name:"Epik",mult:1.8,color:"#c06cff",salvage:120},relic:{name:"Yadigâr",mult:2.5,color:"#e3b94d",salvage:260}};
+  const GODDESS_OFFERS=[{id:"supply",name:"Erzak Sandığı",rep:25,cost:180,desc:"1 uygun seviye sandık"},{id:"refresh",name:"Emir Yenile",rep:50,cost:250,desc:"Günlük ilerlemeyi sıfırlamadan yeni başlangıç"},{id:"wisp",name:"Kor Wisp",rep:100,cost:0,desc:"Kalıcı Ruh yoldaşı"},{id:"relicChest",name:"Yadigâr Kasası",rep:200,cost:900,desc:"Sv.15+ yüksek seviye sandık"}];
   function atlasIconStyle(atlasName,index,scale=2){const atlas=RPG_ICON_ATLASES[atlasName],safe=Math.max(0,Math.min(atlas.count-1,index|0)),x=safe%atlas.columns,y=Math.floor(safe/atlas.columns);return `width:${16*scale}px;height:${16*scale}px;background-image:url('${RAW_ASSET_URL}${atlas.file}');background-size:${atlas.columns*16*scale}px ${atlas.rows*16*scale}px;background-position:-${x*16*scale}px -${y*16*scale}px`}
   const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
   const chestSoulBase = [80,140,220,350,550,850,1250,1800];
@@ -652,9 +659,9 @@
     keys:[0,0,0,0,0,0,0,0],
     equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
     equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
-    unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],purchasedMarketOffers:[],petAccessVersion:2,ownedPets:[],equippedPet:null,consumables:{health:0,shield:0,blood:0},
+    unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],purchasedMarketOffers:[],petAccessVersion:2,ownedPets:[],equippedPet:null,petProgress:{},itemInventory:[],equippedLootItems:{weapon:null,armor:null},consumables:{health:0,shield:0,blood:0},
     upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
-    ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,ritualDay:"",goddess:{day:"",reputation:0,claimed:[],bonusClaimed:false,baseline:{kills:0,quests:0,rituals:0}},
+    ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,ritualDay:"",weekly:{key:"",bossClaimed:false},goddess:{day:"",reputation:0,claimed:[],bonusClaimed:false,streak:0,lastCompleteDay:"",shopClaims:[],baseline:{kills:0,quests:0,rituals:0}},
     settings:{music:0.15,sfx:1},
     stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,mg_win:0,uniques:0},
     unlockedAchievements:[]
@@ -679,7 +686,10 @@
     s.equippedArmor={...defaultState.equippedArmor,...(raw?.equippedArmor||{})};
     s.consumables={...defaultState.consumables,...(raw?.consumables||{})};Object.keys(s.consumables).forEach(k=>s.consumables[k]=Math.max(0,Math.floor(Number(s.consumables[k])||0)));
     const petMigrated=Number(raw?.petAccessVersion)>=2;s.ownedPets=Array.isArray(s.ownedPets)?[...new Set(s.ownedPets.filter(id=>PETS[id]&&(petMigrated||id!=="wisp")))]:[];s.equippedPet=s.ownedPets.includes(s.equippedPet)?s.equippedPet:null;s.petAccessVersion=2;
-    s.goddess={...clone(defaultState.goddess),...(raw?.goddess||{}),baseline:{...defaultState.goddess.baseline,...(raw?.goddess?.baseline||{})}};s.goddess.claimed=Array.isArray(s.goddess.claimed)?s.goddess.claimed.filter(id=>DAILY_MISSIONS.some(m=>m.id===id)):[];s.goddess.reputation=Math.max(0,Math.floor(Number(s.goddess.reputation)||0));
+    s.petProgress={};for(const id of Object.keys(PETS)){const p=raw?.petProgress?.[id]||{};s.petProgress[id]={xp:Math.max(0,Math.floor(Number(p.xp)||0)),level:Math.max(1,Math.floor(Number(p.level)||1))}}
+    s.itemInventory=Array.isArray(raw?.itemInventory)?raw.itemInventory.filter(i=>i&&["weapon","armor"].includes(i.type)&&RARITIES[i.rarity]).slice(0,30).map(i=>({...i,power:Math.max(1,Math.floor(Number(i.power)||1)),element:ELEMENT_NAMES[i.element]?i.element:"physical"})):[];s.equippedLootItems={weapon:null,armor:null,...(raw?.equippedLootItems||{})};for(const type of ["weapon","armor"]){if(!s.itemInventory.some(i=>i.id===s.equippedLootItems[type]&&i.type===type))s.equippedLootItems[type]=null}
+    s.weekly={...defaultState.weekly,...(raw?.weekly||{})};s.weekly.bossClaimed=!!s.weekly.bossClaimed;
+    s.goddess={...clone(defaultState.goddess),...(raw?.goddess||{}),baseline:{...defaultState.goddess.baseline,...(raw?.goddess?.baseline||{})}};s.goddess.claimed=Array.isArray(s.goddess.claimed)?s.goddess.claimed.filter(id=>DAILY_MISSIONS.some(m=>m.id===id)):[];s.goddess.shopClaims=Array.isArray(s.goddess.shopClaims)?s.goddess.shopClaims.filter(key=>GODDESS_OFFERS.some(o=>key===o.id||key.startsWith(o.id+":"))):[];s.goddess.reputation=Math.max(0,Math.floor(Number(s.goddess.reputation)||0));s.goddess.streak=Math.max(0,Math.floor(Number(s.goddess.streak)||0));
     s.gender=["female","male"].includes(s.gender)?s.gender:null;
     s.questType=QUEST_TYPES[s.questType]?s.questType:null;
     s.questRisk=QUEST_RISKS[s.questRisk]?s.questRisk:null;
@@ -720,7 +730,7 @@
   window.openModal=openModal; window.closeModal=closeModal;
   function openGoddessHub(){isCombatActive=false;renderGoddessHub();openModal("goddess-hub")}
   function closeGoddessHub(){closeModal("goddess-hub");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
-  function closeRewardModal(){closeModal("loot");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
+  function closeRewardModal(){closeModal("loot");if(pendingBossRespawn){pendingBossRespawn=false;spawnEnemy()}isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
   Object.assign(window,{openGoddessHub,closeGoddessHub,closeRewardModal});
 
   function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
@@ -741,17 +751,19 @@
     return Math.floor(150*Math.pow(1.45,effective));
   }
   function weaponEffectStage(eq){const effective=eq.isUnique?15+eq.idx*3:cumulativeLevel(wepTiers,eq.t,eq.l);return Math.min(4,Math.floor(effective/3))}
+  function petLevel(id){return state.petProgress?.[id]?.level||1}function petXpNeeded(id){return petLevel(id)*50}function activePet(){const p=PETS[state.equippedPet];if(!p)return{};const scale=1+(petLevel(state.equippedPet)-1)*.1;return {...p,soul:(p.soul||0)*scale,hp:(p.hp||0)*scale,attack:(p.attack||0)*scale}}
+  function equippedDropItem(type){return state.itemInventory?.find(i=>i.id===state.equippedLootItems?.[type]&&i.type===type)||null}
   function getWeaponTrait(eq){const elements=["arcane","poison","fire","dark","blood"],stage=weaponEffectStage(eq),element=eq.isUnique?elements[Math.abs(eq.idx)%elements.length]:elements[stage];return {element,name:`${ELEMENT_NAMES[element]} Gücü`,power:eq.isUnique ? .14 : .02+stage*.025,proc:eq.isUnique ? .24 : .1+stage*.025}}
   function getArmorTrait(eq){const elements=["arcane","poison","fire","dark","blood"],effective=eq.isUnique?eq.idx:cumulativeLevel(armTiers,eq.t,eq.l,1),element=elements[Math.max(0,effective)%elements.length];return {element,name:`${ELEMENT_NAMES[element]} Muhafazası`,hp:eq.isUnique ? .12 : Math.min(.08,Math.max(0,effective)*.008),shield:eq.isUnique ? .18 : Math.min(.12,Math.max(0,effective)*.012),resist:eq.isUnique ? .05 : Math.min(.03,Math.max(0,effective)*.003)}}
   function hasEquipmentResonance(){const armorEquipped=state.equippedArmor.isUnique||state.equippedArmor.t>0;return armorEquipped&&getWeaponTrait(state.equippedWeapon).element===getArmorTrait(state.equippedArmor).element}
   function weaponAttack(eq){
-    const trait=getWeaponTrait(eq),pet=PETS[state.equippedPet]||{};let base;
+    const trait=getWeaponTrait(eq),pet=activePet(),drop=equippedDropItem("weapon");let base;
     if(eq.isUnique)base=95+(eq.idx*18)+(state.level*2);
     else{
     const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
     base=7+(effective*7)+(state.level*2);
     }
-    return Math.floor(base*(1+trait.power+(pet.attack||0)+(hasEquipmentResonance() ? .1 : 0)));
+    return Math.floor((base+(drop?.power||0))*(1+trait.power+(pet.attack||0)+(hasEquipmentResonance() ? .1 : 0)));
   }
   function armorDefense(eq){
     let base;if(eq.isUnique)base=50+(eq.idx*15);
@@ -760,7 +772,7 @@
     const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
     base=(effective+1)*4;
     }
-    return Math.floor(base*(hasEquipmentResonance()?1.1:1));
+    return Math.floor((base+(equippedDropItem("armor")?.power||0))*(hasEquipmentResonance()?1.1:1));
   }
   function getDamageMitigation(){return Math.min(.78,(playerDef<=0?0:playerDef/(playerDef+180))+(getArmorTrait(state.equippedArmor).resist||0))}
 
@@ -770,12 +782,12 @@
   }
   function updateCombatStats(){
     const bossScale=currentEnemyProfile?.kind==="boss"?5:1;
-    const region=currentRegion||getCombatRegion(),hpMult=(currentEnemyProfile?.hpMult||1)*(region?.hp||1),atkMult=(currentEnemyProfile?.atkMult||1)*(region?.atk||1);
+    const region=currentRegion||getCombatRegion(),groupHp=1+(currentEnemyGroupSize-1)*.28,groupAtk=1+(currentEnemyGroupSize-1)*.1,hpMult=(currentEnemyProfile?.hpMult||1)*(region?.hp||1)*groupHp,atkMult=(currentEnemyProfile?.atkMult||1)*(region?.atk||1)*groupAtk;
     currentEnemyMaxHp=Math.floor(state.level*18*bossScale*hpMult);
     enemyAttack=Math.ceil(state.level*4*(bossScale>1 ? .8 : 1)*atkMult);
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
-    const armorTrait=getArmorTrait(state.equippedArmor),pet=PETS[state.equippedPet]||{},baseHp=50+(state.level*10)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(pet.hp||0)));
+    const armorTrait=getArmorTrait(state.equippedArmor),pet=activePet(),baseHp=50+(state.level*10)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(pet.hp||0)));
     playerHp=Math.min(playerHp,playerMaxHp);
     playerMaxShield=Math.floor(playerDef*4*(1+(armorTrait.shield||0)));
     playerShield=Math.min(playerShield,playerMaxShield);
@@ -895,7 +907,8 @@
     $("eq-armor-upg").innerHTML=a.isUnique?`<button disabled>YADİGÂR</button>`:aMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('armor')">${equipmentUpgradeCost("armor",a)} RUH</button>`;
     $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})" title="Seviye ${i+1} Sandık"><span class="atlas-icon" style="${atlasIconStyle("chests",CHEST_ATLAS_INDICES[i],2)}"></span><span class="key-count">x${state.keys[i]}</span></div>`).join("");
     $("consumables").innerHTML=Object.entries(CONSUMABLE_DEFS).map(([id,item])=>`<div class="consumable-card"><span class="atlas-icon" style="${atlasIconStyle(item.atlas,item.index,2)}"></span><b style="font-size:8px">${item.name}</b><div class="tiny">x${state.consumables[id]}</div><button onclick="useConsumable('${id}')" ${state.consumables[id]>0?"":"disabled"}>KULLAN</button></div>`).join("");
-    $("pets").innerHTML=Object.entries(PETS).map(([id,pet])=>{const owned=state.ownedPets.includes(id),equipped=state.equippedPet===id;return `<div class="pet-card ${owned?"owned":""} ${equipped?"equipped":""}" onclick="equipPet('${id}')"><div class="pet-preview" style="background-image:url('${RAW_ASSET_URL}${pet.file}');background-size:${pet.frames*48}px auto"></div><b>${pet.name}</b><div class="tiny">${owned?pet.bonus:pet.unlock}</div></div>`}).join("");renderBattlePet();
+    $("pets").innerHTML=Object.entries(PETS).map(([id,pet])=>{const owned=state.ownedPets.includes(id),equipped=state.equippedPet===id,p=state.petProgress[id];return `<div class="pet-card ${owned?"owned":""} ${equipped?"equipped":""}" onclick="equipPet('${id}')"><div class="pet-preview" style="background-image:url('${RAW_ASSET_URL}${pet.file}');background-size:${pet.frames*48}px auto"></div><b>${pet.name}</b><div class="tiny">${owned?`${pet.bonus} · Sv.${p.level} · ${p.xp}/${p.level*50} XP`:pet.unlock}</div>${owned?`<button onclick="event.stopPropagation();feedPet('${id}')">BESLE · ${p.level*50} RUH</button>`:""}</div>`}).join("");renderBattlePet();
+    $("drop-inventory-count").textContent=`${state.itemInventory.length} / 30`;$("drop-inventory").innerHTML=state.itemInventory.length?state.itemInventory.map(item=>{const def=RARITIES[item.rarity],equipped=state.equippedLootItems[item.type]===item.id;return `<div class="drop-item ${item.rarity}"><span class="atlas-icon" style="${atlasIconStyle(item.type==="weapon"?"weapons":"armours",item.index,2)}"></span><div><b>${item.name}</b><div class="rarity" style="color:${def.color}">${def.name} · ${item.type==="weapon"?"ATK":"DEF"} +${item.power}</div></div><div><button onclick="equipLootItem('${item.id}')" ${equipped?"disabled":""}>${equipped?"TAKILI":"KUŞAN"}</button><button onclick="salvageLootItem('${item.id}')">PARÇALA</button></div></div>`}).join(""):'<div class="tiny center">Seviye 5 sonrası düşmanlardan ekipman düşebilir.</div>';
     $("uniques").innerHTML=
       wepUniques.map((img,i)=>`<div class="unique ${state.unlockedWeapons.includes(i)?"":"locked"} ${w.isUnique&&w.idx===i?"equipped":""}" onclick="equipUnique('weapon',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("")+
       armUniques.map((img,i)=>`<div class="unique ${state.unlockedArmors.includes(i)?"":"locked"} ${a.isUnique&&a.idx===i?"equipped":""}" onclick="equipUnique('armor',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("");
@@ -947,7 +960,10 @@
 
   function renderBattlePet(){const pet=PETS[state.equippedPet],el=$("battle-pet");if(!pet||!state.ownedPets.includes(state.equippedPet)){el.style.display="none";return}el.style.display="block";el.style.backgroundImage=`url("${RAW_ASSET_URL}${pet.file}")`;el.style.backgroundSize=`${pet.frames*32}px auto`;el.style.setProperty("--pet-end",`-${pet.frames*32}px`);el.style.animationTimingFunction=`steps(${pet.frames})`}
   async function equipPet(id){if(!state.ownedPets.includes(id)||!PETS[id])return;state.equippedPet=id;updateCombatStats();renderBattlePet();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false);showToast(PETS[id].name+" sana katıldı.")}
-  window.equipPet=equipPet;
+  async function feedPet(id){if(!state.ownedPets.includes(id))return;const p=state.petProgress[id],cost=p.level*50;if(state.soul<cost){showToast("Yetersiz Ruh!");return}state.soul-=cost;p.xp+=25;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;showToast(`${PETS[id].name} Seviye ${p.level}!`)}updateCombatStats();uiCache.inventory="";await saveState();updateUI(false)}
+  async function equipLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.equippedLootItems[item.type]=id;updateCombatStats();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false)}
+  async function salvageLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;state.soul+=RARITIES[item.rarity].salvage;state.itemInventory=state.itemInventory.filter(i=>i.id!==id);if(state.equippedLootItems[item.type]===id)state.equippedLootItems[item.type]=null;updateCombatStats();uiCache.inventory="";await saveState();updateUI(false);showToast(`+${RARITIES[item.rarity].salvage} Ruh`)}
+  Object.assign(window,{equipPet,feedPet,equipLootItem,salvageLootItem});
 
   function equipUnique(type,idx){
     if(type==="weapon"&&state.unlockedWeapons.includes(idx)) state.equippedWeapon={isUnique:true,t:0,l:0,idx};
@@ -1031,6 +1047,11 @@
   function resumeBossIdle(){if(isAnimatedBoss()&&currentEnemyHp>0)playBossAnimation("idle",{loop:true})}
   function showAbilityCallout(text){const el=document.createElement("div");el.className="ability-callout";el.textContent=text;$("battle").appendChild(el);setTimeout(()=>el.remove(),950)}
   function showCombatLoot(items){if(!items.length)return;const el=$("combat-loot");el.textContent=items.join(" · ");el.classList.remove("show");void el.offsetWidth;el.classList.add("show")}
+  function weekKey(){const d=new Date(),start=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-start)/86400000)+start.getDay()+1)/7);return `${d.getFullYear()}-W${week}`}
+  function ensureWeekly(){const key=weekKey();if(state.weekly.key!==key){state.weekly={key,bossClaimed:false};queueSave()}}
+  function generateLootEquipment(isBoss){
+    if(state.level<5||Math.random()>(isBoss ? .72 : .1))return null;const roll=Math.random();let rarity=roll<.58?"common":roll<.86?"rare":roll<.97?"epic":"relic";if(rarity==="relic"&&state.level<25)rarity="epic";const type=Math.random()>.5?"weapon":"armor",elements=["arcane","poison","fire","dark","blood"],element=elements[Math.floor(Math.random()*elements.length)],def=RARITIES[rarity],power=Math.max(2,Math.floor(state.level*(type==="weapon"?1.7:1.1)*def.mult*(.85+Math.random()*.3))),index=Math.floor(Math.random()*(type==="weapon"?72:171));return {id:`drop-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,type,rarity,element,power,index,name:`${ELEMENT_NAMES[element]} ${type==="weapon"?"Silahı":"Zırhı"}`}
+  }
   function rollEnemyLoot(profile){
     const region=currentRegion||getCombatRegion(),lootMult=region.loot||1,isBoss=profile?.kind==="boss",found=[];
     if(Math.random()<Math.min(.32,(isBoss ? .42 : .07)*lootMult)){const potion=profile?.element==="poison"?"shield":profile?.element==="fire"||profile?.element==="blood"?"blood":"health";state.consumables[potion]++;found.push("+1 "+CONSUMABLE_DEFS[potion].name)}
@@ -1039,6 +1060,7 @@
     if(state.level>=25&&Math.random()<.08*lootMult){const darkGain=Math.max(1,Math.floor(lootMult));state.dark+=darkGain;found.push(`+${darkGain} Öz`)}
     if(isBoss&&state.level>=15&&Math.random()<.06){const petId=state.level>=35?"fox":"dog";if(!state.ownedPets.includes(petId)){state.ownedPets.push(petId);found.push("Yeni Pet: "+PETS[petId].name)}}
     if(isBoss&&state.level>=25&&Math.random()<.035){const weapon=Math.random()>.42,list=weapon?wepUniques:armUniques,owned=weapon?state.unlockedWeapons:state.unlockedArmors,idx=Math.floor(Math.random()*list.length);if(!owned.includes(idx)){owned.push(idx);state.stats.uniques++;found.push("Yadigâr: "+(weapon?wepUniqueNames[idx]:armUniqueNames[idx]))}}
+    const item=generateLootEquipment(isBoss);if(item){if(state.itemInventory.length<30){state.itemInventory.push(item);found.push(`${RARITIES[item.rarity].name} ${item.type==="weapon"?"Silah":"Zırh"}`)}else{state.soul+=RARITIES[item.rarity].salvage;found.push(`Envanter dolu: +${RARITIES[item.rarity].salvage} Ruh`)}}
     showCombatLoot(found);return found;
   }
 
@@ -1047,11 +1069,11 @@
     currentRegion=getCombatRegion();enemyStrikeCount=0;
     const isBoss=(animatedBossesReady||v55BossesReady)&&(state.stats.kills%10===9||ANIMATED_BOSSES.some(b=>b.id===BOSS_PREVIEW_ID));
     clearInterval(bossAnimationTimer);bossAnimationToken++;el.classList.remove("slime-v55","boss-v55","boss-animated-v60");el.style.backgroundSize="";el.style.transform="";el.style.filter="";
-    if(isBoss&&animatedBossesReady){const selected=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||ANIMATED_BOSSES[Math.floor(Math.random()*ANIMATED_BOSSES.length)];currentEnemyProfile={...selected,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true});playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
-    else if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
-    else if(v55SlimesReady){const pool=V55_SLIME_ENEMIES.filter(s=>currentRegion.slimes.includes(s.id));currentEnemyProfile=pool[Math.floor(Math.random()*pool.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
-    else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
-    el.style.backgroundPosition="0 0";el.style.opacity="1";el.style.filter=currentEnemyProfile?.kind==="boss"?"":(currentEnemyProfile?.filter||"none");$("enemy-name").textContent=currentEnemyProfile.name;$("region-name").textContent=currentRegion.name;
+    if(isBoss&&animatedBossesReady){currentEnemyGroupSize=1;const selected=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||ANIMATED_BOSSES[Math.floor(Math.random()*ANIMATED_BOSSES.length)];currentEnemyProfile={...selected,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true});playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    else if(isBoss){currentEnemyGroupSize=1;currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    else if(v55SlimesReady){currentEnemyGroupSize=3;const pool=V55_SLIME_ENEMIES.filter(s=>currentRegion.slimes.includes(s.id));currentEnemyProfile=pool[Math.floor(Math.random()*pool.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
+    else{currentEnemyGroupSize=1;currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    el.style.backgroundPosition="0 0";el.style.opacity="1";el.style.filter=currentEnemyProfile?.kind==="boss"?"":(currentEnemyProfile?.filter||"none");$("enemy-name").textContent=(currentEnemyGroupSize>1?currentEnemyGroupSize+"× ":"")+currentEnemyProfile.name;$("region-name").textContent=currentRegion.name;
     updateCombatStats();currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
   }
 
@@ -1063,6 +1085,7 @@
     if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{ $("battle").style.backgroundImage=`url("${CDN_URL}${newTier.bg}")`;isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
     return false;
   }
+  function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
 
   function damageEnemy(){
     if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
@@ -1070,8 +1093,9 @@
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;if(isAnimatedBoss())playBossAnimation("death",{onDone:()=>{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}});else{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}playSound("e_death",.5);
-      const bossMult=currentEnemyProfile?.kind==="boss"?5:1,regionLoot=currentRegion?.loot||1,petSoul=PETS[state.equippedPet]?.soul||0,pm=getPrestigeMultiplier(); state.soul+=Math.floor((10+state.level*2*pm)*bossMult*regionLoot*(1+petSoul)); if(currentEnemyProfile?.kind==="boss"||Math.random()>.5) state.blood+=Math.floor((5+state.level*pm*.5)*bossMult*regionLoot);rollEnemyLoot(currentEnemyProfile);
-      const changed=addXP(10*state.level*bossMult); if(!changed)setTimeout(spawnEnemy,isAnimatedBoss()?1500:currentEnemyProfile?.kind==="boss"?1300:900); queueSave();
+      const isBoss=currentEnemyProfile?.kind==="boss",bossMult=isBoss?5:1,groupReward=1+(currentEnemyGroupSize-1)*.2,regionLoot=currentRegion?.loot||1,petSoul=activePet().soul||0,pm=getPrestigeMultiplier(),soulGain=Math.floor((10+state.level*2*pm)*bossMult*regionLoot*groupReward*(1+petSoul)),bloodGain=(isBoss||Math.random()>.5)?Math.floor((5+state.level*pm*.5)*bossMult*regionLoot*groupReward):0;state.soul+=soulGain;state.blood+=bloodGain;const drops=rollEnemyLoot(currentEnemyProfile);awardPetXP(isBoss?25:3);
+      ensureWeekly();let weekly="";if(isBoss&&!state.weekly.bossClaimed){state.weekly.bossClaimed=true;const tier=Math.min(7,Math.floor(state.level/12));state.keys[tier]++;state.soul+=300;weekly="Haftalık İlk Zafer: +300 Ruh · +1 Sandık"}
+      const changed=addXP(10*state.level*bossMult);if(isBoss){isCombatActive=false;pendingBossRespawn=!changed;$("loot-title").textContent=currentEnemyProfile.name+" Yenildi";$("loot-items").innerHTML=`<b style="color:#d1b3ff">+${soulGain} Ruh</b>${bloodGain?`<b style="color:#ff7777">+${bloodGain} Kan</b>`:""}${drops.map(x=>`<b style="color:var(--gold)">${x}</b>`).join("")}${weekly?`<b style="color:#ffcf5a">${weekly}</b>`:""}`;setTimeout(()=>openModal("loot"),650)}else if(!changed)setTimeout(spawnEnemy,900);queueSave();
     }else if(isAnimatedBoss()){const profileId=currentEnemyProfile.id;setTimeout(()=>{if(currentEnemyProfile?.id===profileId&&currentEnemyHp>0)playBossAnimation("hurt",{onDone:resumeBossIdle})},230)}
   }
 
@@ -1096,21 +1120,27 @@
     state.goddess.day=day;state.goddess.claimed=[];state.goddess.bonusClaimed=false;state.goddess.baseline={kills:state.stats.kills,quests:state.stats.quests,rituals:state.stats.rituals};queueSave();
   }
   function dailyMissionProgress(m){return Math.max(0,(state.stats[m.stat]||0)-(state.goddess.baseline[m.stat]||0))}
+  function dayDistance(from,to){if(!from||!to)return 99;const parse=s=>{const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};return Math.round((parse(to)-parse(from))/86400000)}
   async function claimDailyMission(id){
     ensureDailyMissions();const mission=DAILY_MISSIONS.find(m=>m.id===id);if(!mission||dailyMissionProgress(m)<mission.req||state.goddess.claimed.includes(id))return;
     state.goddess.claimed.push(id);state.goddess.reputation+=10;state.soul+=100+state.level*10;addXP(60);playSound("loot",.55);
-    if(state.goddess.reputation>=100&&!state.ownedPets.includes("wisp")){state.ownedPets.push("wisp");if(!state.equippedPet)state.equippedPet="wisp";showToast("Kor Wisp sana katıldı!")}
-    if(state.goddess.claimed.length===DAILY_MISSIONS.length&&!state.goddess.bonusClaimed){state.goddess.bonusClaimed=true;state.keys[Math.min(7,Math.floor(state.level/10))]++;state.goddess.reputation+=20;showToast("Günlük Divan tamamlandı · Bonus sandık!")}
+    if(state.goddess.reputation>=100&&!state.ownedPets.includes("wisp")){state.ownedPets.push("wisp");showToast("Kor Wisp sana katıldı!")}
+    if(state.goddess.claimed.length===DAILY_MISSIONS.length&&!state.goddess.bonusClaimed){const today=localDayKey(),consecutive=dayDistance(state.goddess.lastCompleteDay,today)===1;state.goddess.streak=consecutive?state.goddess.streak+1:1;state.goddess.lastCompleteDay=today;state.goddess.bonusClaimed=true;state.keys[Math.min(7,Math.floor(state.level/10))]++;state.goddess.reputation+=20;const streakSoul=100*Math.min(7,state.goddess.streak);state.soul+=streakSoul;if(state.goddess.streak%7===0)state.rune++;showToast(`Günlük Divan · ${state.goddess.streak} gün seri · +${streakSoul} Ruh${state.goddess.streak%7===0?" · +1 Rün":""}`)}
     await saveState();renderGoddessHub();updateUI(false)
   }
   window.claimDailyMission=claimDailyMission;
   function renderGoddessHub(){
     ensureDailyMissions();const rep=state.goddess.reputation,rank=1+Math.floor(rep/100);$("goddess-reputation").textContent=`${rep} · Rütbe ${rank}`;$("goddess-rep-bar").style.width=(rep%100)+"%";
+    $("goddess-streak").textContent=`Seri ${state.goddess.streak}`;
     $("goddess-line").textContent=state.goddess.bonusClaimed?"Bugünün kaderini tamamladın, savaşçı.":"Üç emrimi tamamla; mührün güçlensin.";
     $("daily-missions").innerHTML=DAILY_MISSIONS.map(m=>{const p=Math.min(m.req,dailyMissionProgress(m)),claimed=state.goddess.claimed.includes(m.id),done=p>=m.req;return `<div class="daily-mission ${done?"done":""}"><span class="atlas-icon" style="${atlasIconStyle(m.atlas,m.index,1.5)}"></span><div><b>${m.name}</b><div class="tiny">${m.desc} · ${p}/${m.req}</div></div><button class="${done&&!claimed?"gold":""}" onclick="claimDailyMission('${m.id}')" ${!done||claimed?"disabled":""}>${claimed?"ALINDI":"AL"}</button></div>`}).join("");
+    const day=localDayKey();$("goddess-shop").innerHTML=GODDESS_OFFERS.map(o=>{const unlocked=rep>=o.rep&&(o.id!=="relicChest"||state.level>=15),owned=o.id==="wisp"&&state.ownedPets.includes("wisp"),claimed=owned||state.goddess.shopClaims.includes(`${o.id}:${day}`);return `<div class="goddess-offer"><div><b>${o.name}</b><div class="tiny">${o.desc} · ${o.rep} İtibar${o.cost?` · ${o.cost} Ruh`:""}</div></div><button onclick="buyGoddessOffer('${o.id}')" ${!unlocked||claimed||state.soul<o.cost?"disabled":""}>${claimed?"ALINDI":unlocked?"AL":"KİLİTLİ"}</button></div>`}).join("");
     checkQuestStatus();renderRitualChoices();
   }
   window.renderGoddessHub=renderGoddessHub;
+
+  async function buyGoddessOffer(id){ensureDailyMissions();const offer=GODDESS_OFFERS.find(o=>o.id===id),day=localDayKey();if(!offer||state.goddess.reputation<offer.rep||(id==="relicChest"&&state.level<15)||state.soul<offer.cost)return;if(id==="wisp"){if(!state.ownedPets.includes("wisp"))state.ownedPets.push("wisp")}else{const key=`${id}:${day}`;if(state.goddess.shopClaims.includes(key))return;state.goddess.shopClaims.push(key);state.soul-=offer.cost;if(id==="supply")state.keys[Math.min(7,Math.floor(state.level/12))]++;if(id==="relicChest")state.keys[Math.min(7,Math.max(2,Math.floor(state.level/10)))]++;if(id==="refresh"){state.goddess.baseline={kills:state.stats.kills,quests:state.stats.quests,rituals:state.stats.rituals};state.goddess.claimed=[];state.goddess.bonusClaimed=false}}playSound("loot",.55);uiCache.inventory="";await saveState();renderGoddessHub();updateUI(false);showToast(offer.name+" alındı.")}
+  window.buyGoddessOffer=buyGoddessOffer;
 
   function checkQuestStatus(){
     const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"),risk=QUEST_RISKS[state.questRisk]||QUEST_RISKS.safe;$("quest-duration").textContent=state.questEndTime?`${risk.name} · ${q.duration} SN`:"Yol Seç";
@@ -1173,7 +1203,7 @@
   window.renderAchievements=renderAchievements;
 
   async function executePrestige(){
-    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
+    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),itemInventory:clone(state.itemInventory),equippedLootItems:clone(state.equippedLootItems),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
     state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
   }
   window.executePrestige=executePrestige;
@@ -1201,7 +1231,7 @@
     const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
     $("goddess-rep-bar").style.width=(state.goddess.reputation%100)+"%";
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
-    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.ownedPets,state.equippedPet,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
+    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.ownedPets,state.equippedPet,state.petProgress,state.itemInventory,state.equippedLootItems,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();
     if(!mgActive){const continuing=dimensionRound>0;$("btn-mg").disabled=!continuing&&state.rune<1;$("btn-mg").textContent=continuing?"Sonraki Mühür":state.rune>=1?"Mührü Uyandır (1 Rün)":"Rün Yetersiz";$("btn-mg").className=continuing||state.rune>=1?"special":""}
   }
