@@ -414,8 +414,9 @@
     {id:"slime-green",name:"Zehirli Slime",element:"poison",sprite:"slime-green.png"},
     {id:"slime-red",name:"Ateş Slime",element:"fire",sprite:"slime-red.png"}
   ];
+  const V55_RAW_URL="https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
   let v55SlimesReady=false,currentEnemyProfile=null;
-  function preloadV55Enemies(){Promise.all(V55_SLIME_ENEMIES.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=CDN_URL+enemy.sprite}))).then(()=>{v55SlimesReady=true}).catch(()=>{v55SlimesReady=false})}
+  function preloadV55Enemies(){Promise.all(V55_SLIME_ENEMIES.map(enemy=>new Promise((resolve,reject)=>{const image=new Image();image.onload=resolve;image.onerror=reject;image.src=V55_RAW_URL+enemy.sprite}))).then(()=>{v55SlimesReady=true}).catch(()=>{v55SlimesReady=false})}
   const enemyAttackGif = "Yku2dxV.gif";
   const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
   const frameCounts = {idle:6,dash:4,jump:8,death:6};
@@ -751,7 +752,7 @@
 
   function spawnEnemy(){
     const el=$("enemy-sprite");
-    if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
     else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.classList.remove("slime-v55");el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
     el.style.backgroundPosition="0 0";el.style.opacity="1";
     updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
