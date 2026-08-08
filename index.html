@@ -702,7 +702,7 @@
   }
 
   function renderMarket(){
-    const signature=JSON.stringify([state.ownedCosmetics,state.purchasedMarketOffers]);if(uiCache.market===signature)return;uiCache.market=signature;
+    const signature=JSON.stringify([characterAssets.length,state.ownedCosmetics,state.purchasedMarketOffers]);if(uiCache.market===signature)return;uiCache.market=signature;
     const sections=[...new Set(ALL_COSMETIC_OFFERS.map(o=>o.section))];
     const preview=offer=>offer.assetIds.slice(0,2).map(id=>assetById(id)).filter(Boolean).map(asset=>`<span class="market-preview-sprite" style="background-image:url('${RAW_ASSET_URL}${asset.runtimePath}')"></span>`).join("");
     const cosmetics=sections.map(section=>`<div class="market-section-title">${section}</div><div class="market-grid">${ALL_COSMETIC_OFFERS.filter(o=>o.section===section).map((offer)=>{const owned=ownsOffer(offer);return `<article class="market-card ${offer.id.startsWith("bundle:")?"bundle":""} ${owned?"owned":""}"><div class="market-preview">${preview(offer)}</div><div class="shop-name">${offer.name}</div><div class="shop-desc">${offer.desc}</div>${owned?`<div class="market-owned">✓ KALICI OLARAK ALINDI</div>`:`<button class="primary market-buy" onclick="buyCosmeticOffer('${offer.id}')">$${offer.price}</button>`}</article>`}).join("")}</div>`).join("");
