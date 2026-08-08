@@ -327,7 +327,7 @@
     male:{ears:["elven-ears1","elven-ears2","elven-ears3","elven-ears4","elven-ears5"],hat:["farming-hat-m","guard-helmet","male-blue-cap","male-green-cap","male-hat1","male-hat10","male-hat2","male-hat3","male-hat4","male-hat5","male-hat6","male-hat7","male-hat8","male-hat9","male-mining-helmet","male-orange-cap","male-purple-cap","male-red-cap","male-santa-hat","pumpkin-hat","viking-helmet-with-horns","viking-helmet"],mask:["male-bandit-scarf","male-mask","male-plague-mask"],back:["male-circle-shield","male-lantern"]},
     unisex:{back:["backpack","cape-blue","cape-green","cape-orange","cape-purple","cape-red","small-backpack"]}
   };
-  const cosmeticTitle=slug=>slug.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase()).replace(/^Female |^Male /,"");
+  const cosmeticTitle=slug=>slug.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase()).replace(/^Female |^Male /,"").replace(/\s+[FM]$/,"");
   const EXTRA_CHARACTER_ASSETS=Object.entries(EXTRA_COSMETIC_FILES).flatMap(([gender,categories])=>Object.entries(categories).flatMap(([category,files])=>files.map(slug=>({id:`${gender}.${category}.${slug}`,gender,category,variant:"standard",displayName:cosmeticTitle(slug),runtimePath:`character-v54/${gender}/${category}/${slug}.png`}))));
 
   const $ = id => document.getElementById(id);
