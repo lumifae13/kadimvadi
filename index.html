@@ -319,8 +319,38 @@
 
   <div id="content">
     <section id="tab-main" class="tab active">
-      <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
-      <div class="panel goddess-card"><div class="goddess-portrait" style="background-image:url('https://raw.githubusercontent.com/lumifae13/kadimvadi/img/goddess-portrait.png')"></div><div><h3>Tanrıça'nın Çağrısı</h3><div class="goddess-dialogue">Avlarını, seferlerini ve kan adağını bana getir.</div><div class="goddess-rep"><i id="goddess-rep-bar" style="width:0%"></i></div><button class="gold" style="min-height:30px;margin-top:6px" onclick="openGoddessHub()">Görevleri Gör</button></div></div>
+      <div class="panel">
+        <div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div>
+        <button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button>
+      </div>
+      
+      <div class="panel goddess-card">
+        <div class="goddess-portrait" style="background-image:url('https://raw.githubusercontent.com/lumifae13/kadimvadi/img/goddess-portrait.png')"></div>
+        <div>
+          <h3>Tanrıça'nın Çağrısı</h3>
+          <div class="goddess-dialogue">Avlarını, seferlerini ve kan adağını bana getir.</div>
+          <div class="goddess-rep"><i id="goddess-rep-bar" style="width:0%"></i></div>
+          <button class="gold" style="min-height:30px;margin-top:6px" onclick="openGoddessHub()">Divanı Gör</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="head"><span>İksir Çantası</span></div>
+        <div id="consumables" class="consumable-grid" style="margin-bottom:14px"></div>
+        <div class="head"><span>Ganimet Sandığı</span></div>
+        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
+        <div id="keys" class="keys-grid"></div>
+      </div>
+
+      <div class="panel purple">
+        <div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div>
+        <div class="bar" style="height:18px;margin-bottom:7px">
+          <div id="quest-progress" class="bar-fill"></div>
+          <div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div>
+        </div>
+        <div id="expedition-choices" class="choice-grid"></div>
+        <button id="btn-quest" class="special" style="display:none"></button>
+      </div>
     </section>
 
     <section id="tab-chest" class="tab">
@@ -347,23 +377,26 @@
         </div>
         <button class="special wardrobe-edit" onclick="openCharacterCreator()">Görünümü Düzenle</button>
         <div id="wardrobe-drawer" class="wardrobe-drawer"><div class="wardrobe-drawer-head"><span id="wardrobe-drawer-title">Eşyalar</span><button onclick="closeInventoryWardrobe()" style="width:auto;min-height:24px;padding:2px 8px">×</button></div><div id="wardrobe-items" class="wardrobe-items"></div></div>
+        
         <div class="head" style="margin-top:14px"><span>Kuşanılmış Savaş Ekipmanı</span><span class="badge">2 Slot</span></div>
         <div class="tiny center" style="margin-bottom:8px">Yadigârlar kendi deposunda ayrı tutulur.</div>
         <div class="eq-grid">
           <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
           <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
         </div>
+        
         <div class="head" style="margin-top:14px"><span>Yoldaş Pet</span><span class="badge">Pasif</span></div>
         <div id="pets" class="pet-grid"></div>
+        
         <div class="head" style="margin-top:14px"><span>Ekipman Deposu</span><span id="drop-inventory-count" class="badge">0 / 30</span></div>
         <div id="drop-inventory" class="drop-inventory"></div>
-        <div class="head"><span>Ganimet Sandığı</span></div>
-        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Yadigâr ihtimali Seviye 15'ten sonra etkinleşir.</div>
-        <div id="keys" class="keys-grid"></div>
-        <div class="head" style="margin-top:14px"><span>İksir Çantası</span></div>
-        <div id="consumables" class="consumable-grid"></div>
       </div>
-      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div><div class="tiny center" style="margin-bottom:10px">Tüm anahtarlardan nadiren düşebilen Kadim Yadigârlar. Kuşanmak için dokun.</div><div id="uniques" class="unique-grid"></div></div>
+      
+      <div class="panel gold">
+        <div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div>
+        <div class="tiny center" style="margin-bottom:10px">Seviye 15 ve sonrasında düşen kadim eşyalar. Sadece bulduğun yadigârlar burada görünür.</div>
+        <div id="uniques" class="unique-grid"></div>
+      </div>
     </section>
 
     <section id="tab-camp" class="tab">
@@ -888,10 +921,16 @@
     const bossScale=currentEnemyProfile?.kind==="boss"?5:1;
     const region=currentRegion||getCombatRegion(),groupHp=1+(currentEnemyGroupSize-1)*.28,groupAtk=1+(currentEnemyGroupSize-1)*.1,hpMult=(currentEnemyProfile?.hpMult||1)*(region?.hp||1)*groupHp,atkMult=(currentEnemyProfile?.atkMult||1)*(region?.atk||1)*groupAtk;
     currentEnemyMaxHp=Math.floor(state.level*18*bossScale*hpMult);
-    enemyAttack=Math.ceil(state.level*4*(bossScale>1 ? .8 : 1)*atkMult);
+    
+    // YENİ: 10. Seviyeden sonra düşmanın hasar artış ivmesini ciddi oranda kırıyoruz
+    let scaledLevel = state.level < 10 ? state.level : 10 + (state.level - 10) * 0.45;
+    enemyAttack=Math.ceil(scaledLevel*3.2*(bossScale>1 ? .8 : 1)*atkMult);
+    
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
-    const armorTrait=getArmorTrait(state.equippedArmor),dropArmor=lootItemBonuses(equippedDropItem("armor")),pet=activePet(),baseHp=50+(state.level*10)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(dropArmor.hp||0)+(pet.hp||0)));
+    
+    // YENİ: Oyuncunun temel can çarpanını (14 yerine 18 yaparak) biraz daha sağlamlaştırdık
+    const armorTrait=getArmorTrait(state.equippedArmor),dropArmor=lootItemBonuses(equippedDropItem("armor")),pet=activePet(),baseHp=50+(state.level*18)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(dropArmor.hp||0)+(pet.hp||0)));
     playerHp=Math.min(playerHp,playerMaxHp);
     playerMaxShield=Math.floor(playerDef*4*(1+(armorTrait.shield||0)+(dropArmor.shield||0)));
     playerShield=Math.min(playerShield,playerMaxShield);
@@ -1191,9 +1230,11 @@
   }
   function awardPetXP(amount){const id=state.equippedPet;if(!id||!state.ownedPets.includes(id))return;const p=state.petProgress[id];p.xp+=amount;let leveled=false;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;leveled=true}if(leveled)showToast(`${PETS[id].name} Seviye ${p.level}!`)}
 
-  function damageEnemy(){
+  function damageEnemy(isAuto = false){
     if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
-    const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));state.stats.clicks++;currentEnemyHp-=dealt;if(loot.lifesteal){playerHp=Math.min(playerMaxHp,playerHp+Math.max(1,Math.floor(dealt*loot.lifesteal)));updatePlayerBars()}applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",dealt,"hp");if(critical)showAbilityCallout("KRİTİK!");else if(execute)showAbilityCallout("BOŞLUK İNFAZI!");else if(proc)showAbilityCallout(trait.name+"!");else if(elemental&&Math.random()<.35)showAbilityCallout(loot.burn?"YANMA!":"ZEHİR!");
+    const trait=getWeaponTrait(state.equippedWeapon),loot=lootItemBonuses(equippedDropItem("weapon")),proc=Math.random()<trait.proc+(state.playerClass==="mage" ? 0.05 : 0),critical=Math.random()<(loot.crit||0)+(state.playerClass==="ranger" ? 0.05 : 0),elemental=Math.ceil(playerAtk*((loot.burn||0)+(loot.poison||0))),execute=currentEnemyHp/currentEnemyMaxHp<=.35?Math.ceil(playerAtk*(loot.execute||0)):0,base=playerAtk+(proc?Math.ceil(playerAtk*.45):0)+elemental+execute,dealt=Math.ceil(base*(critical?1.5+(loot.critDamage||0):1));
+    if(!isAuto) state.stats.clicks++; 
+    currentEnemyHp-=dealt;if(loot.lifesteal){playerHp=Math.min(playerMaxHp,playerHp+Math.max(1,Math.floor(dealt*loot.lifesteal)));updatePlayerBars()}applyCharacterSprite("attack");shootProjectile("player");showDamage("enemy-sprite",dealt,"hp");if(critical)showAbilityCallout("KRİTİK!");else if(execute)showAbilityCallout("BOŞLUK İNFAZI!");else if(proc)showAbilityCallout(trait.name+"!");else if(elemental&&Math.random()<.35)showAbilityCallout(loot.burn?"YANMA!":"ZEHİR!");
     $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
     if(currentEnemyHp<=0){
       state.stats.kills++;if(isAnimatedBoss())playBossAnimation("death",{onDone:()=>{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}});else{spawnEnemyDeathImpact();$("enemy-sprite").style.opacity="0"}playSound("e_death",.5);
@@ -1310,7 +1351,8 @@
   function openPrestigeModal(){pendingPrestigeClass=state.playerClass;renderClassChoices("prestige-classes",pendingPrestigeClass,true);openModal("prestige-confirm")}
   function selectPrestigeClass(id){if(!CLASS_DEFS[id])return;pendingPrestigeClass=id;renderClassChoices("prestige-classes",id,true)}
   async function executePrestige(){
-    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),playerClass:pendingPrestigeClass||state.playerClass,rune:state.rune,dark:state.dark,gems:clone(state.gems),settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),itemInventory:clone(state.itemInventory),equippedLootItems:clone(state.equippedLootItems),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
+    closeModal("prestige-confirm");
+    const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),playerClass:pendingPrestigeClass||state.playerClass,rune:state.rune,dark:state.dark,gems:clone(state.gems),settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
     state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
   }
   Object.assign(window,{openPrestigeModal,selectPrestigeClass,executePrestige});
@@ -1390,7 +1432,9 @@
     if(!mgActive){
       if(dimensionRound===0&&state.rune<1){showToast("Yeterli Rün Yok!");return}
       if(dimensionRound===0){state.rune--;dimensionHits=0;dimensionResults=[];$("mg-result").textContent="";$("dimension-gate").className="dimension-gate active";document.querySelectorAll(".dimension-seal").forEach(x=>x.className="dimension-seal")}
-      mgActive=true;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;mgPos=0;mgDir=1;mgSpeed=1.9+dimensionRound*.55+Math.random()*.5;const width=[18,13,9][dimensionRound],left=50-width/2;$("mg-target").style.left=left+"%";$("mg-target").style.width=width+"%";this.textContent=`MÜHRÜ VUR · ${dimensionRound+1}/3`;this.className="primary";$("dimension-stage-label").textContent=`Aşama ${dimensionRound+1}/3`;
+      mgActive=true;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;mgPos=0;mgDir=1;
+      mgSpeed=1.3+dimensionRound*.35+Math.random()*.3; /* Hız hissedilir oranda düşürüldü */
+      const width=[18,13,9][dimensionRound],left=50-width/2;$("mg-target").style.left=left+"%";$("mg-target").style.width=width+"%";this.textContent=`MÜHRÜ VUR · ${dimensionRound+1}/3`;this.className="primary";$("dimension-stage-label").textContent=`Aşama ${dimensionRound+1}/3`;
       const loop=()=>{if(!mgActive)return;mgPos+=mgDir*mgSpeed;if(mgPos>=96){mgPos=96;mgDir=-1}if(mgPos<=0){mgPos=0;mgDir=1}$("mg-cursor").style.left=mgPos+"%";mgAnim=requestAnimationFrame(loop)};loop();
     }else{
       mgActive=false;cancelAnimationFrame(mgAnim);const width=[18,13,9][dimensionRound],win=mgPos>=50-width/2&&mgPos<=50+width/2;dimensionResults.push(win);if(win)dimensionHits++;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;document.querySelectorAll(".dimension-seal")[dimensionRound].classList.add(win?"hit":"miss");dimensionRound++;
@@ -1406,6 +1450,16 @@
     if(isCombatActive&&!isAFK&&Date.now()-lastInteractTime>15000){isAFK=true;$("player-afk").style.display="block";$("enemy-afk").style.display="block"}
     if(isCombatActive&&!isMapChanging&&!isAFK)enemyStrike()
   },2000);
+
+
+  setTimeout(() => {
+    setInterval(() => {
+      if(isCombatActive&&!isMapChanging&&!isAFK&&!isDead&&currentEnemyHp>0){
+        damageEnemy(true); 
+        updateUI(false);
+      }
+    }, 2000); 
+  }, 1000);
 
   setInterval(()=>{
     if((state.upgrades.dust||0)>0&&!isDead)state.soul+=(state.upgrades.dust||0)*5;
