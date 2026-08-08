@@ -1109,7 +1109,7 @@
       await loadCharacterManifest();
       let saved=null;try{saved=await phone.storage.get(SAVE_KEY)}catch{}
       if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
-      state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;
+      state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;renderMarket();
       initCharacterSystem();
       preloadV55Enemies();
       if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
