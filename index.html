@@ -888,10 +888,16 @@
     const bossScale=currentEnemyProfile?.kind==="boss"?5:1;
     const region=currentRegion||getCombatRegion(),groupHp=1+(currentEnemyGroupSize-1)*.28,groupAtk=1+(currentEnemyGroupSize-1)*.1,hpMult=(currentEnemyProfile?.hpMult||1)*(region?.hp||1)*groupHp,atkMult=(currentEnemyProfile?.atkMult||1)*(region?.atk||1)*groupAtk;
     currentEnemyMaxHp=Math.floor(state.level*18*bossScale*hpMult);
-    enemyAttack=Math.ceil(state.level*4*(bossScale>1 ? .8 : 1)*atkMult);
+    
+    // YENİ: 10. Seviyeden sonra düşmanın hasar artış ivmesini ciddi oranda kırıyoruz
+    let scaledLevel = state.level < 10 ? state.level : 10 + (state.level - 10) * 0.45;
+    enemyAttack=Math.ceil(scaledLevel*3.2*(bossScale>1 ? .8 : 1)*atkMult);
+    
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
-    const armorTrait=getArmorTrait(state.equippedArmor),dropArmor=lootItemBonuses(equippedDropItem("armor")),pet=activePet(),baseHp=50+(state.level*10)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(dropArmor.hp||0)+(pet.hp||0)));
+    
+    // YENİ: Oyuncunun temel can çarpanını (14 yerine 18 yaparak) biraz daha sağlamlaştırdık
+    const armorTrait=getArmorTrait(state.equippedArmor),dropArmor=lootItemBonuses(equippedDropItem("armor")),pet=activePet(),baseHp=50+(state.level*18)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(dropArmor.hp||0)+(pet.hp||0)));
     playerHp=Math.min(playerHp,playerMaxHp);
     playerMaxShield=Math.floor(playerDef*4*(1+(armorTrait.shield||0)+(dropArmor.shield||0)));
     playerShield=Math.min(playerShield,playerMaxShield);
@@ -1312,8 +1318,10 @@
   function openPrestigeModal(){pendingPrestigeClass=state.playerClass;renderClassChoices("prestige-classes",pendingPrestigeClass,true);openModal("prestige-confirm")}
   function selectPrestigeClass(id){if(!CLASS_DEFS[id])return;pendingPrestigeClass=id;renderClassChoices("prestige-classes",id,true)}
   async function executePrestige(){
-    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),playerClass:pendingPrestigeClass||state.playerClass,rune:state.rune,dark:state.dark,gems:clone(state.gems),settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),itemInventory:clone(state.itemInventory),equippedLootItems:clone(state.equippedLootItems),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
+    closeModal("prestige-confirm");
+    const keep={prestige:state.prestige+1,gender:state.gender,character:clone(state.character),playerClass:pendingPrestigeClass||state.playerClass,rune:state.rune,dark:state.dark,gems:clone(state.gems),settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements],ownedCosmetics:[...state.ownedCosmetics],purchasedMarketOffers:[...state.purchasedMarketOffers],ownedPets:[...state.ownedPets],equippedPet:state.equippedPet,petProgress:clone(state.petProgress),weekly:clone(state.weekly),goddess:clone(state.goddess),unlockedWeapons:[...state.unlockedWeapons],unlockedArmors:[...state.unlockedArmors]};
     state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
+  }
   }
   Object.assign(window,{openPrestigeModal,selectPrestigeClass,executePrestige});
 
@@ -1392,7 +1400,9 @@
     if(!mgActive){
       if(dimensionRound===0&&state.rune<1){showToast("Yeterli Rün Yok!");return}
       if(dimensionRound===0){state.rune--;dimensionHits=0;dimensionResults=[];$("mg-result").textContent="";$("dimension-gate").className="dimension-gate active";document.querySelectorAll(".dimension-seal").forEach(x=>x.className="dimension-seal")}
-      mgActive=true;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;mgPos=0;mgDir=1;mgSpeed=1.9+dimensionRound*.55+Math.random()*.5;const width=[18,13,9][dimensionRound],left=50-width/2;$("mg-target").style.left=left+"%";$("mg-target").style.width=width+"%";this.textContent=`MÜHRÜ VUR · ${dimensionRound+1}/3`;this.className="primary";$("dimension-stage-label").textContent=`Aşama ${dimensionRound+1}/3`;
+      mgActive=true;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;mgPos=0;mgDir=1;
+      mgSpeed=1.3+dimensionRound*.35+Math.random()*.3; /* Hız hissedilir oranda düşürüldü */
+      const width=[18,13,9][dimensionRound],left=50-width/2;$("mg-target").style.left=left+"%";$("mg-target").style.width=width+"%";this.textContent=`MÜHRÜ VUR · ${dimensionRound+1}/3`;this.className="primary";$("dimension-stage-label").textContent=`Aşama ${dimensionRound+1}/3`;
       const loop=()=>{if(!mgActive)return;mgPos+=mgDir*mgSpeed;if(mgPos>=96){mgPos=96;mgDir=-1}if(mgPos<=0){mgPos=0;mgDir=1}$("mg-cursor").style.left=mgPos+"%";mgAnim=requestAnimationFrame(loop)};loop();
     }else{
       mgActive=false;cancelAnimationFrame(mgAnim);const width=[18,13,9][dimensionRound],win=mgPos>=50-width/2&&mgPos<=50+width/2;dimensionResults.push(win);if(win)dimensionHits++;$("dimension-gate").className=`dimension-gate active charge-${dimensionHits}`;document.querySelectorAll(".dimension-seal")[dimensionRound].classList.add(win?"hit":"miss");dimensionRound++;
