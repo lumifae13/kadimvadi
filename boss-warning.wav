@@ -1,0 +1,70 @@
+﻿{
+    "version":  "v55-alpha",
+    "ready":  {
+                  "slimeFrame":  {
+                                     "width":  32,
+                                     "height":  32,
+                                     "sheetWidth":  256,
+                                     "sheetHeight":  96
+                                 },
+                  "slimes":  [
+                                 {
+                                     "id":  "slime-blue",
+                                     "path":  "asset-v55/enemies/slimes/slime-blue.png"
+                                 },
+                                 {
+                                     "id":  "slime-green",
+                                     "path":  "asset-v55/enemies/slimes/slime-green.png"
+                                 },
+                                 {
+                                     "id":  "slime-red",
+                                     "path":  "asset-v55/enemies/slimes/slime-red.png"
+                                 }
+                             ]
+              },
+    "licensedSelection":  {
+                           "characterEffects":  {
+                                                    "frameWidth":  80,
+                                                    "frameHeight":  64,
+                                                    "frames":  5,
+                                                    "fps":  10,
+                                                    "count":  24
+                                                },
+                           "basicBosses":  {
+                                               "count":  15,
+                                               "format":  "gif"
+                                           },
+                           "itemAtlas":  {
+                                             "path":  "asset-v55/inventory/items-atlas.png",
+                                             "manifest":  "asset-v55/inventory/items-atlas.json"
+                                         },
+                           "potionAtlas":  {
+                                               "path":  "asset-v55/inventory/potions-atlas.png",
+                                               "manifest":  "asset-v55/inventory/potions-atlas.json"
+                                           },
+                           "ravenAtlas":  {
+                                              "path":  "asset-v55/inventory/raven-icons-32.png",
+                                              "tileWidth":  32,
+                                              "tileHeight":  32,
+                                              "condition":  "free-no-monetization"
+                                          },
+                           "audio":  {
+                                         "source":  "400 Sounds Pack / Chequered Ink (ci.itch.io)",
+                                         "paths":  {
+                                                       "attack":  "asset-v55/audio/attack-sword.wav",
+                                                       "enemyHit":  "asset-v55/audio/enemy-hit.wav",
+                                                       "enemyDefeat":  "asset-v55/audio/enemy-defeat.wav",
+                                                       "equip":  "asset-v55/audio/equip.wav",
+                                                       "upgrade":  "asset-v55/audio/upgrade.wav",
+                                                       "coin":  "asset-v55/audio/coin.wav",
+                                                       "gem":  "asset-v55/audio/gem.wav",
+                                                       "bookOpen":  "asset-v55/audio/book-open.wav",
+                                                       "levelComplete":  "asset-v55/audio/level-complete.wav",
+                                                       "playerDefeat":  "asset-v55/audio/player-defeat.wav",
+                                                       "bossWarning":  "asset-v55/audio/boss-warning.wav",
+                                                       "uiSelect":  "asset-v55/audio/ui-select.wav",
+                                                       "uiCancel":  "asset-v55/audio/ui-cancel.wav"
+                                                   }
+                                          }
+                       }
+}
