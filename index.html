@@ -250,8 +250,9 @@
   "use strict";
 
   const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/";
+  const RAW_ASSET_URL = "https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
   const CHARACTER_ROOT = "character-v54/";
-  const CHARACTER_MANIFEST_URL = CDN_URL + CHARACTER_ROOT + "manifest.json";
+  const CHARACTER_MANIFEST_URL = RAW_ASSET_URL + CHARACTER_ROOT + "manifest.json";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
 
@@ -272,7 +273,7 @@
   function getCharacterImage(path){
     if(!path)return null;
     if(!characterImageCache.has(path)){
-      const image=new Image();image.decoding="async";image.src=CDN_URL+path;
+      const image=new Image();image.decoding="async";image.addEventListener("error",()=>{if(!image.dataset.rawFallback){image.dataset.rawFallback="1";image.src=RAW_ASSET_URL+path}});image.src=CDN_URL+path;
       image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw()});
       characterImageCache.set(path,image);
     }
