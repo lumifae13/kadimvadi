@@ -1307,6 +1307,8 @@
       choices.innerHTML=Object.entries(QUEST_RISKS).map(([id,r])=>`<button class="choice-card" onclick="startExpedition('${id}')"><b>${r.name}</b><span>${r.desc}<br>Ödül x${r.reward}</span></button>`).join("");
       $("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
+  }
+  
   async function questAction(){
     const now=Date.now(),q=getQuestStats();
     if(state.questEndTime>0&&state.questEndTime<=now){
