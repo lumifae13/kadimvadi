@@ -738,9 +738,9 @@
   const COSMETIC_BUNDLES=[
     {id:"bundle:elf",name:"Elf Mirası",desc:"10 ten uyumlu elf kulağı · %38 avantaj",price:750,section:"Paketler",assetIds:ELF_EAR_IDS},
     {id:"bundle:demon",name:"İblis Suretleri",desc:"Kadın + erkek Demon Skin · %25 avantaj",price:1200,section:"Paketler",assetIds:DEMON_IDS},
-    {id:"bundle:dresses",name:"Saray Gardırobu",desc:`${DRESS_IDS.length} elbisenin tamamı · %40 avantaj`,price:1850,section:"Paketler",gender:"female",assetIds:DRESS_IDS},
+    {id:"bundle:dresses",name:"Saray Gardırobu",desc:`${DRESS_IDS.length} elbisenin tamamı · %40 avantaj`,price:1850,section:"Paketler",assetIds:DRESS_IDS},
     {id:"bundle:shadow",name:"Gölge Gezgini",desc:"Veba maskeleri, cadı şapkası ve mor pelerin",price:760,section:"Paketler",assetIds:["female.mask.female-plague-mask","male.mask.male-plague-mask","female.hat.witch-hat","unisex.back.cape-purple"]},
-    {id:"bundle:adventurer",name:"Maceracı Seti",desc:"Chain mail, sırt çantaları ve muhafız miğferi",price:650,section:"Paketler",gender:"male",assetIds:["male.clothing.chainmail","unisex.back.backpack","unisex.back.small-backpack","male.hat.guard-helmet"]}
+    {id:"bundle:adventurer",name:"Maceracı Seti",desc:"Chain mail, sırt çantaları ve muhafız miğferi",price:650,section:"Paketler",assetIds:["male.clothing.chainmail","unisex.back.backpack","unisex.back.small-backpack","male.hat.guard-helmet"]}
   ];
   const COSMETIC_MARKET_OFFERS=[
     ...VARIANT_OFFERS,
@@ -972,7 +972,7 @@
 
   function renderMarket(){
     const signature=JSON.stringify([characterAssets.length,state.gender,state.character?.skinId,state.ownedCosmetics,state.purchasedMarketOffers,marketVariantSelection]);if(uiCache.market===signature)return;uiCache.market=signature;
-    const visible=ALL_COSMETIC_OFFERS.filter(o=>!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))];
+    const visible=ALL_COSMETIC_OFFERS.filter(o=>o.id.startsWith("bundle:")||!o.gender||o.gender==="unisex"||o.gender===state.gender),sections=[...new Set(visible.map(o=>o.section))];
     const previewAsset=asset=>{const gender=asset.gender==="unisex"?(state.gender||"female"):asset.gender,base=assetsFor(gender,"skin")[0],layers=asset.category==="skin"?[asset]:asset.category==="back"?[asset,base]:[base,asset];return `<span class="market-character">${layers.filter(Boolean).map(layer=>`<i style="background-image:url('${RAW_ASSET_URL}${layer.runtimePath}')"></i>`).join("")}</span>`};
     const preview=offer=>offerPurchaseIds(offer).slice(0,2).map(id=>assetById(id)).filter(Boolean).map(previewAsset).join("");
     const dots=offer=>offer.variantIds?`<div class="variant-dots">${offer.variantIds.map((id,i)=>`<button class="variant-dot ${selectedVariantId(offer)===id?"active":""}" style="background:${MARKET_VARIANT_SWATCHES[offer.id]?.[i]||"#777"}" title="Renk ${i+1}" onclick="selectMarketVariant('${offer.id}','${id}')"></button>`).join("")}</div><div class="market-progress">${offer.variantIds.filter(id=>state.ownedCosmetics.includes(id)).length}/${offer.variantIds.length} sende</div>`:"";
