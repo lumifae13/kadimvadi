@@ -1,1235 +1,789 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="color-scheme" content="dark" />
   <title>Kadim Vadi RPG</title>
   <style>
-    :root {
-      --bg: #030001; --label: #d8c8c8; --label-2: #8f7a7a;
-      --bordo: #7a001c; --bordo-light: #9e0024; --bordo-dark: #3a000d;
-      --mor: #580082; --mor-light: #7a00b3; --mor-dark: #2c0042;
-      --gold: #b38b22; --frames: 6; 
+    :root{
+      --bg:#030001; --panel:#0c0004; --panel2:#08000c;
+      --label:#d8c8c8; --muted:#8f7a7a;
+      --bordo:#7a001c; --bordo2:#9e0024; --bordo3:#3a000d;
+      --mor:#580082; --mor2:#7a00b3; --mor3:#2c0042;
+      --gold:#b38b22; --gold2:#d4af37;
+      --green:#33cc66; --blue:#3399ff; --red:#ff4d66;
+      --safe-bottom:32px;
     }
-
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; }
-    body {
-      margin: 0; padding: 0; max-width: 308px; min-height: 632px;
-      background: var(--bg) url('https://www.transparenttextures.com/patterns/dark-matter.png');
-      color: var(--label); font: 12px/1.4 -apple-system, "Segoe UI", sans-serif;
-      overflow: hidden; box-sizing: border-box; user-select: none;
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0}
+    body{
+      width:100%; max-width:308px; height:100dvh; min-height:632px;
+      overflow:hidden; background:#030001 url("https://www.transparenttextures.com/patterns/dark-matter.png");
+      color:var(--label); font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      user-select:none; -webkit-tap-highlight-color:transparent;
     }
-
-    #game-container { width: 100%; height: 632px; position: relative; padding: 0 0 32px; overflow: hidden; }
-
-    .tab-content { display: none; } 
-    .tab-content.active { display: block; animation: fadeIn 0.15s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    #battle-stage {
-      position: absolute; top: 0; left: 0; width: 100%; height: 154px;
-      background-color: #111; background-size: cover; background-position: center bottom; background-repeat: no-repeat;
-      z-index: 5; overflow: hidden; border-bottom: 2px solid var(--bordo-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-      transition: background-image 0.5s ease-in-out, opacity 0.3s ease; image-rendering: pixelated;
+    button,input{font:inherit}
+    button{
+      min-height:44px; width:100%; border:1px solid var(--bordo3); border-radius:7px;
+      color:white; background:linear-gradient(#180005,#090002); font-weight:800;
+      text-transform:uppercase; letter-spacing:.2px; padding:0 10px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      box-shadow:0 2px 5px #0008;
     }
-
-    body.hide-battle #battle-stage { opacity: 0; pointer-events: none; }
-    body.hide-battle #stats-bar { top: 8px; }
-    body.hide-battle #content-scroll { top: 74px; }
-
-    #top-hud { position: absolute; top: 8px; left: 10px; width: calc(100% - 20px); z-index: 20; }
-    
-    .bar-container {
-      width: 100%; height: 14px; background: rgba(0,0,0,0.8);
-      border: 1px solid var(--bordo-dark); border-radius: 6px;
-      position: relative; overflow: hidden; box-shadow: inset 0 0 5px #000; margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
+    button.primary{background:linear-gradient(var(--bordo),var(--bordo3));border-color:var(--bordo2)}
+    button.special{background:linear-gradient(var(--mor),var(--mor3));border-color:var(--mor2)}
+    button.gold{background:linear-gradient(#4a3500,#211700);border-color:var(--gold);color:#f1d26a}
+    button:active{transform:scale(.98)}
+    button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+    .icon{width:24px;height:24px;background-size:contain;background-repeat:no-repeat;background-position:center;display:inline-block}
+    .icon-sm{width:18px;height:18px}.icon-lg{width:34px;height:34px}
+    #game{position:relative;width:100%;height:100%;overflow:hidden;padding-bottom:var(--safe-bottom)}
+    .battle{
+      position:absolute;left:0;top:0;width:100%;height:154px;overflow:hidden;
+      background:#111 center bottom/cover no-repeat; image-rendering:pixelated;
+      border-bottom:2px solid var(--bordo3); box-shadow:0 4px 12px #000b; z-index:5;
+      transition:opacity .25s,background-image .4s;
     }
-    .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--mor-dark), var(--bordo-light)); position: absolute; left: 0; top: 0;}
-    .bar-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 9px; color: #fff; text-shadow: 1px 1px 2px #000; font-weight: bold; z-index: 2; line-height: 14px; }
-    .hud-icon { width: 12px; height: 12px; background-size: cover; margin-left: 4px; z-index: 2; position: relative; image-rendering: pixelated; display: inline-block; vertical-align: middle;}
-
-    #player-sprite {
-      position: absolute; bottom: 25px; left: 30px; width: 48px; height: 64px;
-      background-repeat: no-repeat; image-rendering: pixelated; 
-      animation: playSprite 0.8s steps(var(--frames)) infinite; z-index: 15;
-    }
-    @keyframes playSprite { from { background-position: 0 0; } to { background-position: calc(-48px * var(--frames)) 0; } }
-
-    .player-bars-container {
-      position: absolute; bottom: -18px; left: -10px; width: 68px; display: flex; flex-direction: column; gap: 3px; z-index: 20;
-    }
-    .small-bar-row { display: flex; align-items: center; justify-content: center; }
-    .small-bar-icon { width: 12px; height: 12px; margin-right: 3px; image-rendering: pixelated; }
-    .small-bar-bg { width: 100%; height: 5px; background: #000; border: 1px solid #333; border-radius: 2px; overflow: hidden; }
-    .small-bar-fill { height: 100%; transition: width 0.2s; }
-    #player-hp-bar { background: linear-gradient(90deg, #006600, #33cc33); width: 100%; }
-    #player-shield-bar { background: linear-gradient(90deg, #004c99, #3399ff); width: 100%; }
-
-    #enemy-sprite {
-      position: absolute; bottom: 25px; right: 30px; width: 64px; height: 64px;
-      background-size: 256px 64px; background-repeat: no-repeat; background-position: left center;
-      image-rendering: pixelated; transform: scaleX(-1); z-index: 10;
-      animation: enemyAnim 0.8s steps(4) infinite; transition: filter 0.1s, opacity 0.3s;
-    }
-    @keyframes enemyAnim { from { background-position: 0 0; } to { background-position: -256px 0; } }
-
-    #enemy-hp-container { position: absolute; bottom: -8px; left: 10%; width: 80%; height: 4px; background: #000; border: 1px solid #333; border-radius: 2px; overflow: hidden; }
-    #enemy-hp-bar { height: 100%; width: 100%; background: #ff3366; transition: width 0.2s; }
-
-    .combat-effect-img { position: absolute; bottom: 42px; height: 32px; width: auto; z-index: 30; image-rendering: pixelated; pointer-events: none; }
-    .combat-effect-img.flip { transform: scaleX(-1); }
-    
-    .afk-icon { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; image-rendering: pixelated; z-index: 50; display: none; }
-
-    .damage-text {
-      position: absolute; font-size: 16px; font-weight: 900; z-index: 50; pointer-events: none;
-      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.8);
-      animation: floatUp 0.8s ease-out forwards;
-    }
-    .damage-text.hp { color: #ff3366; }
-    .damage-text.shield { color: #66ccff; font-size: 14px; }
-    
-    @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 100% { transform: translateY(-40px) scale(1.2); opacity: 0; } }
-
-    #stats-bar { position: absolute; top: 160px; left: 0; width: 100%; height: 60px; padding: 0 10px; box-sizing: border-box; z-index: 10; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }
-    .stat-box { background: rgba(0,0,0,0.8); padding: 4px 0; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-    #content-scroll { position: absolute; top: 226px; bottom: 80px; width: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 0 8px 20px; box-sizing: border-box; transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
-    
-    #bottom-nav { position: absolute; bottom: 32px; left: 0; width: 100%; height: 48px; background: rgba(5, 0, 2, 0.98); border-top: 1px solid var(--bordo-dark); display: flex; justify-content: space-around; align-items: center; z-index: 10; box-shadow: 0 -5px 15px rgba(0,0,0,0.9); }
-    .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--label-2); font-size: 9px; font-weight: bold; flex: 1; height: 100%; cursor: pointer;}
-    .nav-btn.active { color: #fff; border-top: 2px solid var(--bordo-light); margin-top: -1px; background: rgba(255,255,255,0.02);}
-
-    .icon { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; display: inline-block; image-rendering: auto; }
-    .icon-sm { width: 20px; height: 20px; }
-    .icon-lg { width: 32px; height: 32px; transform: none; margin: 8px; }
-    .nav-btn .icon { width: 24px; height: 24px; opacity: 0.68; transition: opacity 0.2s, filter 0.2s; margin-bottom: 1px; }
-    .nav-btn.active .icon { opacity: 1; filter: drop-shadow(0 0 3px var(--bordo-light)); }
-
-    .panel { background: rgba(12, 0, 4, 0.85); width: 100%; margin: 0 auto 12px auto; border: 1px solid var(--bordo-dark); border-radius: 6px; padding: 10px; box-sizing: border-box; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); position: relative;}
-    .panel.purple-border { border-color: var(--mor-dark); background: rgba(8, 0, 12, 0.85); }
-    .panel.gold-border { border-color: #5c4711; background: rgba(12, 8, 0, 0.85); }
-
-    .header-clean { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: bold; font-size: 13px; color: #fff; text-shadow: 1px 1px 2px #000; text-transform: uppercase; letter-spacing: 0.5px; }
-
-    .badge { font-size: 8px; font-weight: bold; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; background: rgba(0,0,0,0.6);}
-    .badge.rare { color: #d1b3ff; border: 1px solid var(--mor-dark); }
-    .badge.active { color: #fff; background: var(--bordo); }
-
-    button { background: linear-gradient(180deg, #170005 0%, #0a0002 100%); color: #fff; border: 1px solid var(--bordo-dark); border-radius: 6px; min-height: 44px; padding: 0 10px; font-weight: bold; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.8); transition: all 0.1s ease; font-size: 11px; text-transform: uppercase; }
-    button:hover { border-color: var(--bordo-light); background: linear-gradient(180deg, #24000d 0%, #120006 100%); }
-    button.primary { background: linear-gradient(180deg, var(--bordo) 0%, var(--bordo-dark) 100%); border-color: var(--bordo-light); }
-    button.special { background: linear-gradient(180deg, var(--mor) 0%, var(--mor-dark) 100%); border-color: var(--mor-light); }
-    button:active { transform: scale(0.97); }
-    button:disabled { background: #050002 !important; color: #444 !important; border-color: #110005 !important; cursor: not-allowed; transform: none !important; }
-
-    .shop-item { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.05); }
-    .eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-    .eq-box { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 6px; padding: 10px; text-align: center; }
-    .eq-icon { width: 48px; height: 48px; margin: 0 auto 5px auto; background-size: contain; background-repeat: no-repeat; background-position: center; image-rendering: pixelated; filter: drop-shadow(0 0 3px rgba(179,139,34,0.25));}
-    
-    .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
-    .key-btn { position: relative; height: 40px; background: rgba(20,0,5,0.9); border: 1px solid var(--bordo); border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
-    .key-btn:hover { background: rgba(50,0,15,0.9); }
-    .key-btn.locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); }
-    .key-count { position: absolute; bottom: 2px; right: 2px; font-size: 8px; font-weight: bold; background: #000; padding: 1px 3px; border-radius: 3px; }
-    
-    .unique-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 10px; }
-    .unique-slot { width: 100%; aspect-ratio: 1; background: #050002; border: 1px solid #222; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-    .unique-slot:hover { border-color: var(--gold); }
-    .unique-slot.locked { background: #000; opacity: 0.2; cursor: not-allowed; }
-    .unique-slot.equipped { border-color: var(--gold); box-shadow: inset 0 0 10px rgba(179,139,34,0.5); }
-    .unique-slot .icon { width: 24px; height: 24px; }
-
-    #toast-msg { position: absolute; top: 220px; left: 50%; transform: translateX(-50%); background: rgba(158, 0, 36, 0.95); border: 1px solid #ff3366; color: #fff; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 11px; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s; text-align: center; box-shadow: 0 0 10px rgba(255,51,102,0.5); }
-    .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.90); z-index: 250; flex-direction: column; align-items: center; justify-content: center; }
-    .modal-close { position: absolute; top: -5px; left: -5px; width: 28px; height: 28px; background-size: contain; background-repeat: no-repeat; cursor: pointer; z-index: 10; image-rendering: pixelated; filter: drop-shadow(0 0 3px #000); }
-
-    .minigame-zone { width: 100%; height: 36px; background: #000; border: 2px solid var(--mor); border-radius: 18px; position: relative; overflow: hidden; margin: 20px 0; box-shadow: inset 0 0 15px rgba(0,0,0,1); }
-    .target-area { position: absolute; left: 45%; width: 10%; height: 100%; background: rgba(88, 0, 130, 0.4); border-left: 2px solid var(--mor-light); border-right: 2px solid var(--mor-light); }
-    .cursor { position: absolute; left: 0%; top: 0; width: 4px; height: 100%; background: #fff; box-shadow: 0 0 10px #fff; border-radius: 2px; }
-
-    #modal-creation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 300; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .char-select-btn { width: 80px; height: 100px; background: rgba(255,255,255,0.02); border: 1px solid #333; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px; cursor: pointer; transition: all 0.2s; }
-    .char-select-btn:hover { border-color: var(--bordo); background: rgba(110,0,25,0.2); transform: translateY(-5px); }
-    
-    .loading-dots:after { content: '.'; animation: dots 1s steps(5, end) infinite; }
-    @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 40% { color: #fff; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 60% { text-shadow: .25em 0 0 #fff, .5em 0 0 rgba(0,0,0,0);} 80%, 100% { text-shadow: .25em 0 0 #fff, .5em 0 0 #fff;} }
-    
-    .ach-item { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; border: 1px solid #333; transition: 0.3s; }
-    .ach-item.unlocked { border-color: var(--gold); box-shadow: inset 0 0 5px rgba(179,139,34,0.3); }
-    .ach-icon { width: 32px; height: 32px; image-rendering: pixelated; filter: grayscale(100%); opacity: 0.3; transition: 0.3s; }
-    .ach-item.unlocked .ach-icon { filter: grayscale(0%); opacity: 1; }
+    body.hide-battle .battle{opacity:0;pointer-events:none}
+    #hud{position:absolute;top:8px;left:10px;right:10px;z-index:30}
+    .hud-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+    #player-title{margin:0;font-size:11px;color:#fff;text-shadow:0 1px 2px #000}
+    .badge{font-size:8px;font-weight:900;padding:3px 6px;border-radius:4px;background:#0009;color:#d1b3ff;border:1px solid var(--mor3)}
+    .bar{height:14px;border:1px solid var(--bordo3);background:#000d;border-radius:7px;overflow:hidden;position:relative}
+    .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--mor3),var(--bordo2));transition:width .2s}
+    .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
+    #player-sprite{position:absolute;left:30px;bottom:25px;width:48px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
+    #enemy-sprite{position:absolute;right:30px;bottom:25px;width:64px;height:64px;background-repeat:no-repeat;background-size:256px 64px;transform:scaleX(-1);z-index:14;image-rendering:pixelated;animation:enemyAnim .8s steps(4) infinite}
+    @keyframes playerAnim{from{background-position:0 0}to{background-position:calc(-48px * var(--frames,6)) 0}}
+    @keyframes enemyAnim{from{background-position:0 0}to{background-position:-256px 0}}
+    .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
+    .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
+    .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
+    .mini-fill{height:100%;width:100%;transition:width .15s}
+    #player-hp-bar{background:linear-gradient(90deg,#075,#3c6)}
+    #player-shield-bar{background:linear-gradient(90deg,#036,#39f)}
+    #enemy-hp-wrap{position:absolute;left:10%;bottom:-8px;width:80%;height:5px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
+    #enemy-hp-bar{height:100%;width:100%;background:#f36;transition:width .15s}
+    .afk{position:absolute;top:-25px;left:50%;transform:translateX(-50%);width:24px;height:24px;background-size:contain;background-repeat:no-repeat;display:none}
+    .damage{position:absolute;top:40px;font-size:16px;font-weight:900;z-index:60;pointer-events:none;text-shadow:0 2px 4px #000;animation:float .8s forwards}
+    .damage.hp{color:#ff4967}.damage.shield{color:#69c9ff;font-size:14px}
+    @keyframes float{to{transform:translateY(-40px) scale(1.15);opacity:0}}
+    #stats{position:absolute;left:0;top:160px;width:100%;height:60px;padding:0 10px;z-index:10;transition:top .25s}
+    body.hide-battle #stats{top:8px}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+    .stat{height:54px;border:1px solid #ffffff0d;border-radius:7px;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800}
+    #content{position:absolute;top:226px;left:0;right:0;bottom:80px;overflow-y:auto;overflow-x:hidden;padding:0 8px 20px;scrollbar-width:none;transition:top .25s}
+    body.hide-battle #content{top:74px}
+    .tab{display:none}.tab.active{display:block;animation:fade .15s}@keyframes fade{from{opacity:0}to{opacity:1}}
+    .panel{background:#0c0004d9;border:1px solid var(--bordo3);border-radius:7px;padding:10px;margin-bottom:12px;box-shadow:inset 0 0 10px #000b}
+    .panel.purple{background:#08000cd9;border-color:var(--mor3)}
+    .panel.gold{background:#0c0800d9;border-color:#5c4711}
+    .head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff1a;padding-bottom:6px;margin-bottom:10px;color:#fff;font-size:13px;font-weight:900;text-transform:uppercase}
+    .shop-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;margin-top:10px;border-top:1px dashed #ffffff12}
+    .shop-item:first-child{margin-top:0}.shop-info{display:flex;align-items:center;gap:10px;min-width:0}.shop-info>div:last-child{min-width:0}.shop-name{font-weight:900;color:#fff;font-size:12px}.shop-desc{font-size:9px;color:var(--muted);white-space:normal}
+    .shop-item button{width:auto;min-width:76px;flex:0 0 auto}
+    .eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .eq{background:#0007;border:1px solid #333;border-radius:7px;padding:8px;text-align:center}.eq-icon{width:48px;height:48px;margin:0 auto 4px;background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:pixelated}
+    .keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.key{height:44px;border:1px solid var(--bordo);background:#140005;border-radius:5px;position:relative;display:flex;align-items:center;justify-content:center}.key.locked{opacity:.25}.key-count{position:absolute;right:2px;bottom:2px;background:#000;border-radius:3px;padding:1px 3px;font-size:8px}
+    .unique-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.unique{aspect-ratio:1;background:#050002;border:1px solid #222;border-radius:5px;display:flex;align-items:center;justify-content:center}.unique.locked{opacity:.18}.unique.equipped{border-color:var(--gold);box-shadow:inset 0 0 10px #b38b2280}
+    .mg{height:36px;margin:16px 0;background:#000;border:2px solid var(--mor);border-radius:18px;position:relative;overflow:hidden}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#58008255;border-left:2px solid var(--mor2);border-right:2px solid var(--mor2)}.mg-cursor{position:absolute;left:0;top:0;width:4px;height:100%;background:#fff;box-shadow:0 0 8px #fff}
+    #nav{position:absolute;left:0;right:0;bottom:var(--safe-bottom);height:48px;background:#050002fa;border-top:1px solid var(--bordo3);display:flex;z-index:20}
+    .nav{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--muted);font-weight:800}.nav.active{color:#fff;border-top:2px solid var(--bordo2);background:#ffffff05}.nav .icon{width:23px;height:23px;opacity:.7}.nav.active .icon{opacity:1}
+    .overlay{display:none;position:absolute;inset:0;background:#000e;z-index:250;align-items:center;justify-content:center;padding:18px}.modal{width:100%;max-height:88%;overflow:auto}.close{position:absolute;left:-5px;top:-5px;width:28px;height:28px;background-size:contain;background-repeat:no-repeat}
+    #creation{display:flex;position:absolute;inset:0;background:#000;z-index:300;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+    .char-row{display:flex;gap:16px}.char-btn{width:90px;height:110px;border:1px solid #333;border-radius:8px;background:#ffffff05;display:flex;align-items:center;justify-content:center}
+    #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
+    .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img{width:32px;height:32px;filter:grayscale(1);opacity:.3}.ach.unlocked img{filter:none;opacity:1}
+    .tiny{font-size:9px;color:var(--muted)} .center{text-align:center}
+    input[type="range"]{width:100%}
   </style>
 </head>
 <body>
+<div id="game">
+  <div id="toast"></div>
 
-  <!-- Karakter Seçimi -->
-  <div id="modal-creation" style="display: none;">
-    <img data-src="5uCOUOu.png" style="width: 220px; image-rendering: pixelated; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--bordo));">
-    <h2 style="color: #fff; text-shadow: 0 0 10px var(--bordo); margin-top: 0;">Kanın Sahibini Seç</h2>
-    <div style="color: var(--label-2); font-size: 12px; margin-bottom: 30px;">Kadim vadiye adım atmadan önce...</div>
-    <div style="display: flex; gap: 20px;">
-      <div class="char-select-btn" onclick="selectGender('female')">
-        <div class="char-sprite" data-bg="VbwzaIQ.png" style="--frames: 6; width: 48px; height: 64px;"></div>
-      </div>
-      <div class="char-select-btn" onclick="selectGender('male')">
-        <div class="char-sprite" data-bg="vb9bSml.png" style="--frames: 6; width: 48px; height: 64px;"></div>
-      </div>
+  <div id="creation">
+    <img data-src="5uCOUOu.png" style="width:220px;image-rendering:pixelated;filter:drop-shadow(0 0 10px var(--bordo));margin-bottom:8px">
+    <h2 style="margin:0 0 4px;color:#fff">Kanın Sahibini Seç</h2>
+    <div class="tiny" style="margin-bottom:20px">Kadim Vadi'ye adım atmadan önce...</div>
+    <div class="char-row">
+      <div class="char-btn" onclick="selectGender('female')"><div class="char-preview" data-bg="VbwzaIQ.png" style="width:48px;height:64px"></div></div>
+      <div class="char-btn" onclick="selectGender('male')"><div class="char-preview" data-bg="vb9bSml.png" style="width:48px;height:64px"></div></div>
     </div>
   </div>
 
-  <div id="game-container">
-    <div id="toast-msg">Uyarı!</div>
-
-    <!-- AYARLAR MODALI -->
-    <div id="modal-settings" class="modal-overlay">
-      <div class="panel" style="width: 85%; padding-top: 25px;">
-        <div class="modal-close" data-bg="c6YwskP.png" onclick="document.getElementById('modal-settings').style.display='none'"></div>
-        <h3 style="text-align: center; color: #fff; margin-top: 0; margin-bottom: 20px;">Ayarlar</h3>
-        <div style="margin-bottom: 15px;">
-          <label style="font-size: 11px; color: var(--label); font-weight: bold;">Müzik Sesi</label>
-          <input type="range" id="vol-music" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()" style="width: 100%; margin-top: 5px;">
-        </div>
-        <div style="margin-bottom: 25px;">
-          <label style="font-size: 11px; color: var(--label); font-weight: bold;">Oyun Efekt Sesi</label>
-          <input type="range" id="vol-sfx" min="0" max="1" step="0.1" value="1.0" onchange="updateVolumes()" style="width: 100%; margin-top: 5px;">
-        </div>
-        <button class="primary" style="background: linear-gradient(180deg, #9e0024 0%, #3a000d 100%); border-color: #ff3366;" onclick="hardResetGame()">
-          <img data-src="LC7WF2B.png" style="width: 18px; image-rendering: pixelated;"> Oyunu Sıfırla
-        </button>
-        <div style="margin-top: 25px; text-align: center; font-size: 9px; color: var(--label-2); display: flex; align-items: center; justify-content: center; gap: 5px;">
-           <img data-src="08HBYPE.png" style="width: 16px; image-rendering: pixelated;"> SYLEX entertainment tüm hakları saklıdır.
-        </div>
-      </div>
-    </div>
-
-    <!-- BAŞARIMLAR MODALI -->
-    <div id="modal-achievements" class="modal-overlay">
-      <div class="panel" style="width: 85%; max-height: 85%; padding-top: 25px; display: flex; flex-direction: column;">
-        <div class="modal-close" data-bg="c6YwskP.png" onclick="document.getElementById('modal-achievements').style.display='none'"></div>
-        <h3 style="text-align: center; color: var(--gold); margin-top: 0; margin-bottom: 5px;">Başarımlar</h3>
-        <div style="text-align: center; font-size: 10px; color: var(--label-2); margin-bottom: 15px;">Açılan: <span id="achievements-count" style="color: #fff; font-weight: bold;">0 / 15</span></div>
-        <div id="achievements-list" style="overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; scrollbar-width: none;"></div>
-      </div>
-    </div>
-
-    <!-- PRESTİJ ONAY MODALI -->
-    <div id="modal-confirm" class="modal-overlay">
-      <div class="panel" style="width: 80%; text-align: center; border-color: #5c4711; box-shadow: 0 0 20px rgba(92, 71, 17, 0.5);">
-        <div class="modal-close" data-bg="c6YwskP.png" onclick="document.getElementById('modal-confirm').style.display='none'"></div>
-        <h3 style="color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 0;">Reenkarnasyon</h3>
-        <div style="font-size: 12px; margin-bottom: 15px; color: var(--label);">Öz ve Rün hariç her şey sıfırlanacak. Kadim gücü uyandırmaya hazır mısın?</div>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="document.getElementById('modal-confirm').style.display='none'">İptal</button>
-          <button class="primary" style="background: linear-gradient(180deg, #d4af37 0%, #8b6508 100%); color: #000; border-color: #d4af37;" onclick="executePrestige()">Onayla</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- LOOT PENCERESİ -->
-    <div id="modal-loot" class="modal-overlay">
-      <div class="panel" style="width: 80%; text-align: center; border-color: var(--mor-light); box-shadow: 0 0 20px rgba(88,0,130,0.5);">
-        <h3 style="color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 0;" id="loot-title">Ganimet</h3>
-        <div id="loot-items-container" style="margin: 15px 0; display: flex; flex-direction: column; gap: 10px; align-items: center; font-size: 13px;"></div>
-        <button class="primary" onclick="document.getElementById('modal-loot').style.display='none'">Kabul Et</button>
-      </div>
-    </div>
-
-    <div id="battle-stage">
-      <div id="top-hud">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <h3 style="margin:0; text-align: left; font-size: 11px;" id="player-title">Çırak Büyücü</h3>
-          <div class="badge rare">SV <span id="level-display">1</span></div>
-        </div>
-        <div class="bar-container">
-          <div class="bar-fill" id="xp-bar"></div>
-          <div class="bar-text">XP <div class="hud-icon" data-bg="rZ2HD2E.png"></div></div>
-        </div>
-      </div>
-
-      <div id="player-sprite" class="char-sprite">
-        <div class="afk-icon" id="player-afk" data-bg="xs7MP6T.png"></div>
-        <div class="player-bars-container">
-          <div class="small-bar-row">
-            <img data-src="UTi6qfN.png" class="small-bar-icon">
-            <div class="small-bar-bg"><div id="player-hp-bar" class="small-bar-fill"></div></div>
-          </div>
-          <div class="small-bar-row">
-            <img data-src="7uCbrSq.png" class="small-bar-icon">
-            <div class="small-bar-bg"><div id="player-shield-bar" class="small-bar-fill"></div></div>
-          </div>
-        </div>
-      </div>
-      <div id="enemy-sprite">
-        <div class="afk-icon" id="enemy-afk" data-bg="xs7MP6T.png"></div>
-        <div id="enemy-hp-container"><div id="enemy-hp-bar"></div></div>
-      </div>
-    </div>
-
-    <div id="stats-bar">
-      <div class="stats-grid">
-        <div class="stat-box"><div class="icon" data-bg="rZ2HD2E.png"></div><span id="res-soul" style="color: #d1b3ff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XWcKSug.png"></div><span id="res-blood" style="color: #ff4d4d;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="XaP5VtJ.png"></div><span id="res-dark" style="color: #b84dff;">0</span></div>
-        <div class="stat-box"><div class="icon" data-bg="KND00E1.png"></div><span id="res-rune" style="color: var(--bordo-light);">0</span></div>
-      </div>
-    </div>
-
-    <div id="content-scroll">
-      
-      <!-- MACERA -->
-      <div id="tab-main" class="tab-content active">
-        <div class="panel">
-          <div class="header-clean"><span id="loc-name">Karanlık Orman</span><span class="badge active">AKTİF</span></div>
-          <button class="primary" id="btn-farm"><div class="icon icon-sm" data-bg="rZ2HD2E.png"></div> Ruh Hasadı</button>
-        </div>
-        <div class="panel">
-          <div class="header-clean">
-            <span>Eski Kalıntılar</span>
-            <span class="badge rare" id="quest-duration-badge"></span>
-          </div>
-          <div class="bar-container purple" style="height: 18px; margin-bottom: 10px;">
-            <div class="bar-fill" id="quest-progress-bar"></div>
-            <div class="bar-text" id="quest-progress-text">HAZIR</div>
-          </div>
-          <button id="btn-quest" class="special"><div class="icon icon-sm" data-bg="3IngNRT.png"></div> Gölgelere Dal</button>
-        </div>
-        <div class="panel purple-border">
-          <div class="header-clean"><span>Kan Ritüeli</span><span class="badge">ŞANS</span></div>
-          <div style="font-size: 10px; color: var(--label-2); margin-bottom: 12px; text-align: center;" id="ritual-cost-desc"></div>
-          <button id="btn-ritual" style="border-color: var(--bordo); color: #ff6680;"><div class="icon icon-sm" data-bg="XWcKSug.png"></div> Ritüel Yap</button>
-        </div>
-      </div>
-
-      <!-- KASA -->
-      <div id="tab-chest" class="tab-content">
-        <div class="panel">
-          <div class="header-clean"><span>Kuşanılan Ekipman</span><span class="badge active">GÜÇ</span></div>
-          <div class="eq-grid">
-            <div class="eq-box">
-              <div style="font-size: 9px; color: var(--label-2); margin-bottom: 3px;">SİLAH</div>
-              <div class="eq-icon" id="eq-weapon-img" data-bg="Sobgyzp.png"></div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff;" id="eq-weapon-name">Çırak Asası</div>
-              <div style="font-size: 9px; color: #ff6666;" id="eq-weapon-stat">ATK: 5</div>
-              <div id="eq-weapon-upg"></div>
-            </div>
-            <div class="eq-box">
-              <div style="font-size: 9px; color: var(--label-2); margin-bottom: 3px;">ZIRH</div>
-              <div class="eq-icon" id="eq-armor-img" data-bg="uiCTITp.png"></div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff;" id="eq-armor-name">Basit Kumaş</div>
-              <div style="font-size: 9px; color: #66ccff;" id="eq-armor-stat">DEF: 0</div>
-              <div id="eq-armor-upg"></div>
-            </div>
-          </div>
-          
-          <div class="header-clean" style="margin-top: 15px;"><span>Ganimet Sandığı</span></div>
-          <div style="text-align: center; margin-bottom: 10px;">
-            <img data-src="N1OwHln.png" style="width: 80px; image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(179,139,34,0.3));">
-            <div style="font-size: 10px; color: var(--label-2); margin-top: 5px;">Kalıntılardan düşen anahtarlarla aç.</div>
-          </div>
-          <div class="keys-grid" id="keys-container"></div>
-        </div>
-
-        <div class="panel gold-border">
-          <div class="header-clean" style="color: var(--gold); border-color: #5c4711;"><span>Yadigâr Deposu</span></div>
-          <div style="font-size: 10px; color: var(--label-2); text-align: center;">Yüksek seviye anahtarlardan düşen Kadim Yadigârlar. Üzerine tıklayarak kuşan.</div>
-          <div class="unique-grid" id="unique-storage"></div>
-        </div>
-      </div>
-
-      <!-- SUNAK -->
-      <div id="tab-camp" class="tab-content">
-        <div class="panel">
-          <div class="header-clean"><span>Kadim Sunak</span><span class="badge" style="background: var(--mor-dark);">PASİF</span></div>
-          <div style="font-size: 10px; color: var(--label-2); margin-bottom: 10px; text-align: center;">Ruh ve Kan ile kalıcı üretimleri güçlendir.</div>
-          <div id="upgrades-container"></div>
-        </div>
-        
-        <div class="panel gold-border">
-          <div class="header-clean" style="color: var(--gold); border-color: #5c4711;"><div class="icon icon-sm" data-bg="2CCtWNL.png" style="margin-right: 5px;"></div> <span>Reenkarnasyon</span></div>
-          <div style="font-size: 10px; color: var(--label-2); margin-bottom: 10px; text-align: center;">Tüm ilerlemeyi feda et. Üretimi %50 artıran <span style="color:#fff;">Kadim Ruh</span> kazan. Mevcut: <span id="res-prestige" style="color:var(--gold); font-weight:bold;">0</span></div>
-          <button id="btn-prestige" style="background: #2b1f00; color:#b38b22; border-color: #5c4711;" disabled>Gereksinim: Seviye 10</button>
-        </div>
-      </div>
-
-      <!-- BOYUT KAPISI -->
-      <div id="tab-mini" class="tab-content">
-        <div class="panel purple-border">
-          <div class="header-clean" style="border-color: var(--mor-dark);"><span>Boyut Kapısı</span><span class="badge rare">RÜN</span></div>
-          <div style="font-size: 11px; color: var(--label-2); text-align: center; margin-bottom: 10px;">Işık mor alana geldiğinde vur! Yarığı açarak Karanlık Öz kazan.</div>
-          <div class="minigame-zone"><div class="target-area" id="mg-target"></div><div class="cursor" id="mg-cursor"></div></div>
-          <button class="special" id="btn-mg-action" style="height: 50px; font-size: 14px;">Boyutu Arala (1 Rün)</button>
-          <div id="mg-result" style="text-align: center; font-size: 12px; margin-top: 10px; font-weight: bold; min-height: 16px;"></div>
-        </div>
-
-        <div class="panel gold-border" style="margin-top: 15px;">
-            <div class="header-clean" style="color: var(--gold); border-color: #5c4711; margin-bottom: 15px;"><span>Sistem & Başarımlar</span></div>
-            <button class="primary" style="margin-bottom: 10px; border-color: #555; background: linear-gradient(180deg, #333 0%, #111 100%);" onclick="document.getElementById('modal-settings').style.display='flex'">
-                <img data-src="h0Eo4it.png" style="width:16px; image-rendering: pixelated;"> Ayarlar
-            </button>
-            <button class="special" style="border-color: var(--gold); background: linear-gradient(180deg, #443300 0%, #221100 100%); color: var(--gold);" onclick="document.getElementById('modal-achievements').style.display='flex'; renderAchievements();">
-                <img data-src="RKweSBt.png" style="width:16px; image-rendering: pixelated;"> Başarımlar
-            </button>
-        </div>
-      </div>
-
-      <!-- KARABORSA -->
-      <div id="tab-shop" class="tab-content">
-        <div class="panel purple-border">
-          <div class="header-clean" style="border-color: var(--mor-dark);"><div class="icon icon-sm" data-bg="z4bPDWO.png" style="margin-right: 5px;"></div> <span>Karaborsa</span></div>
-          <div style="font-size: 10px; color: var(--label-2); margin-bottom: 12px; text-align: center;">Tüm ödemeler IC bankadan düşer.</div>
-          <div id="black-market-items"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ALT MENÜ -->
-    <div id="bottom-nav">
-      <div class="nav-btn active" onclick="switchTab('main', this)"><div class="icon" data-bg="rZ2HD2E.png"></div> Macera</div>
-      <div class="nav-btn" onclick="switchTab('chest', this)"><div class="icon" data-bg="N1OwHln.png"></div> Kasa</div>
-      <div class="nav-btn" onclick="switchTab('camp', this)"><div class="icon" data-bg="Ripj8GR.png"></div> Sunak</div>
-      <div class="nav-btn" onclick="switchTab('mini', this)"><div class="icon" data-bg="IRT0WDZ.png"></div> Boyut</div>
-      <div class="nav-btn" onclick="switchTab('shop', this)"><div class="icon" data-bg="z4bPDWO.png"></div> Borsa</div>
+  <div id="settings" class="overlay">
+    <div class="panel modal" style="position:relative">
+      <div class="close" data-bg="c6YwskP.png" onclick="closeModal('settings')"></div>
+      <h3 class="center" style="margin-top:0">Ayarlar</h3>
+      <label>Müzik</label><input id="vol-music" type="range" min="0" max="1" step="0.1" value="0.15" onchange="updateVolumes()">
+      <label>Efekt</label><input id="vol-sfx" type="range" min="0" max="1" step="0.1" value="1" onchange="updateVolumes()">
+      <button class="primary" style="margin-top:18px" onclick="hardResetGame()">Oyunu Sıfırla</button>
+      <div class="tiny center" style="margin-top:18px">SYLEX entertainment · demo build</div>
     </div>
   </div>
 
-  <script src="https://phone-gw.downtownrpg.com/api/sdk/0.2/child.umd.js"></script>
-  <script>
-    // DİKKAT: BURAYA KENDİ NETLİFY LİNKİNİ YAZ! (Sonunda /img/ olmasına dikkat et)
-    // Örnek: "https://oyun-adim.netlify.app/img/"
-    const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/"
-
-    function initCDN() {
-        document.querySelectorAll('[data-src]').forEach(el => el.src = CDN_URL + el.getAttribute('data-src'));
-        document.querySelectorAll('[data-bg]').forEach(el => el.style.backgroundImage = `url('${CDN_URL}${el.getAttribute('data-bg')}')`);
-    }
-    // HTML yüklendiği an bot görmeden resimleri dinamik olarak çek
-    initCDN();
-
-    var isEnvPhone = typeof PhoneSDK !== 'undefined';
-    var phone = isEnvPhone ? PhoneSDK.createPhoneSDK() : {
-      whenReady: async () => ({ theme: { background: '#000', label: '#d8c8c8', secondaryLabel: '#8f7a7a', accent: '#6e0019'}, characterId: "RP" }),
-      storage: { get: async () => null, set: async () => {} },
-      bank: { charge: async () => true },
-      identity: { token: async () => ({ token: "local-preview", expiresAt: Math.floor(Date.now() / 1000) + 900 }) },
-      phone: { notify: async () => {} }
-    };
-    
-    const sfx = {
-      bg: new Audio('https://files.catbox.moe/74c7yc.mp3'),
-      p_atk: new Audio('https://files.catbox.moe/jxe6g6.wav'),
-      e_atk: new Audio('https://files.catbox.moe/yqtnmq.wav'),
-      loot: new Audio('https://files.catbox.moe/sr74q7.wav'),
-      lvlup: new Audio('https://files.catbox.moe/459gkz.wav'),
-      equip: new Audio('https://files.catbox.moe/ozg7s8.wav'),
-      buy: new Audio('https://files.catbox.moe/9zh4gj.wav'),
-      mapchange: new Audio('https://files.catbox.moe/xnmhb5.wav'),
-      chest: new Audio('https://files.catbox.moe/az4wl5.wav'),
-      e_death: new Audio('https://files.catbox.moe/t30v8r.wav'),
-      p_death: new Audio('https://files.catbox.moe/k9gftq.wav'),
-      tab: new Audio('https://files.catbox.moe/t48nif.wav'),
-      select: new Audio('https://files.catbox.moe/4z8lcp.wav'),
-      ritual: new Audio('https://files.catbox.moe/l2dgcz.wav'),
-      quest_start: new Audio('https://files.catbox.moe/sfar5a.wav'),
-      rune: new Audio('https://files.catbox.moe/m52suq.wav'),
-      altar_upg: new Audio('https://files.catbox.moe/xx3qu9.wav'),
-      weapon_upg: new Audio('https://files.catbox.moe/7m6qur.wav'),
-      robe_upg: new Audio('https://files.catbox.moe/77a5fd.wav') 
-    };
-    
-    sfx.bg.loop = true; 
-    let userSettings = { music: 0.15, sfx: 1.0 };
-
-    function updateVolumes() {
-        userSettings.music = parseFloat(document.getElementById('vol-music').value);
-        userSettings.sfx = parseFloat(document.getElementById('vol-sfx').value);
-        sfx.bg.volume = userSettings.music;
-        state.settings = userSettings;
-        saveState();
-    }
-    
-    function playSound(name, vol = 1.0) {
-        let a = sfx[name].cloneNode(); a.volume = vol * userSettings.sfx; a.play().catch(e => {}); 
-    }
-
-    let isAFK = false; let lastInteractTime = Date.now();
-    ['click', 'touchstart'].forEach(evt => 
-      document.addEventListener(evt, () => {
-        lastInteractTime = Date.now();
-        if(isAFK) { isAFK = false; document.getElementById('player-afk').style.display = 'none'; document.getElementById('enemy-afk').style.display = 'none'; }
-      })
-    );
-
-    const enemyList = ['r34x4rk.png', 'aeUE8LY.png', 'Ki45LLY.png', '6ngSd4q.png', 'DXl76oM.png', 'qU1GVNc.png', 'aRqvjwr.png', 'L8VJXGB.png', 'BMntBV6.png', '9JCM4k5.png', '5wxpNCA.png', 'z85mIc5.png', 'zc8veBt.png', 'k8j34JO.png', 'Epfg5AR.png'];
-    const hitEffects = ['pLFDbUS.gif', 'ekys4GI.gif', 'skpvZ1K.gif', '0pI60Ow.gif', 'ZzB4n3j.gif', 'JcPZP40.gif'];
-    const enemyAttackGif = 'Yku2dxV.gif'; 
-    const sprites = { female: { idle: 'VbwzaIQ.png', dash: 'SU7Wm8d.png', jump: 'AvyZjtx.png', death: 'ScaOYPs.png' }, male: { idle: 'vb9bSml.png', dash: 'QA7fwcY.png', jump: 'wb8tVhJ.png', death: 'ScaOYPs.png' } };
-    const frameCounts = { idle: 6, dash: 4, jump: 8, death: 6 };
-
-    const wepTiers = [['Sobgyzp.png', 'KmKYn2j.png', 'iLrkoIP.png', 'OnNJZib.png', 'DJwL46V.png'],['ufRauzO.png', 'BF39DDd.png', 'XlAL5e0.png', '9Rd7Vcx.png', 'U4SvLci.png'],['79U9ddN.png', 'z1NAu65.png', 'eka9oKj.png', '4gVPxxU.png', 'LEgUUIi.png']];
-    const wepUniques = ['S2x99Uo.png','FXXkBlx.png','gV4nwGa.png','usBDlxr.png','EVoaOUW.png','4jGKsVI.png','kfADGqF.png','iu2RLfz.png','6aoTbXQ.png'];
-    const armTiers = [['uiCTITp.png', '0d6QvWe.png', 'AQiwNcp.png'],['chUVP49.png', 'rNXPeal.png', 'AGIHoXb.png', 'PZQ243K.png', 'AsFMSdt.png'],['0XVH5cj.png', 'OUgWUkQ.png', '7M085ds.png', 'HigNrFC.png', 'fthODln.png'],['3WSmAuR.png', 'o70Kunf.png', 'IajSD07.png', 'ZwLdEMM.png'],['5l21f1v.png', 'k83JT0E.png', '0lCeYQm.png', 'XjqYjpm.png', 'pz4wL1Q.png', 'KYrj5bB.png'],['a4a2sIF.png', 't0YTMlA.png', 'Uo9HsOn.png', 'tljYYCo.png', '4iMw6Nv.png', 'a7afDq0.png']];
-    const armUniques = ['VjkYGmr.png','aikRPrn.png','8K02ZOU.png','evwFKwB.png','mmyrNMr.png','mMEjivM.png','y4PTmZh.png','DKk5Axs.png'];
-    const chestKeys = ['3pCe51s.png', 'LgBYg2I.png', 'LxANbXQ.png', 'pql7Og9.png', 'cu4AHcV.png', 'cJ3vWM9.png', 'J1fjm0c.png', 'R3paBEL.png'];
-
-    const wepUniqueNames = ["Kanlı Tırpan", "Kader Kılıcı", "Ruh Yiyen", "Gölge Hançeri", "Kızıl Gürz", "Kadim Asa", "Gece Kılıcı", "Buzul Balta", "Şeytan Mızrağı"];
-    const armUniqueNames = ["Gölgeler Cübbesi", "Kızıl Zırh", "Kadim Kalkan", "Ruh Koruması", "Gece Pelerini", "Kemik Zırh", "Lanetli Deri", "Buzul Plaka"];
-
-    const altarUpgrades = [
-      { id: 'book', name: 'Kadim Bilgelik', desc: 'Anahtar düşürme şansını artırır.', imgs: ['csY0vyb.png','1IOTuZe.png','HchptsM.png','3IzzE4S.png'], type: 'soul', baseCost: 50, mult: 2.5 },
-      { id: 'dust', name: 'Kozmik Toz', desc: 'Saniyede Oto Ruh üretir.', imgs: ['Y9xlskS.png','MEvfNBv.png','ViCqShl.png','cmLNF4B.png','Iz3gWYq.png','1HNJ42F.png','xUYBV1O.png','vhawAm2.png'], type: 'blood', baseCost: 100, mult: 1.8 },
-      { id: 'scroll', name: 'Kanlı Parşömen', desc: 'Saniyede Oto Kan üretir.', imgs: ['V5QEvwy.png','QEYitFc.png','TOgbKV4.png','ZGWqw1W.png','dXcl3wH.png','z5k8XDk.png','QRXsNtE.png'], type: 'dark', baseCost: 10, mult: 2.0 },
-      { id: 'potion', name: 'Yaşam İksiri', desc: 'Maksimum Canı artırır.', imgs: ['XCjwkjr.png','DgmO02h.png','lm6RHXG.png','uF7ztGJ.png','JEG4iJU.png','B6YG0in.png','AYSkDbA.png','oMYS51o.png'], type: 'soul', baseCost: 150, mult: 1.5 },
-      { id: 'coin', name: 'Ganimet Zenginliği', desc: 'Görevlerden gelen ganimeti artırır.', imgs: ['M7X9WOQ.png','oy6iNYy.png','qQwN1mW.png','Eq2ngN6.png','kBQEANO.png'], type: 'blood', baseCost: 200, mult: 1.7 }
-    ];
-    const roman = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "MAKS"];
-
-    const marketItems = [
-      { name: "Küçük Bilgi Tomarı", desc: "+100 XP · 2,4 dk emek", icon: "3xcyzvh.png", price: 40, action: () => addXP(100) },
-      { name: "Bilge Tomarı", desc: "+500 XP · 9,6 dk emek", icon: "0O2SqwA.png", price: 160, action: () => addXP(500) },
-      { name: "Kadim Tomar", desc: "+2000 XP · 31 dk emek", icon: "dqc0ybc.png", price: 520, action: () => addXP(2000) },
-      { name: "Efsanevi Tomar", desc: "+5000 XP · 1,1 sa emek", icon: "EdOIbwE.png", price: 1100, action: () => addXP(5000) },
-      { name: "Tanrısal Tomar", desc: "+15000 XP · 2,7 sa emek", icon: "CneQ9wH.png", price: 2700, action: () => addXP(15000) },
-      { name: "Sıradan Ruh", desc: "+250 Ruh", icon: "72DNCNJ.png", price: 50, action: () => { state.soul+=250; } },
-      { name: "Zengin Ruh", desc: "+1000 Ruh", icon: "xpRIjnf.png", price: 180, action: () => { state.soul+=1000; } },
-      { name: "Kadim Ruh Kümesi", desc: "+5000 Ruh", icon: "GIrbWTa.png", price: 800, action: () => { state.soul+=5000; } },
-      { name: "Damla Kan", desc: "+100 Kan", icon: "hBTvz3U.png", price: 50, action: () => { state.blood+=100; } },
-      { name: "Kan Şişesi", desc: "+500 Kan", icon: "Sy5NAsX.png", price: 220, action: () => { state.blood+=500; } },
-      { name: "Kan Kadehi", desc: "+2000 Kan", icon: "VDmfS8Z.png", price: 800, action: () => { state.blood+=2000; } },
-      { name: "Kan Havuzu", desc: "+5000 Kan", icon: "wBPrZad.png", price: 1800, action: () => { state.blood+=5000; } },
-      { name: "Karanlık Taş", desc: "+10 Öz", icon: "uXvTGJC.png", price: 150, action: () => { state.dark+=10; } },
-      { name: "Karanlık Kristal", desc: "+50 Öz · toplu %20 indirim", icon: "jUC5lFz.png", price: 600, action: () => { state.dark+=50; } },
-      { name: "Karanlık Yürek", desc: "+200 Öz · toplu %33 indirim", icon: "v8b6RUf.png", price: 2000, action: () => { state.dark+=200; } },
-      { name: "Karanlık Küp", desc: "+750 Öz · 6 sa emek", icon: "o7eQsNh.png", price: 6000, action: () => { state.dark+=750; } },
-      { name: "Karanlık Göz", desc: "+2000 Öz · 12 sa emek", icon: "AgrVJ1H.png", price: 12000, action: () => { state.dark+=2000; } },
-      { name: "Rün Kırığı", desc: "+1 Rün · 15 dk emek", icon: "UwxjWcn.png", price: 250, action: () => { state.rune+=1; } },
-      { name: "Rün Kesesi", desc: "+3 Rün · toplu %13 indirim", icon: "Pipa3Ag.png", price: 650, action: () => { state.rune+=3; } },
-      { name: "Rün Sandığı", desc: "+10 Rün · toplu %28 indirim", icon: "TT7vr06.png", price: 1800, action: () => { state.rune+=10; } }
-    ];
-
-    const achievements = [
-      { id: 'first_blood', name: 'İlk Kan', desc: 'Maceraya atıl ve ilk düşmanını alt et.', icon: 'twxqpzw.png', type: 'kill', req: 1 },
-      { id: 'serial_killer', name: 'Gölge Katili', desc: '1,000 düşmanı hiç acımadan katlet.', icon: 'NDrPFl8.png', type: 'kill', req: 1000 },
-      { id: 'death_wish', name: 'Azim mi, Delilik mi?', desc: 'Savaşta 10 kez can ver.', icon: 'ZEfdj9s.png', type: 'death', req: 10 },
-      { id: 'undead', name: 'Ölümsüzlüğe Doğru', desc: 'Savaşta tam 100 kez öl ve diril.', icon: 'N6VLHwv.png', type: 'death', req: 100 },
-      { id: 'clicker', name: 'Yorulmaz Parmaklar', desc: 'Ruh Hasadı butonuna 1,000 kez tıkla.', icon: 'yv6es4J.png', type: 'click', req: 1000 },
-      { id: 'click_god', name: 'Tık Tanrısı', desc: 'Ruh Hasadına 50,000 kez tıkla! (Gerçek bir Idle Ustası)', icon: 'Evxp84Y.png', type: 'click', req: 50000 },
-      { id: 'explorer', name: 'Mezar Soyguncusu', desc: 'Eski Kalıntılar görevini 50 kez tamamla.', icon: 'bAXdexU.png', type: 'quest', req: 50 },
-      { id: 'cultist', name: 'Kızıl Kültist', desc: '100 defa Kan Ritüeli gerçekleştir.', icon: 'pfsf0Qj.png', type: 'ritual', req: 100 },
-      { id: 'wealth', name: 'Karaborsa Baronu', desc: 'Karaborsadan 25 eşya/kaynak satın al.', icon: 'D11BDxH.png', type: 'shop', req: 25 },
-      { id: 'chest_opener', name: 'Hazine Avcısı', desc: 'Kasadaki ganimet sandığını 50 kez aç.', icon: 'bsmif0s.png', type: 'chest', req: 50 },
-      { id: 'dimension', name: 'Boyut Gezgini', desc: 'Boyut Kapısını 50 kere başarıyla arala.', icon: 'zfJ5L5I.png', type: 'mg_win', req: 50 },
-      { id: 'blacksmith', name: 'Kadim Demirci', desc: 'Silahını 50 kez güçlendir.', icon: 'uIRlL4e.png', type: 'upg_w', req: 50 },
-      { id: 'tank', name: 'Sarsılmaz Duvar', desc: 'Zırhını 25 kez güçlendir.', icon: 'T5MZ1kg.png', type: 'upg_a', req: 25 },
-      { id: 'lucky', name: 'Şeytan Tüyü', desc: 'Kasadaki sandıklardan Eşsiz (Unique) eşya düşür.', icon: 'F7MaUi9.png', type: 'unique', req: 1 },
-      { id: 'level_50', name: 'Kadim Bilge', desc: 'Karakter seviyesini 50 yap.', icon: 'CTPayn5.png', type: 'level', req: 50 }
-    ];
-
-    var defaultState = {
-      gender: null, soul: 0, blood: 0, dark: 0, rune: 0, prestige: 0, xp: 0, level: 1, questEndTime: 0,
-      keys: [0,0,0,0,0,0,0,0], equippedWeapon: { isUnique: false, t: 0, l: 0, idx: -1 }, equippedArmor:  { isUnique: false, t: 0, l: 0, idx: -1 },
-      unlockedWeapons: [], unlockedArmors: [], upgrades: { book: 0, dust: 0, scroll: 0, potion: 0, coin: 0 },
-      ritualEndTime: 0, pendingRitualRoll: 0, ritualNextAvailable: 0, settings: { music: 0.15, sfx: 1.0 },
-      stats: { kills: 0, clicks: 0, deaths: 0, quests: 0, rituals: 0, chests: 0, shop: 0, weapon_upg: 0, armor_upg: 0, mg_win: 0, uniques: 0 },
-      unlockedAchievements: []
-    };
-    var state = JSON.parse(JSON.stringify(defaultState));
-    var currentEnemyHp = 5, currentEnemyMaxHp = 5, enemyAttack = 1;
-    var playerHp = 50, playerMaxHp = 50, isDead = false, playerAtk = 5, playerDef = 0;
-    var playerShield = 0, playerMaxShield = 0;
-
-    var isMapChanging = false; var isCombatActive = true; 
-
-    function sanitizeState(s) {
-        s.soul = isNaN(Number(s.soul)) ? 0 : Number(s.soul); s.blood = isNaN(Number(s.blood)) ? 0 : Number(s.blood);
-        s.dark = isNaN(Number(s.dark)) ? 0 : Number(s.dark); s.rune = isNaN(Number(s.rune)) ? 0 : Number(s.rune);
-        s.xp = isNaN(Number(s.xp)) ? 0 : Number(s.xp); s.level = isNaN(Number(s.level)) || Number(s.level) < 1 ? 1 : Number(s.level);
-        s.prestige = isNaN(Number(s.prestige)) ? 0 : Number(s.prestige); s.questEndTime = isNaN(Number(s.questEndTime)) ? 0 : Number(s.questEndTime);
-        s.ritualEndTime = isNaN(Number(s.ritualEndTime)) ? 0 : Number(s.ritualEndTime); s.ritualNextAvailable = isNaN(Number(s.ritualNextAvailable)) ? 0 : Number(s.ritualNextAvailable);
-        if (!s.keys || s.keys.length < 8) s.keys = [0,0,0,0,0,0,0,0];
-        for(let i=0; i<s.keys.length; i++) s.keys[i] = isNaN(Number(s.keys[i])) ? 0 : Number(s.keys[i]);
-        if (!s.upgrades) s.upgrades = { book: 0, dust: 0, scroll: 0, potion: 0, coin: 0 };
-        Object.keys(defaultState.upgrades).forEach(k => { s.upgrades[k] = isNaN(Number(s.upgrades[k])) ? 0 : Number(s.upgrades[k]); });
-        if (!s.equippedWeapon) s.equippedWeapon = { isUnique: false, t: 0, l: 0, idx: -1 };
-        if (!s.equippedArmor) s.equippedArmor = { isUnique: false, t: 0, l: 0, idx: -1 };
-        if (!s.unlockedWeapons) s.unlockedWeapons = []; if (!s.unlockedArmors) s.unlockedArmors = [];
-        if (!s.settings) s.settings = { music: 0.15, sfx: 1.0 };
-        if (!s.stats) s.stats = { kills: 0, clicks: 0, deaths: 0, quests: 0, rituals: 0, chests: 0, shop: 0, weapon_upg: 0, armor_upg: 0, mg_win: 0, uniques: 0 };
-        if (!s.unlockedAchievements) s.unlockedAchievements = [];
-        return s;
-    }
-
-    const levelTiers = [
-      { min: 1, title: "Çırak Büyücü", bg: "4vPe6ET.png" }, { min: 10, title: "Kanlı Kültist", bg: "0iXQcMW.png" },
-      { min: 25, title: "Gölge Lordu", bg: "n0m4VHm.png" }, { min: 50, title: "Karanlık Gezgin", bg: "tfHQ2S9.png" },
-      { min: 75, title: "Kadim Varlık", bg: "vwS3cGl.png" }
-    ];
-
-    function getRitualStats() {
-        let tIdx = Math.max(0, Math.floor((state.level - 1) / 5));
-        let bCost = 10 + (tIdx * 5); let hpP = 5 + (tIdx * 5);
-        return { bloodCost: bCost, hpCostPercent: hpP, cooldownMS: bCost * 1000, rewardMult: 1 + (tIdx * 0.5) };
-    }
-
-    function showToast(msg) {
-      var t = document.getElementById("toast-msg"); t.textContent = msg; t.style.opacity = 1; setTimeout(() => { t.style.opacity = 0; }, 2000);
-    }
-
-    function showDamage(targetId, amount, type) {
-      let target = document.getElementById('battle-stage'); if(!target) return;
-      let el = document.createElement('div'); el.className = 'damage-text ' + type; el.textContent = "-" + Math.floor(amount);
-      let offsetX = Math.floor(Math.random() * 20) - 10;
-      if(targetId === 'enemy-sprite') { el.style.left = `calc(75% + ${offsetX}px)`; } else { el.style.left = `calc(20% + ${offsetX}px)`; }
-      el.style.top = '40px'; target.appendChild(el); setTimeout(() => el.remove(), 800);
-    }
-
-    function getTier() { return levelTiers.slice().reverse().find(t => state.level >= t.min) || levelTiers[0]; }
-
-    function cumulativeLevel(tiers, tier, level, startTier = 0) {
-      let total = 0;
-      for (let i = startTier; i < tier; i++) total += tiers[i].length;
-      return total + level;
-    }
-
-    function equipmentUpgradeCost(type, eq) {
-      if (type === 'armor') {
-        if (eq.t === 0) return [80, 120, 150][eq.l] || 150;
-        const effective = cumulativeLevel(armTiers, eq.t, eq.l, 1);
-        return Math.floor(150 * Math.pow(1.4, effective + 1));
-      }
-      const effective = cumulativeLevel(wepTiers, eq.t, eq.l);
-      return Math.floor(150 * Math.pow(1.45, effective));
-    }
-
-    function armorDefense(eq) {
-      if (eq.isUnique) return 50 + (eq.idx * 15);
-      if (eq.t === 0) return 0;
-      return (cumulativeLevel(armTiers, eq.t, eq.l, 1) + 1) * 5;
-    }
-    
-    function updateCombatStats() {
-      currentEnemyMaxHp = state.level * 18; enemyAttack = state.level * 4;
-      let w = state.equippedWeapon; playerAtk = w.isUnique ? 100 + (w.idx * 25) + (state.level * 3) : 5 + (w.t * 20) + (w.l * 5) + (state.level * 2);
-      let a = state.equippedArmor; playerDef = armorDefense(a);
-      playerMaxHp = 50 + (state.level * 10) + ((state.upgrades.potion || 0) * 30);
-      if(playerHp > playerMaxHp) playerHp = playerMaxHp;
-      playerMaxShield = playerDef * 15;
-      document.getElementById("player-hp-bar").style.width = Math.max(0, (playerHp / playerMaxHp) * 100) + "%";
-      if(playerMaxShield > 0) document.getElementById("player-shield-bar").style.width = Math.max(0, (playerShield / playerMaxShield) * 100) + "%";
-      else document.getElementById("player-shield-bar").style.width = "0%";
-      updateInventoryUI();
-    }
-
-    function checkAchievements() {
-        let newlyUnlocked = false;
-        achievements.forEach(ach => {
-            if(!state.unlockedAchievements.includes(ach.id)) {
-                let reqMet = false;
-                switch(ach.type) {
-                    case 'kill': if(state.stats.kills >= ach.req) reqMet = true; break;
-                    case 'click': if(state.stats.clicks >= ach.req) reqMet = true; break;
-                    case 'death': if(state.stats.deaths >= ach.req) reqMet = true; break;
-                    case 'quest': if(state.stats.quests >= ach.req) reqMet = true; break;
-                    case 'ritual': if(state.stats.rituals >= ach.req) reqMet = true; break;
-                    case 'chest': if(state.stats.chests >= ach.req) reqMet = true; break;
-                    case 'shop': if(state.stats.shop >= ach.req) reqMet = true; break;
-                    case 'upg_w': if(state.stats.weapon_upg >= ach.req) reqMet = true; break;
-                    case 'upg_a': if(state.stats.armor_upg >= ach.req) reqMet = true; break;
-                    case 'mg_win': if(state.stats.mg_win >= ach.req) reqMet = true; break;
-                    case 'level': if(state.level >= ach.req) reqMet = true; break;
-                    case 'unique': if(state.stats.uniques >= ach.req) reqMet = true; break;
-                }
-                if(reqMet) {
-                    state.unlockedAchievements.push(ach.id); showToast("🏆 Başarım: " + ach.name); playSound('equip', 0.8); newlyUnlocked = true;
-                }
-            }
-        });
-        if(newlyUnlocked) { saveState(); renderAchievements(); }
-    }
-
-    function renderAchievements() {
-        let html = ""; let unlockedCount = state.unlockedAchievements.length;
-        achievements.forEach(ach => {
-            let unlocked = state.unlockedAchievements.includes(ach.id);
-            let cl = unlocked ? "ach-item unlocked" : "ach-item";
-            let color = unlocked ? "#fff" : "var(--label-2)";
-            let desc = unlocked ? ach.desc : "Sırrını öğrenmek için oyunu oynamaya devam et.";
-            html += `<div class="${cl}"><img src="${CDN_URL}${ach.icon}" class="ach-icon"><div><div style="font-weight:bold; font-size:12px; color:${color};">${ach.name}</div><div style="font-size:9px; color:var(--label-2);">${desc}</div></div></div>`;
-        });
-        document.getElementById("achievements-list").innerHTML = html;
-        document.getElementById("achievements-count").textContent = `${unlockedCount} / ${achievements.length}`;
-    }
-
-    window.upgradeEquipment = async function(type) {
-      let isWeapon = type === 'weapon'; let eq = isWeapon ? state.equippedWeapon : state.equippedArmor; if(eq.isUnique) return;
-      let maxT = isWeapon ? wepTiers.length - 1 : armTiers.length - 1; let maxL = isWeapon ? wepTiers[eq.t].length - 1 : armTiers[eq.t].length - 1;
-      if(eq.t === maxT && eq.l === maxL) return;
-      let cost = equipmentUpgradeCost(type, eq);
-      if(state.soul < cost) { showToast("Yetersiz Ruh!"); return; }
-      state.soul -= cost;
-      if(eq.l < maxL) { eq.l++; showToast("Eşya Güçlendirildi!");} else if(eq.t < maxT) { eq.t++; eq.l = 0; showToast("Eşya Evrimleşti!");}
-      if(isWeapon) { playSound('weapon_upg', 0.8); state.stats.weapon_upg++; } else { playSound('robe_upg', 0.8); state.stats.armor_upg++; }
-      playBottomEffect('player-sprite', '5492udk.gif'); updateCombatStats(); await saveState(); updateUI();
-    };
-
-    function updateInventoryUI() {
-      let w = state.equippedWeapon; let wImg = w.isUnique ? wepUniques[w.idx] : (wepTiers[w.t] ? wepTiers[w.t][w.l] : wepTiers[0][0]);
-      let wName = w.isUnique ? wepUniqueNames[w.idx] : "Asa S" + (w.t+1) + "-" + (w.l+1);
-      let wMaxT = wepTiers.length - 1; let wMaxL = wepTiers[w.t] ? wepTiers[w.t].length - 1 : 0;
-      let wCost = equipmentUpgradeCost('weapon', w);
-      let wBtnHtml = w.isUnique ? `<button disabled style="margin-top:5px; height:24px; font-size:9px; background:var(--gold); border-color:#fff; color:#000;">YADİGÂR</button>` : (w.t === wMaxT && w.l === wMaxL ? `<button disabled style="margin-top:5px; height:24px; font-size:9px;">MAX</button>` : `<button class="primary" onclick="upgradeEquipment('weapon')" style="margin-top:5px; height:24px; font-size:9px;">${wCost} RUH</button>`);
-      document.getElementById('eq-weapon-img').style.backgroundImage = "url('" + CDN_URL + wImg + "')"; 
-      document.getElementById('eq-weapon-name').textContent = wName; 
-      document.getElementById('eq-weapon-name').style.color = w.isUnique ? "var(--gold)" : "#fff";
-      document.getElementById('eq-weapon-stat').textContent = "ATK: " + playerAtk; 
-      document.getElementById('eq-weapon-upg').innerHTML = wBtnHtml;
-
-      let a = state.equippedArmor; let aImg = a.isUnique ? armUniques[a.idx] : (armTiers[a.t] ? armTiers[a.t][a.l] : armTiers[0][0]);
-      let aName = a.isUnique ? armUniqueNames[a.idx] : "Cübbe S" + (a.t+1) + "-" + (a.l+1);
-      let aMaxT = armTiers.length - 1; let aMaxL = armTiers[a.t] ? armTiers[a.t].length - 1 : 0;
-      let aCost = equipmentUpgradeCost('armor', a);
-      let aBtnHtml = a.isUnique ? `<button disabled style="margin-top:5px; height:24px; font-size:9px; background:var(--gold); border-color:#fff; color:#000;">YADİGÂR</button>` : (a.t === aMaxT && a.l === aMaxL ? `<button disabled style="margin-top:5px; height:24px; font-size:9px;">MAX</button>` : `<button class="primary" onclick="upgradeEquipment('armor')" style="margin-top:5px; height:24px; font-size:9px;">${aCost} RUH</button>`);
-      document.getElementById('eq-armor-img').style.backgroundImage = "url('" + CDN_URL + aImg + "')"; 
-      document.getElementById('eq-armor-name').textContent = aName; 
-      document.getElementById('eq-armor-name').style.color = a.isUnique ? "var(--gold)" : "#fff";
-      document.getElementById('eq-armor-stat').textContent = "DEF: " + playerDef; 
-      document.getElementById('eq-armor-upg').innerHTML = aBtnHtml;
-
-      let keysHtml = "";
-      chestKeys.forEach((kImg, i) => { let count = state.keys[i] || 0; let locked = count <= 0 ? "locked" : ""; keysHtml += `<div class="key-btn ${locked}" onclick="openChest(${i})"><img src="${CDN_URL}${kImg}" style="width:24px; image-rendering:pixelated;"><div class="key-count">x${count}</div></div>`; });
-      document.getElementById("keys-container").innerHTML = keysHtml;
-
-      let uHtml = "";
-      wepUniques.forEach((uImg, i) => { let has = state.unlockedWeapons.includes(i); let eq = (w.isUnique && w.idx === i) ? "equipped" : ""; let cl = has ? "unique-slot " + eq : "unique-slot locked"; uHtml += `<div class="${cl}" onclick="equipUnique('weapon', ${i})"><div class="icon" style="background-image:url('${CDN_URL}${uImg}'); background-size:contain;"></div></div>`; });
-      armUniques.forEach((uImg, i) => { let has = state.unlockedArmors.includes(i); let eq = (a.isUnique && a.idx === i) ? "equipped" : ""; let cl = has ? "unique-slot " + eq : "unique-slot locked"; uHtml += `<div class="${cl}" onclick="equipUnique('armor', ${i})"><div class="icon" style="background-image:url('${CDN_URL}${uImg}'); background-size:contain;"></div></div>`; });
-      document.getElementById("unique-storage").innerHTML = uHtml;
-    }
-
-    window.openChest = async function(keyIndex) {
-      if(state.keys[keyIndex] <= 0) { showToast("Bu anahtardan yok!"); return; }
-      playSound('chest', 0.6); state.keys[keyIndex]--; state.stats.chests++;
-      const uniqueChances = [0.01, 0.02, 0.03, 0.15, 0.20, 0.25, 0.30, 0.35];
-      let isWeapon = Math.random() > 0.5; let gotUnique = Math.random() < uniqueChances[keyIndex];
-      if(gotUnique) {
-        state.stats.uniques++;
-        let uArr = isWeapon ? wepUniques : armUniques; let uStateArr = isWeapon ? state.unlockedWeapons : state.unlockedArmors;
-        let rIdx = Math.floor(Math.random() * uArr.length); if(!uStateArr.includes(rIdx)) uStateArr.push(rIdx);
-        playSound('loot', 0.6); document.getElementById("loot-title").textContent = "Kadim Yadigâr Bulundu!";
-        document.getElementById("loot-items-container").innerHTML = `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}${uArr[rIdx]}" style="width:32px; filter: drop-shadow(0 0 5px var(--gold));"> <span style="color:var(--gold); font-weight:bold;">Depoya Eklendi</span></div>`;
-        document.getElementById("modal-loot").style.display = "flex";
-      } else {
-        playSound('loot', 0.6); let sReward = 50 * (keyIndex + 1) * state.level; let bReward = 10 * (keyIndex + 1) * state.level;
-        state.soul += sReward; state.blood += bReward;
-        document.getElementById("loot-title").textContent = "Kasa Ganimeti";
-        document.getElementById("loot-items-container").innerHTML = `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}rZ2HD2E.png" style="width:20px;"> <span style="color:#d1b3ff; font-weight:bold;">+${sReward} Ruh</span></div><div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}XWcKSug.png" style="width:20px;"> <span style="color:#ff4d4d; font-weight:bold;">+${bReward} Kan</span></div>`;
-        document.getElementById("modal-loot").style.display = "flex";
-      }
-      updateCombatStats(); await saveState(); updateUI();
-    };
-
-    window.equipUnique = function(type, idx) {
-      playSound('equip', 0.7);
-      if(type === 'weapon' && state.unlockedWeapons.includes(idx)) state.equippedWeapon = { isUnique: true, t:0, l:0, idx: idx };
-      if(type === 'armor' && state.unlockedArmors.includes(idx)) state.equippedArmor = { isUnique: true, t:0, l:0, idx: idx };
-      updateCombatStats(); saveState(); updateInventoryUI();
-    };
-
-    function shootProjectile(type) {
-      let target = document.getElementById('battle-stage'); let proj = document.createElement('img'); proj.className = 'combat-effect-img';
-      var gifToUse;
-      if (state.equippedWeapon.isUnique) gifToUse = 'mZbPRLE.gif'; 
-      else {
-          var wGifs = [['h4DFOjm.gif', '0RVLTmN.gif'], ['shLT4xS.gif', 'say1Ohb.gif'], ['BWPpgKw.gif']];
-          var tGifs = wGifs[state.equippedWeapon.t] || wGifs[0]; gifToUse = tGifs[Math.floor(Math.random() * tGifs.length)];
-      }
-      proj.src = CDN_URL + (type === 'player' ? gifToUse : enemyAttackGif); 
-      if (type === 'player') { playSound('p_atk', 0.15); proj.style.left = '60px'; proj.style.transition = 'left 0.3s linear'; setTimeout(() => { proj.style.left = '200px'; }, 10); } 
-      else { playSound('e_atk', 0.15); proj.style.right = '60px'; proj.classList.add('flip'); proj.style.transition = 'right 0.3s linear'; setTimeout(() => { proj.style.right = '200px'; }, 10); }
-      target.appendChild(proj); setTimeout(() => proj.remove(), 300);
-    }
-
-    function playHitEffect(targetId) {
-      const target = document.getElementById(targetId);
-      if(!target || typeof target.animate !== 'function') return;
-      target.animate(
-        [{ opacity: 1 }, { opacity: 0.48 }, { opacity: 1 }],
-        { duration: 160, easing: 'steps(2, end)' }
-      );
-    }
-
-    function playEffectAt(targetId, gifName, scale = 1, offsetY = 0) {
-      let target = document.getElementById(targetId); if(!target) return;
-      let eff = document.createElement('img'); 
-      eff.src = CDN_URL + gifName;
-      eff.style.position = 'absolute'; eff.style.width = (100 * scale) + 'px'; eff.style.height = (100 * scale) + 'px'; eff.style.left = '50%'; eff.style.top = `calc(50% + ${offsetY}px)`; eff.style.transform = 'translate(-50%, -50%)'; eff.style.zIndex = '100'; eff.style.pointerEvents = 'none'; target.appendChild(eff); setTimeout(() => eff.remove(), 800);
-    }
-
-    function handleMapChange(newBg) {
-      isMapChanging = true; playSound('mapchange', 0.8); document.getElementById("enemy-sprite").style.opacity = 0;
-      var pEl = document.getElementById('player-sprite'); applyCharacterSprite('dash');
-      pEl.style.transition = 'transform 0.6s ease-in'; pEl.style.transform = 'translateX(300px)';
-      setTimeout(() => {
-        if(newBg) document.getElementById("battle-stage").style.backgroundImage = "url('" + CDN_URL + newBg + "')";
-        pEl.style.transition = 'none'; pEl.style.transform = 'translateX(-150px)';
-        setTimeout(() => {
-          pEl.style.transition = 'transform 0.6s ease-out'; pEl.style.transform = 'translateX(0)';
-          setTimeout(() => { isMapChanging = false; applyCharacterSprite('idle'); spawnEnemy(); }, 600);
-        }, 50);
-      }, 600);
-    }
-
-    function spawnEnemy() {
-      var randomImg = enemyList[Math.floor(Math.random() * enemyList.length)];
-      var eEl = document.getElementById("enemy-sprite");
-      eEl.style.backgroundImage = "url('" + CDN_URL + randomImg + "')";
-      eEl.style.opacity = 1; updateCombatStats(); currentEnemyHp = currentEnemyMaxHp;
-      document.getElementById("enemy-hp-bar").style.width = "100%";
-    }
-
-    function addXP(amount) {
-      let oldTier = getTier();
-      state.xp += Math.max(0, Number(amount) || 0);
-      let levelsGained = 0;
-      while (state.xp >= state.level * state.level * 100) {
-        state.xp -= state.level * state.level * 100;
-        state.level++;
-        levelsGained++;
-      }
-      if (levelsGained > 0) {
-        updateCombatStats(); playerHp = playerMaxHp; playerShield = playerMaxShield;
-        playSound('lvlup', 0.7); playEffectAt('player-sprite', 'UbY50AM.gif'); applyCharacterSprite('jump');
-        showToast(levelsGained > 1 ? `${levelsGained} seviye yükseldin!` : "Seviye yükseldin!");
-      }
-      let newTier = getTier(); updateUI(false);
-      if (oldTier.bg !== newTier.bg && !isMapChanging) {
-          document.getElementById("battle-stage").style.backgroundImage = "url('" + CDN_URL + oldTier.bg + "')";
-          isMapChanging = true; document.getElementById("enemy-sprite").style.opacity = 0; currentEnemyHp = 0;
-          setTimeout(() => handleMapChange(newTier.bg), 800); return true;
-      }
-      document.getElementById("battle-stage").style.backgroundImage = "url('" + CDN_URL + newTier.bg + "')"; return false;
-    }
-
-    function damageEnemy() {
-      if(isDead || currentEnemyHp <= 0 || isMapChanging || !isCombatActive || isAFK) return;
-      state.stats.clicks++; currentEnemyHp -= playerAtk; shootProjectile('player'); showDamage('enemy-sprite', playerAtk, 'hp');
-      setTimeout(() => { playHitEffect('enemy-sprite'); }, 250);
-      document.getElementById("enemy-hp-bar").style.width = Math.max(0, (currentEnemyHp / currentEnemyMaxHp) * 100) + "%";
-      if(currentEnemyHp <= 0) {
-        state.stats.kills++; document.getElementById("enemy-sprite").style.opacity = 0; playSound('e_death', 0.5);
-        let eff = document.createElement('img'); 
-        eff.src = CDN_URL + "L0H4aas.gif"; 
-        eff.style.position = 'absolute'; eff.style.right = '20px'; eff.style.bottom = '20px'; eff.style.width = '80px'; eff.style.height = '80px'; eff.style.zIndex = '25'; eff.style.imageRendering = 'pixelated';
-        document.getElementById('battle-stage').appendChild(eff); setTimeout(() => eff.remove(), 800);
-        let pM = 1 + (state.prestige * 0.5); state.soul += 10 + (state.level * 2 * pM); if(Math.random() > 0.5) state.blood += 5 + state.level;
-        let mapChanged = addXP(10 * state.level);
-        if(!mapChanged) { setTimeout(spawnEnemy, 1200); }
-      }
-    }
-
-    function enemyStrike() {
-      if(isDead || currentEnemyHp <= 0 || isMapChanging || !isCombatActive || isAFK) return;
-      var dmgTaken = enemyAttack;
-      if(playerShield > 0) {
-        if(dmgTaken > playerShield) { dmgTaken -= playerShield; showDamage('player-sprite', playerShield, 'shield'); playerShield = 0; } 
-        else { playerShield -= dmgTaken; showDamage('player-sprite', dmgTaken, 'shield'); dmgTaken = 0; }
-      }
-      if(dmgTaken > 0) { playerHp -= dmgTaken; showDamage('player-sprite', dmgTaken, 'hp'); }
-      shootProjectile('enemy'); setTimeout(() => { playHitEffect('player-sprite'); }, 250);
-      document.getElementById("player-hp-bar").style.width = Math.max(0, (playerHp / playerMaxHp) * 100) + "%";
-      if(playerMaxShield > 0) document.getElementById("player-shield-bar").style.width = Math.max(0, (playerShield / playerMaxShield) * 100) + "%";
-      if(playerHp <= 0) {
-        state.stats.deaths++; playSound('p_death', 0.8); isDead = true; playerHp = 0; showToast("ÖLDÜN!"); document.getElementById("player-sprite").style.opacity = 0;
-        let eff = document.createElement('img'); 
-        eff.src = CDN_URL + "TAcW2zd.gif"; 
-        eff.style.position = 'absolute'; eff.style.left = '30px'; eff.style.bottom = '25px'; eff.style.width = '64px'; eff.style.height = '64px'; eff.style.zIndex = '25'; eff.style.imageRendering = 'pixelated';
-        document.getElementById('battle-stage').appendChild(eff); setTimeout(() => eff.remove(), 1000);
-        setTimeout(() => { 
-          isDead = false; playerHp = playerMaxHp; playerShield = playerMaxShield; document.getElementById("player-sprite").style.opacity = 1;
-          applyCharacterSprite('idle'); document.getElementById("player-hp-bar").style.width = "100%";
-          if(playerMaxShield > 0) document.getElementById("player-shield-bar").style.width = "100%";
-        }, 5000);
-      }
-    }
-    
-    setInterval(() => { 
-        if(isCombatActive && !isAFK && (Date.now() - lastInteractTime > 15000)) {
-            isAFK = true; document.getElementById('player-afk').style.display = 'block'; document.getElementById('enemy-afk').style.display = 'block';
-        }
-        if(isCombatActive && !isMapChanging && !isAFK) enemyStrike(); 
-    }, 2000);
-
-    window.buyAltarUpgrade = function(id) {
-      var lvl = state.upgrades[id] || 0; var def = altarUpgrades.find(d => d.id === id);
-      if (lvl >= def.imgs.length - 1) { showToast("Maksimum Seviye!"); return; }
-      var cost = Math.floor(def.baseCost * Math.pow(def.mult, lvl));
-      if (state[def.type] < cost) { showToast("Yetersiz Kaynak!"); return; }
-      state[def.type] -= cost; state.upgrades[id] = lvl + 1;
-      playSound('altar_upg', 0.8); playEffectAt('player-sprite', 'UbY50AM.gif'); 
-      updateCombatStats(); updateUI(); saveState();
-    }
-
-    window.selectGender = async function(g) {
-      playSound('select', 0.8); if (sfx.bg.paused) sfx.bg.play().catch(()=>{});
-      state.gender = g; document.getElementById('modal-creation').style.display = 'none';
-      applyCharacterSprite('idle'); spawnEnemy(); playerHp = playerMaxHp; playerShield = playerMaxShield; await saveState();
-    };
-
-    function applyCharacterSprite(animType) {
-      if(!state.gender) return;
-      var spriteEl = document.getElementById('player-sprite');
-      spriteEl.style.animation = 'none'; spriteEl.offsetHeight; 
-      spriteEl.style.backgroundImage = "url('" + CDN_URL + sprites[state.gender][animType] + "')";
-      spriteEl.style.setProperty('--frames', frameCounts[animType] || 6);
-      spriteEl.style.animation = 'playSprite ' + (animType === 'dash' ? '0.4s' : '0.8s') + ' steps(' + (frameCounts[animType] || 6) + ') infinite';
-      if(animType !== 'idle' && animType !== 'dash' && !isDead) setTimeout(() => { applyCharacterSprite('idle'); }, 400);
-    }
-
-    window.switchTab = function(tabId, element) {
-      playSound('tab', 0.5);
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('#bottom-nav .nav-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById('tab-' + tabId).classList.add('active'); if(element) element.classList.add('active');
-      if(tabId === 'main') { document.body.classList.remove('hide-battle'); isCombatActive = true; } 
-      else { document.body.classList.add('hide-battle'); isCombatActive = false; }
-    };
-
-    let resetArmedUntil = 0;
-    window.hardResetGame = async function() {
-      const now = Date.now();
-      if (now > resetArmedUntil) {
-        resetArmedUntil = now + 4000;
-        showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");
-        return;
-      }
-
-      resetArmedUntil = 0;
-      state = sanitizeState(JSON.parse(JSON.stringify(defaultState)));
-      verifiedIdentityCache = null;
-      try { localStorage.removeItem("kadim_rpg_v51_backup"); } catch (_) {}
-
-      try { await saveState(); }
-      catch (_) { try { localStorage.setItem("kadim_rpg_v51_backup", JSON.stringify(state)); } catch (_) {} }
-
-      location.reload();
-    }
-
-    let saveChain = Promise.resolve();
-    function saveState() {
-      const snapshot = JSON.parse(JSON.stringify(state));
-      try { localStorage.setItem("kadim_rpg_v51_backup", JSON.stringify(snapshot)); } catch (_) {}
-      saveChain = saveChain.catch(() => {}).then(async () => {
-        let lastError;
-        for (let attempt = 0; attempt < 3; attempt++) {
-          try { await phone.storage.set("kadim_rpg_v51", snapshot); return true; }
-          catch (error) { lastError = error; await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1))); }
-        }
-        throw lastError;
-      });
-      return saveChain;
-    }
-
-    const uiCache = { upgrades: '', inventory: '' };
-
-    function inventorySignature() {
-      return JSON.stringify([state.equippedWeapon, state.equippedArmor, state.keys, state.unlockedWeapons, state.unlockedArmors, Math.floor(state.soul), playerAtk, playerDef]);
-    }
-
-    function updateUI(updateBg = true) {
-      if(!state.gender) document.getElementById('modal-creation').style.display = 'flex';
-      document.getElementById("res-soul").textContent = Math.floor(state.soul); document.getElementById("res-blood").textContent = Math.floor(state.blood); document.getElementById("res-dark").textContent = Math.floor(state.dark); document.getElementById("res-rune").textContent = Math.floor(state.rune);
-      var pTier = getTier(); document.getElementById("level-display").textContent = state.level; document.getElementById("player-title").textContent = pTier.title;
-      if(updateBg !== false) document.getElementById("battle-stage").style.backgroundImage = "url('" + CDN_URL + pTier.bg + "')";
-      document.getElementById("xp-bar").style.width = Math.min(100, (state.xp / (state.level * state.level * 100)) * 100) + "%";
-      
-      let questDurationSeconds = 30 + (state.level * 5); 
-      document.getElementById("quest-duration-badge").textContent = questDurationSeconds + " SN";
-
-      let ritual = getRitualStats();
-      document.getElementById("ritual-cost-desc").textContent = `[Bedel: ${ritual.bloodCost} Kan + %${ritual.hpCostPercent} Can]`;
-
-      let mgBtn = document.getElementById("btn-mg-action");
-      if(mgBtn && !mgActive) {
-          if(state.rune >= 1) { mgBtn.textContent = "Boyutu Arala (1 Rün)"; mgBtn.disabled = false; mgBtn.className = "special"; } 
-          else { mgBtn.textContent = "Rün Yetersiz"; mgBtn.disabled = true; mgBtn.className = ""; }
-      }
-
-      const upgradeSignature = JSON.stringify([state.upgrades, Math.floor(state.soul), Math.floor(state.blood), Math.floor(state.dark)]);
-      if (uiCache.upgrades !== upgradeSignature) {
-        uiCache.upgrades = upgradeSignature;
-        var upgHtml = "";
-        altarUpgrades.forEach(def => {
-        var lvl = state.upgrades[def.id] || 0; var isMax = lvl >= def.imgs.length - 1;
-        var cost = Math.floor(def.baseCost * Math.pow(def.mult, lvl));
-        upgHtml += `
-          <div class="shop-item">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="icon icon-lg" style="background-image: url('${CDN_URL}${def.imgs[lvl]}');"></div>
-              <div><div style="font-weight: bold; font-size: 13px; color: ${isMax ? 'var(--bordo-light)' : '#fff'}">${def.name} <span style="color:var(--gold)">${isMax ? "MAKS" : roman[lvl]}</span></div><div style="font-size: 9px; color: var(--label-2);">${def.desc}</div></div>
-            </div>
-            <button onclick="buyAltarUpgrade('${def.id}')" style="min-width: 80px;" ${isMax ? 'disabled' : ''}>${isMax ? "MAX" : cost + (def.type==='soul'?' Ruh':(def.type==='blood'?' Kan':' Öz'))}</button>
-          </div>`;
-        });
-        document.getElementById("upgrades-container").innerHTML = upgHtml;
-      }
-
-      let reqLvl = (state.prestige + 1) * 10;
-      let btnPrestige = document.getElementById("btn-prestige"); btnPrestige.textContent = "Gereksinim: Seviye " + reqLvl;
-      if(state.level >= reqLvl) { btnPrestige.disabled = false; btnPrestige.style.borderColor = "var(--gold)"; btnPrestige.style.color = "#fff"; } 
-      else { btnPrestige.disabled = true; btnPrestige.style.borderColor = "#5c4711"; btnPrestige.style.color = "#b38b22"; }
-      document.getElementById("res-prestige").textContent = state.prestige;
-      const invSignature = inventorySignature();
-      if (uiCache.inventory !== invSignature) {
-        uiCache.inventory = invSignature;
-        updateInventoryUI();
-      }
-    }
-
-    function renderMarket() {
-      let mHtml = "";
-      marketItems.forEach((item, idx) => {
-        mHtml += `<div class="shop-item"><div style="display: flex; align-items: center; gap: 12px;"><div class="icon icon-lg" style="background-image: url('${CDN_URL}${item.icon}'); background-size:contain;"></div><div><div style="font-weight: bold; font-size: 13px;">${item.name}</div><div style="font-size: 9px; color: var(--label-2);">${item.desc}</div></div></div><button class="primary market-buy" data-market-index="${idx}" onclick="buyMarketItem(${idx})">$${item.price}</button></div>`;
-      });
-      document.getElementById("black-market-items").innerHTML = mHtml;
-    }
-    
-    let marketPurchasePending = false;
-    let verifiedIdentityCache = null;
-    const sdkPreviewMode = new URLSearchParams(window.location.search).get("sdkPreview") === "1";
-    const bankErrorMessages = {
-      USER_DENIED: "Ödeme iptal edildi.",
-      INSUFFICIENT_FUNDS: "IC banka bakiyen yetersiz.",
-      NO_LINKED_BANK_ACCOUNT: "Uygulamaya şirket banka hesabı bağlanmamış.",
-      PERMISSION_DENIED: "bank.charge izni verilmemiş.",
-      PROTOCOL_MISMATCH: "Telefon SDK sürümü uyumsuz.",
-      UNKNOWN_ACTION: "Telefon bu ödeme işlemini desteklemiyor.",
-      IDENTITY_FAILED: "Karakter kimliği doğrulanamadı. Uygulamayı kapatıp tekrar açın.",
-      IDENTITY_TIMEOUT: "Kimlik sunucusu yanıt vermedi. Tekrar deneyin."
-    };
-
-    async function getVerifiedIdentity() {
-      if (!isEnvPhone) return { valid: true, characterId: "LOCAL" };
-
-      const now = Date.now();
-      if (verifiedIdentityCache && verifiedIdentityCache.expiresAt * 1000 > now + 30000) {
-        return verifiedIdentityCache;
-      }
-
-      const identity = await phone.identity.token();
-      if (!identity || !identity.token) {
-        const error = new Error("Kimlik tokenı alınamadı.");
-        error.code = "IDENTITY_FAILED";
-        throw error;
-      }
-
-      // Telefon Önizleme sahte token üretir; gerçek gateway bu tokenı doğrulamaz.
-      // Bu atlama yalnız URL'de açıkça sdkPreview=1 varken etkinleşir.
-      if (sdkPreviewMode) {
-        verifiedIdentityCache = {
-          valid: true,
-          characterId: "SDK_PREVIEW",
-          expiresAt: identity.expiresAt || Math.floor(Date.now() / 1000) + 900
-        };
-        return verifiedIdentityCache;
-      }
-
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000);
-
-      try {
-        const response = await fetch("/.netlify/functions/verify-identity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: identity.token }),
-          signal: controller.signal
-        });
-
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.valid) {
-          const error = new Error(result.code || "Kimlik doğrulanamadı.");
-          error.code = "IDENTITY_FAILED";
-          throw error;
-        }
-
-        verifiedIdentityCache = result;
-        return result;
-      } catch (error) {
-        if (error && error.name === "AbortError") {
-          error.code = "IDENTITY_TIMEOUT";
-        } else if (!error.code) {
-          error.code = "IDENTITY_FAILED";
-        }
-        throw error;
-      } finally {
-        clearTimeout(timeout);
-      }
-    }
-
-    function lockMarket(locked) {
-      document.querySelectorAll('.market-buy').forEach(button => {
-        button.disabled = locked;
-        if (locked) button.setAttribute('aria-busy', 'true'); else button.removeAttribute('aria-busy');
-      });
-    }
-
-    window.buyMarketItem = async function(idx) {
-      if (marketPurchasePending) return;
-      const item = marketItems[idx];
-      if (!item) return;
-      marketPurchasePending = true;
-      lockMarket(true);
-      let charged = false;
-      try {
-        await phone.bank.charge({ amount: item.price, note: "Karaborsa: " + item.name });
-        charged = true;
-        item.action();
-        state.stats.shop++;
-        playSound('buy', 0.5);
-        await saveState();
-        updateUI();
-        showToast("Satın alım başarılı!");
-      } catch(e) {
-        showToast(charged ? "Ödeme alındı; ödül cihazda korundu, bulut kayıt bekliyor." : (bankErrorMessages[e && e.code] || "Ödeme gerçekleştirilemedi. Tekrar deneyin."));
-      } finally {
-        marketPurchasePending = false;
-        lockMarket(false);
-      }
-    }
-
-    var mgPos = 0, mgDir = 1, mgSpeed = 2, mgAnim, mgActive = false;
-    document.getElementById("btn-mg-action").onclick = async function() {
-      if(!mgActive) { 
-        if(state.rune < 1) { showToast("Yeterli Rün Yok!"); return; }
-        state.rune -= 1; await saveState(); updateUI();
-        playSound('rune', 0.6); mgActive = true; mgPos = 0; mgSpeed = 1.8 + Math.random();
-        document.getElementById("mg-result").textContent = ""; this.textContent = "KIR!"; this.className = "primary";
-        (function mgL(){ if(!mgActive)return; mgPos += mgDir * mgSpeed; if(mgPos >= 96) mgDir = -1; if(mgPos <= 0) mgDir = 1; document.getElementById("mg-cursor").style.left = mgPos + "%"; mgAnim = requestAnimationFrame(mgL); })();
-      } else { 
-        playSound('rune', 0.6); mgActive = false; cancelAnimationFrame(mgAnim);
-        var res = document.getElementById("mg-result");
-        if(mgPos >= (50-7.5) && mgPos <= (50+7.5)) {
-          var totalDark = Math.ceil(5 * (1 + (state.prestige * 0.5)));
-          res.textContent = "BAŞARILI! +" + totalDark + " Öz"; res.style.color = "var(--mor-light)";
-          state.dark += totalDark; playEffectAt('player-sprite', 'UbY50AM.gif'); addXP(300); state.stats.mg_win++;
-        } else { res.textContent = "ISKALADIN! Kapı kapandı."; res.style.color = "var(--label-2)"; }
-        this.textContent = state.rune >= 1 ? "Tekrar Dene (1 Rün)" : "Rün Yetersiz";
-        this.className = state.rune >= 1 ? "special" : ""; this.disabled = state.rune < 1;
-        await saveState(); updateUI();
-      }
-    };
-
-    function checkQuestStatus() {
-      var btn = document.getElementById("btn-quest"); if(!btn) return;
-      var now = Date.now(), questDur = 30 + (state.level * 5);
-      if (state.questEndTime > now) { btn.disabled = true; btn.className = ""; btn.textContent = "Araştırılıyor (" + Math.ceil((state.questEndTime - now)/1000) + "s)"; } 
-      else if (state.questEndTime > 0 && state.questEndTime <= now) { btn.disabled = false; btn.className = "primary"; btn.textContent = "Ganimeti Topla!"; } 
-      else { btn.disabled = false; btn.className = "special"; btn.innerHTML = `<div class="icon icon-sm" style="background-image: url('${CDN_URL}3IngNRT.png');"></div> Gölgelere Dal (${questDur}s)`; }
-    }
-
-    function checkRitualStatus() {
-        var btn = document.getElementById("btn-ritual"); if(!btn) return;
-        var now = Date.now();
-        if (state.ritualEndTime > now) { btn.disabled = true; btn.className = ""; btn.innerHTML = `Ritüel <span class="loading-dots"></span>`; } 
-        else if (state.ritualEndTime > 0 && state.ritualEndTime <= now) { btn.disabled = false; btn.className = "primary"; btn.textContent = "Ganimeti Topla!"; } 
-        else if (state.ritualNextAvailable > now) { btn.disabled = true; btn.className = ""; btn.innerHTML = `Bekleniyor (${Math.ceil((state.ritualNextAvailable - now)/1000)}s)`; } 
-        else { btn.disabled = false; btn.className = "special"; btn.innerHTML = `<div class="icon icon-sm" style="background-image: url('${CDN_URL}XWcKSug.png');"></div> Ritüel Yap`; }
-    }
-
-    setInterval(async () => { 
-      if(!state.upgrades) return;
-      if((state.upgrades.dust||0)>0 && !isDead) state.soul += (state.upgrades.dust||0)*5; 
-      if((state.upgrades.scroll||0)>0 && !isDead) state.blood += (state.upgrades.scroll||0)*2; 
-      if(!isDead && playerShield < playerMaxShield) {
-        playerShield = Math.min(playerMaxShield, playerShield + (playerMaxShield * 0.05));
-        document.getElementById("player-shield-bar").style.width = Math.max(0, (playerShield / playerMaxShield) * 100) + "%";
-      }
-      checkQuestStatus(); checkRitualStatus(); checkAchievements(); updateUI();
-    }, 1000);
-
-    phone.whenReady().then(async function (ctx) {
-      renderMarket();
-      let saved = null;
-      try { saved = await phone.storage.get("kadim_rpg_v51"); } catch (_) {}
-      if (!saved) {
-        try { saved = JSON.parse(localStorage.getItem("kadim_rpg_v51_backup") || "null"); } catch (_) {}
-      }
-      if (saved) { state = sanitizeState({...defaultState, ...saved}); } 
-      else { state = sanitizeState(JSON.parse(JSON.stringify(defaultState))); }
-      
-      userSettings = state.settings || { music: 0.15, sfx: 1.0 };
-      document.getElementById('vol-music').value = userSettings.music; document.getElementById('vol-sfx').value = userSettings.sfx;
-      sfx.bg.volume = userSettings.music;
-
-      if(state.gender) { applyCharacterSprite('idle'); spawnEnemy(); updateCombatStats(); playerHp = playerMaxHp; playerShield = playerMaxShield; }
-      updateUI(); setInterval(() => saveState().catch(() => {}), 10000);
+  <div id="achievements" class="overlay">
+    <div class="panel modal" style="position:relative">
+      <div class="close" data-bg="c6YwskP.png" onclick="closeModal('achievements')"></div>
+      <h3 class="center" style="margin:0;color:var(--gold)">Başarımlar</h3>
+      <div class="tiny center" style="margin-bottom:12px">Açılan: <span id="ach-count">0 / 15</span></div>
+      <div id="ach-list" style="display:grid;gap:8px"></div>
+    </div>
+  </div>
+
+  <div id="prestige-confirm" class="overlay">
+    <div class="panel gold modal" style="position:relative;text-align:center">
+      <div class="close" data-bg="c6YwskP.png" onclick="closeModal('prestige-confirm')"></div>
+      <h3 style="color:var(--gold)">Reenkarnasyon</h3>
+      <p>Öz, Rün, başarımlar ve istatistikler korunur; diğer ilerleme sıfırlanır. Her Kadim Ruh üretimi +%25 artırır.</p>
+      <div style="display:flex;gap:8px"><button onclick="closeModal('prestige-confirm')">İptal</button><button class="gold" onclick="executePrestige()">Onayla</button></div>
+    </div>
+  </div>
+
+  <div id="loot" class="overlay">
+    <div class="panel purple modal center">
+      <h3 id="loot-title" style="color:var(--gold);margin-top:0">Ganimet</h3>
+      <div id="loot-items" style="display:grid;gap:10px;justify-items:center;margin:14px 0"></div>
+      <button class="primary" onclick="closeModal('loot')">Kabul Et</button>
+    </div>
+  </div>
+
+  <div class="battle" id="battle">
+    <div id="hud">
+      <div class="hud-row"><h3 id="player-title">Çırak Büyücü</h3><span class="badge">SV <span id="level-display">1</span></span></div>
+      <div class="bar"><div id="xp-bar" class="bar-fill"></div><div class="bar-label">XP</div></div>
+    </div>
+    <div id="player-sprite">
+      <div id="player-afk" class="afk" data-bg="xs7MP6T.png"></div>
+      <div class="player-bars">
+        <div class="mini-row"><img data-src="UTi6qfN.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
+        <div class="mini-row"><img data-src="7uCbrSq.png"><div class="mini-bg"><div id="player-shield-bar" class="mini-fill"></div></div></div>
+      </div>
+    </div>
+    <div id="enemy-sprite">
+      <div id="enemy-afk" class="afk" data-bg="xs7MP6T.png"></div>
+      <div id="enemy-hp-wrap"><div id="enemy-hp-bar"></div></div>
+    </div>
+  </div>
+
+  <div id="stats"><div class="stats-grid">
+    <div class="stat"><div class="icon" data-bg="rZ2HD2E.png"></div><span id="res-soul" style="color:#d1b3ff">0</span></div>
+    <div class="stat"><div class="icon" data-bg="XWcKSug.png"></div><span id="res-blood" style="color:#ff4d4d">0</span></div>
+    <div class="stat"><div class="icon" data-bg="XaP5VtJ.png"></div><span id="res-dark" style="color:#b84dff">0</span></div>
+    <div class="stat"><div class="icon" data-bg="KND00E1.png"></div><span id="res-rune" style="color:#ff7a98">0</span></div>
+  </div></div>
+
+  <div id="content">
+    <section id="tab-main" class="tab active">
+      <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
+      <div class="panel"><div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
+      <div class="panel purple"><div class="head"><span>Kan Ritüeli</span><span class="badge">Şans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>Ritüel Yap</button></div>
+    </section>
+
+    <section id="tab-chest" class="tab">
+      <div class="panel">
+        <div class="head"><span>Kuşanılan Ekipman</span><span class="badge">Güç</span></div>
+        <div class="eq-grid">
+          <div class="eq"><div class="tiny">SİLAH</div><div id="eq-weapon-img" class="eq-icon"></div><div id="eq-weapon-name" style="font-weight:900;color:#fff"></div><div id="eq-weapon-stat" class="tiny" style="color:#ff7777"></div><div id="eq-weapon-upg"></div></div>
+          <div class="eq"><div class="tiny">ZIRH</div><div id="eq-armor-img" class="eq-icon"></div><div id="eq-armor-name" style="font-weight:900;color:#fff"></div><div id="eq-armor-stat" class="tiny" style="color:#7dc7ff"></div><div id="eq-armor-upg"></div></div>
+        </div>
+        <div class="head"><span>Ganimet Sandığı</span></div>
+        <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Her anahtar nadiren Yadigâr verebilir.</div>
+        <div id="keys" class="keys-grid"></div>
+      </div>
+      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div><div class="tiny center" style="margin-bottom:10px">Tüm anahtarlardan nadiren düşebilen Kadim Yadigârlar. Kuşanmak için dokun.</div><div id="uniques" class="unique-grid"></div></div>
+    </section>
+
+    <section id="tab-camp" class="tab">
+      <div class="panel"><div class="head"><span>Kadim Sunak</span><span class="badge">Pasif</span></div><div id="upgrades"></div></div>
+      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Reenkarnasyon</span></div><div class="tiny center" style="margin-bottom:10px">Her Kadim Ruh üretimi +%25 artırır. Mevcut: <b id="res-prestige" style="color:var(--gold)">0</b></div><button id="btn-prestige" class="gold" disabled></button></div>
+    </section>
+
+    <section id="tab-mini" class="tab">
+      <div class="panel purple"><div class="head"><span>Boyut Kapısı</span><span class="badge">Rün</span></div><div class="tiny center">Işık mor bölgedeyken vur. Başarı Karanlık Öz kazandırır.</div><div class="mg"><div class="mg-target"></div><div id="mg-cursor" class="mg-cursor"></div></div><button id="btn-mg" class="special">Boyutu Arala (1 Rün)</button><div id="mg-result" class="center" style="min-height:18px;margin-top:8px;font-weight:900"></div></div>
+      <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Sistem</span></div><button onclick="openModal('settings')" style="margin-bottom:8px">Ayarlar</button><button class="gold" onclick="renderAchievements();openModal('achievements')">Başarımlar</button></div>
+    </section>
+
+    <section id="tab-shop" class="tab">
+      <div class="panel purple"><div class="head"><span>Karaborsa</span></div><div class="tiny center" style="margin-bottom:10px">Tüm ödemeler IC bankadan düşer.</div><div id="market"></div></div>
+    </section>
+  </div>
+
+  <div id="nav">
+    <div class="nav active" onclick="switchTab('main',this)"><span class="icon" data-bg="rZ2HD2E.png"></span>Macera</div>
+    <div class="nav" onclick="switchTab('chest',this)"><span class="icon" data-bg="N1OwHln.png"></span>Kasa</div>
+    <div class="nav" onclick="switchTab('camp',this)"><span class="icon" data-bg="Ripj8GR.png"></span>Sunak</div>
+    <div class="nav" onclick="switchTab('mini',this)"><span class="icon" data-bg="IRT0WDZ.png"></span>Boyut</div>
+    <div class="nav" onclick="switchTab('shop',this)"><span class="icon" data-bg="z4bPDWO.png"></span>Borsa</div>
+  </div>
+</div>
+
+<script src="https://phone-gw.downtownrpg.com/api/sdk/0.2/child.umd.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/";
+  const SAVE_KEY = "kadim_rpg_v52";
+  const BACKUP_KEY = "kadim_rpg_v52_backup";
+
+  const $ = id => document.getElementById(id);
+  const clone = obj => JSON.parse(JSON.stringify(obj));
+  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+  const money = n => Math.floor(Number(n)||0);
+
+  function initCDN(){
+    document.querySelectorAll("[data-src]").forEach(el => el.src = CDN_URL + el.dataset.src);
+    document.querySelectorAll("[data-bg]").forEach(el => el.style.backgroundImage = `url("${CDN_URL}${el.dataset.bg}")`);
+    document.querySelectorAll(".char-preview").forEach(el => {
+      el.style.backgroundRepeat="no-repeat"; el.style.imageRendering="pixelated";
+      el.style.animation="playerAnim .8s steps(6) infinite"; el.style.setProperty("--frames",6);
     });
+  }
+  initCDN();
 
-    document.getElementById("btn-farm").onclick = function () {
-      if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive) return;
-      damageEnemy(); updateUI();
-    };
+  const isPhone = typeof PhoneSDK !== "undefined";
+  const phone = isPhone ? PhoneSDK.createPhoneSDK() : {
+    whenReady: async () => ({characterId:"LOCAL"}),
+    storage: { get: async()=>null, set: async()=>true },
+    bank: { charge: async()=>true },
+    phone: { notify: async()=>true }
+  };
 
-    document.getElementById("btn-quest").onclick = async function () {
-      var now = Date.now(), questDur = 30 + (state.level * 5);
-      if (state.questEndTime > 0 && state.questEndTime <= now) {
-        state.questEndTime = 0; state.stats.quests++;
-        let pM = 1 + (state.prestige * 0.5), qM = 1 + ((state.upgrades.coin || 0) * 0.5), bookD = (state.upgrades.book || 0) * 0.05;
-        let dMult = questDur / 30, hC = "", xpG = Math.floor(150 * dMult);
-        addXP(xpG);
-        if(Math.random() < (0.2 + bookD)) {
-           let kIdx = Math.floor(Math.random() * Math.min(state.level/10 + 1, 8)); if(kIdx > 7) kIdx = 7; state.keys[kIdx]++;
-           hC += `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}${chestKeys[kIdx]}" style="width:24px; image-rendering:pixelated;"> <span style="color:#fff; font-weight:bold;">Seviye ${kIdx+1} Anahtar</span></div>`;
-        } else {
-           let sG = Math.floor(20 * state.level * qM * dMult), bG = Math.floor(5 * state.level * qM * dMult);
-           state.soul += sG; state.blood += bG;
-           hC += `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}rZ2HD2E.png" style="width:20px;"> <span style="color:#d1b3ff; font-weight:bold;">+${sG} Ruh</span></div><div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}XWcKSug.png" style="width:20px;"> <span style="color:#ff4d4d; font-weight:bold;">+${bG} Kan</span></div>`;
-        }
-        hC += `<div style="display:flex; align-items:center; gap:8px;"><span style="color:#b38b22; font-weight:bold;">+${xpG} XP</span></div>`;
-        playSound('loot', 0.6); document.getElementById("loot-title").textContent = "Kalıntı Ganimeti"; document.getElementById("loot-items-container").innerHTML = hC; document.getElementById("modal-loot").style.display = "flex"; applyCharacterSprite('jump'); 
-      } else if (state.questEndTime <= 0) { playSound('quest_start', 0.5); state.questEndTime = now + (questDur * 1000); }
-      checkQuestStatus(); await saveState(); updateUI();
-    };
+  const sfx = {
+    bg:new Audio("https://files.catbox.moe/74c7yc.mp3"),
+    p_atk:new Audio("https://files.catbox.moe/jxe6g6.wav"), e_atk:new Audio("https://files.catbox.moe/yqtnmq.wav"),
+    loot:new Audio("https://files.catbox.moe/sr74q7.wav"), lvlup:new Audio("https://files.catbox.moe/459gkz.wav"),
+    equip:new Audio("https://files.catbox.moe/ozg7s8.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
+    mapchange:new Audio("https://files.catbox.moe/xnmhb5.wav"), chest:new Audio("https://files.catbox.moe/az4wl5.wav"),
+    e_death:new Audio("https://files.catbox.moe/t30v8r.wav"), p_death:new Audio("https://files.catbox.moe/k9gftq.wav"),
+    tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
+    ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
+    rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
+    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
+  };
+  sfx.bg.loop = true;
 
-    document.getElementById("btn-ritual").onclick = async function () {
-      if(isDead) return;
-      var now = Date.now(); let ritual = getRitualStats(); 
-      if (state.ritualEndTime > 0 && state.ritualEndTime <= now) {
-          state.ritualEndTime = 0; state.stats.rituals++; let htmlContent = ""; let roll = state.pendingRitualRoll;
-          if (roll < 0.15) { state.rune += 1; htmlContent = `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}UwxjWcn.png" style="width:24px; image-rendering:pixelated;"> <span style="color:var(--bordo-light); font-weight:bold;">+1 Rün Kırığı</span></div>`; } 
-          else if (roll < 0.40) { let dGained = Math.floor(3 * ritual.rewardMult); state.dark += dGained; htmlContent = `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}XaP5VtJ.png" style="width:24px; image-rendering:pixelated;"> <span style="color:#b84dff; font-weight:bold;">+${dGained} Karanlık Öz</span></div>`; } 
-          else { let sGained = Math.floor((200 + (state.level * 10)) * ritual.rewardMult); state.soul += sGained; htmlContent = `<div style="display:flex; align-items:center; gap:8px;"><img src="${CDN_URL}rZ2HD2E.png" style="width:24px; image-rendering:pixelated;"> <span style="color:#d1b3ff; font-weight:bold;">+${sGained} Ruh</span></div>`; }
-          playSound('loot', 0.6); document.getElementById("loot-title").textContent = "Kan Ritüeli Sonucu"; document.getElementById("loot-items-container").innerHTML = htmlContent; document.getElementById("modal-loot").style.display = "flex";
-          if(playerHp <= 0) {
-              state.stats.deaths++; playSound('p_death', 0.8); isDead = true; playerHp = 0; showToast("Ritüel seni tüketti..."); document.getElementById("player-sprite").style.opacity = 0;
-              let eff = document.createElement('img'); 
-              eff.src = CDN_URL + "TAcW2zd.gif"; 
-              eff.style.position = 'absolute'; eff.style.left = '30px'; eff.style.bottom = '25px'; eff.style.width = '64px'; eff.style.height = '64px'; eff.style.zIndex = '25'; eff.style.imageRendering = 'pixelated';
-              document.getElementById('battle-stage').appendChild(eff); setTimeout(() => eff.remove(), 1000);
-              setTimeout(() => { isDead = false; playerHp = playerMaxHp; playerShield = playerMaxShield; document.getElementById("player-sprite").style.opacity = 1; applyCharacterSprite('idle'); document.getElementById("player-hp-bar").style.width = "100%"; }, 5000);
-          } else applyCharacterSprite('idle');
-          document.getElementById("player-hp-bar").style.width = Math.max(0, (playerHp / playerMaxHp) * 100) + "%";
-          await saveState(); updateUI(); return;
-      }
-      if(state.blood < ritual.bloodCost) { showToast("YETERSİZ KAN!"); return; }
-      if(state.ritualNextAvailable > now) return;
-      playSound('ritual', 0.7);
-      let hpCost = Math.floor(playerMaxHp * (ritual.hpCostPercent / 100)); hpCost = Math.max(10, hpCost); 
-      state.blood -= ritual.bloodCost; playerHp -= hpCost; showDamage('player-sprite', hpCost, 'hp');
-      state.ritualNextAvailable = now + ritual.cooldownMS; state.ritualEndTime = now + 3000; state.pendingRitualRoll = Math.random();
-      playEffectAt('player-sprite', 'BvKsn1n.gif', 1.5, -10); await saveState(); updateUI();
-    };
+  const enemyList = ["r34x4rk.png","aeUE8LY.png","Ki45LLY.png","6ngSd4q.png","DXl76oM.png","qU1GVNc.png","aRqvjwr.png","L8VJXGB.png","BMntBV6.png","9JCM4k5.png","5wxpNCA.png","z85mIc5.png","zc8veBt.png","k8j34JO.png","Epfg5AR.png"];
+  const enemyAttackGif = "Yku2dxV.gif";
+  const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
+  const frameCounts = {idle:6,dash:4,jump:8,death:6};
+  const wepTiers = [["Sobgyzp.png","KmKYn2j.png","iLrkoIP.png","OnNJZib.png","DJwL46V.png"],["ufRauzO.png","BF39DDd.png","XlAL5e0.png","9Rd7Vcx.png","U4SvLci.png"],["79U9ddN.png","z1NAu65.png","eka9oKj.png","4gVPxxU.png","LEgUUIi.png"]];
+  const armTiers = [["uiCTITp.png","0d6QvWe.png","AQiwNcp.png"],["chUVP49.png","rNXPeal.png","AGIHoXb.png","PZQ243K.png","AsFMSdt.png"],["0XVH5cj.png","OUgWUkQ.png","7M085ds.png","HigNrFC.png","fthODln.png"],["3WSmAuR.png","o70Kunf.png","IajSD07.png","ZwLdEMM.png"],["5l21f1v.png","k83JT0E.png","0lCeYQm.png","XjqYjpm.png","pz4wL1Q.png","KYrj5bB.png"],["a4a2sIF.png","t0YTMlA.png","Uo9HsOn.png","tljYYCo.png","4iMw6Nv.png","a7afDq0.png"]];
+  const wepUniques = ["S2x99Uo.png","FXXkBlx.png","gV4nwGa.png","usBDlxr.png","EVoaOUW.png","4jGKsVI.png","kfADGqF.png","iu2RLfz.png","6aoTbXQ.png"];
+  const armUniques = ["VjkYGmr.png","aikRPrn.png","8K02ZOU.png","evwFKwB.png","mmyrNMr.png","mMEjivM.png","y4PTmZh.png","DKk5Axs.png"];
+  const wepUniqueNames = ["Kanlı Tırpan","Kader Kılıcı","Ruh Yiyen","Gölge Hançeri","Kızıl Gürz","Kadim Asa","Gece Kılıcı","Buzul Balta","Şeytan Mızrağı"];
+  const armUniqueNames = ["Gölgeler Cübbesi","Kızıl Zırh","Kadim Kalkan","Ruh Koruması","Gece Pelerini","Kemik Zırh","Lanetli Deri","Buzul Plaka"];
+  const chestKeys = ["3pCe51s.png","LgBYg2I.png","LxANbXQ.png","pql7Og9.png","cu4AHcV.png","cJ3vWM9.png","J1fjm0c.png","R3paBEL.png"];
+  const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
+  const chestSoulBase = [80,140,220,350,550,850,1250,1800];
 
-    window.executePrestige = async function() {
-        document.getElementById('modal-confirm').style.display='none';
-        var p = state.prestige + 1, g = state.gender, r = state.rune, d = state.dark, stgs = state.settings, stts = state.stats, achs = state.unlockedAchievements;
-        state = sanitizeState(JSON.parse(JSON.stringify(defaultState))); 
-        state.prestige = p; state.gender = g; state.rune = r; state.dark = d; state.settings = stgs; state.stats = stts; state.unlockedAchievements = achs;
-        await saveState(); updateCombatStats(); updateUI(); applyCharacterSprite('idle'); 
-        isMapChanging = false; isCombatActive = true; isDead = false; currentEnemyHp = 0; playerHp = playerMaxHp; playerShield = playerMaxShield; spawnEnemy(); 
-        playSound('lvlup', 0.8); showToast("Kadim Güç uyandı.");
+  const altarUpgrades = [
+    {id:"book",name:"Kadim Bilgelik",desc:"Anahtar düşürme şansını artırır.",imgs:["csY0vyb.png","1IOTuZe.png","HchptsM.png","3IzzE4S.png"],type:"soul",baseCost:50,mult:2.5},
+    {id:"dust",name:"Kozmik Toz",desc:"Saniyede Ruh üretir.",imgs:["Y9xlskS.png","MEvfNBv.png","ViCqShl.png","cmLNF4B.png","Iz3gWYq.png","1HNJ42F.png","xUYBV1O.png","vhawAm2.png"],type:"blood",baseCost:100,mult:1.8},
+    {id:"scroll",name:"Kanlı Parşömen",desc:"Saniyede Kan üretir.",imgs:["V5QEvwy.png","QEYitFc.png","TOgbKV4.png","ZGWqw1W.png","dXcl3wH.png","z5k8XDk.png","QRXsNtE.png"],type:"dark",baseCost:10,mult:2.0},
+    {id:"potion",name:"Yaşam İksiri",desc:"Maksimum Canı artırır.",imgs:["XCjwkjr.png","DgmO02h.png","lm6RHXG.png","uF7ztGJ.png","JEG4iJU.png","B6YG0in.png","AYSkDbA.png","oMYS51o.png"],type:"soul",baseCost:150,mult:1.5},
+    {id:"coin",name:"Ganimet Zenginliği",desc:"Görev ganimetini seviye başına +%20 artırır.",imgs:["M7X9WOQ.png","oy6iNYy.png","qQwN1mW.png","Eq2ngN6.png","kBQEANO.png"],type:"blood",baseCost:200,mult:1.7}
+  ];
+  const roman = ["","I","II","III","IV","V","VI","VII","VIII","IX","X"];
+
+  const marketItems = [
+    {name:"Küçük Bilgi Tomarı",desc:"+100 XP · 2,4 dk emek",icon:"3xcyzvh.png",price:40,action:()=>addXP(100)},
+    {name:"Bilge Tomarı",desc:"+500 XP · 9,6 dk emek",icon:"0O2SqwA.png",price:160,action:()=>addXP(500)},
+    {name:"Kadim Tomar",desc:"+2000 XP · 31 dk emek",icon:"dqc0ybc.png",price:520,action:()=>addXP(2000)},
+    {name:"Efsanevi Tomar",desc:"+5000 XP · 1,1 sa emek",icon:"EdOIbwE.png",price:1100,action:()=>addXP(5000)},
+    {name:"Tanrısal Tomar",desc:"+15000 XP · 2,7 sa emek",icon:"CneQ9wH.png",price:2700,action:()=>addXP(15000)},
+    {name:"Sıradan Ruh",desc:"+250 Ruh · 4,8 dk emek",icon:"72DNCNJ.png",price:80,action:()=>state.soul+=250},
+    {name:"Zengin Ruh",desc:"+1000 Ruh · 16,8 dk emek",icon:"xpRIjnf.png",price:280,action:()=>state.soul+=1000},
+    {name:"Kadim Ruh Kümesi",desc:"+5000 Ruh · 1,2 sa emek",icon:"GIrbWTa.png",price:1200,action:()=>state.soul+=5000},
+    {name:"Damla Kan",desc:"+100 Kan · 4,8 dk emek",icon:"hBTvz3U.png",price:80,action:()=>state.blood+=100},
+    {name:"Kan Şişesi",desc:"+500 Kan · 19,2 dk emek",icon:"Sy5NAsX.png",price:320,action:()=>state.blood+=500},
+    {name:"Kan Kadehi",desc:"+2000 Kan · 1,1 sa emek",icon:"VDmfS8Z.png",price:1100,action:()=>state.blood+=2000},
+    {name:"Kan Havuzu",desc:"+5000 Kan · 2,5 sa emek",icon:"wBPrZad.png",price:2500,action:()=>state.blood+=5000},
+    {name:"Karanlık Taş",desc:"+10 Öz · 9 dk emek",icon:"uXvTGJC.png",price:150,action:()=>state.dark+=10},
+    {name:"Karanlık Kristal",desc:"+50 Öz · 33 dk emek",icon:"jUC5lFz.png",price:550,action:()=>state.dark+=50},
+    {name:"Karanlık Yürek",desc:"+200 Öz · 1,7 sa emek",icon:"v8b6RUf.png",price:1700,action:()=>state.dark+=200},
+    {name:"Karanlık Küp",desc:"+750 Öz · 4,5 sa emek",icon:"o7eQsNh.png",price:4500,action:()=>state.dark+=750},
+    {name:"Karanlık Göz",desc:"+2000 Öz · 7,5 sa emek",icon:"AgrVJ1H.png",price:7500,action:()=>state.dark+=2000},
+    {name:"Rün Kırığı",desc:"+1 Rün · 15 dk emek",icon:"UwxjWcn.png",price:250,action:()=>state.rune+=1},
+    {name:"Rün Kesesi",desc:"+3 Rün · 39 dk emek",icon:"Pipa3Ag.png",price:650,action:()=>state.rune+=3},
+    {name:"Rün Sandığı",desc:"+10 Rün · 1,8 sa emek",icon:"TT7vr06.png",price:1800,action:()=>state.rune+=10}
+  ];
+
+  const achievements = [
+    {id:"first_blood",name:"İlk Kan",desc:"İlk düşmanını alt et.",icon:"twxqpzw.png",type:"kill",req:1},
+    {id:"serial_killer",name:"Gölge Katili",desc:"1.000 düşman alt et.",icon:"NDrPFl8.png",type:"kill",req:1000},
+    {id:"death_wish",name:"Azim mi, Delilik mi?",desc:"10 kez öl.",icon:"ZEfdj9s.png",type:"death",req:10},
+    {id:"undead",name:"Ölümsüzlüğe Doğru",desc:"100 kez öl.",icon:"N6VLHwv.png",type:"death",req:100},
+    {id:"clicker",name:"Yorulmaz Parmaklar",desc:"Ruh Hasadı'na 1.000 kez bas.",icon:"yv6es4J.png",type:"click",req:1000},
+    {id:"click_god",name:"Tık Tanrısı",desc:"Ruh Hasadı'na 50.000 kez bas.",icon:"Evxp84Y.png",type:"click",req:50000},
+    {id:"explorer",name:"Mezar Soyguncusu",desc:"50 Kalıntı görevi tamamla.",icon:"bAXdexU.png",type:"quest",req:50},
+    {id:"cultist",name:"Kızıl Kültist",desc:"100 ritüel tamamla.",icon:"pfsf0Qj.png",type:"ritual",req:100},
+    {id:"wealth",name:"Karaborsa Baronu",desc:"Karaborsadan 25 satın alım yap.",icon:"D11BDxH.png",type:"shop",req:25},
+    {id:"chest_opener",name:"Hazine Avcısı",desc:"50 sandık aç.",icon:"bsmif0s.png",type:"chest",req:50},
+    {id:"dimension",name:"Boyut Gezgini",desc:"Boyut Kapısını 50 kez başarıyla aç.",icon:"zfJ5L5I.png",type:"mg_win",req:50},
+    {id:"blacksmith",name:"Kadim Demirci",desc:"Silahını 50 kez güçlendir.",icon:"uIRlL4e.png",type:"upg_w",req:50},
+    {id:"tank",name:"Sarsılmaz Duvar",desc:"Zırhını 25 kez güçlendir.",icon:"T5MZ1kg.png",type:"upg_a",req:25},
+    {id:"lucky",name:"Şeytan Tüyü",desc:"Bir Yadigâr düşür.",icon:"F7MaUi9.png",type:"unique",req:1},
+    {id:"level_50",name:"Kadim Bilge",desc:"Seviye 50 ol.",icon:"CTPayn5.png",type:"level",req:50}
+  ];
+
+  const levelTiers = [
+    {min:1,title:"Çırak Büyücü",bg:"4vPe6ET.png"},
+    {min:10,title:"Kanlı Kültist",bg:"0iXQcMW.png"},
+    {min:25,title:"Gölge Lordu",bg:"n0m4VHm.png"},
+    {min:50,title:"Karanlık Gezgin",bg:"tfHQ2S9.png"},
+    {min:75,title:"Kadim Varlık",bg:"vwS3cGl.png"}
+  ];
+
+  const defaultState = {
+    gender:null,soul:0,blood:0,dark:0,rune:0,prestige:0,xp:0,level:1,
+    questEndTime:0,questStartedAt:0,
+    keys:[0,0,0,0,0,0,0,0],
+    equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
+    equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
+    unlockedWeapons:[],unlockedArmors:[],
+    upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
+    ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,
+    settings:{music:0.15,sfx:1},
+    stats:{kills:0,clicks:0,deaths:0,quests:0,rituals:0,chests:0,shop:0,weapon_upg:0,armor_upg:0,mg_win:0,uniques:0},
+    unlockedAchievements:[]
+  };
+
+  let state = clone(defaultState);
+  let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
+  let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
+  let isDead=false,isMapChanging=false,isCombatActive=true,isAFK=false,lastInteractTime=Date.now();
+  let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
+  let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null;
+  let userSettings={music:0.15,sfx:1};
+  const uiCache={upgrades:"",inventory:"",market:false};
+
+  function sanitizeState(raw){
+    const s = {...clone(defaultState), ...(raw && typeof raw==="object" ? raw : {})};
+    s.settings={...defaultState.settings,...(raw?.settings||{})};
+    s.upgrades={...defaultState.upgrades,...(raw?.upgrades||{})};
+    s.stats={...defaultState.stats,...(raw?.stats||{})};
+    s.equippedWeapon={...defaultState.equippedWeapon,...(raw?.equippedWeapon||{})};
+    s.equippedArmor={...defaultState.equippedArmor,...(raw?.equippedArmor||{})};
+    ["soul","blood","dark","rune","prestige","xp","level","questEndTime","questStartedAt","ritualEndTime","pendingRitualRoll","ritualNextAvailable"].forEach(k=>{
+      s[k]=Number(s[k]); if(!Number.isFinite(s[k])) s[k]=defaultState[k];
+    });
+    s.level=Math.max(1,Math.floor(s.level)); s.prestige=Math.max(0,Math.floor(s.prestige));
+    s.keys=Array.from({length:8},(_,i)=>Math.max(0,Math.floor(Number(raw?.keys?.[i])||0)));
+    s.unlockedWeapons=[...new Set((raw?.unlockedWeapons||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<wepUniques.length))];
+    s.unlockedArmors=[...new Set((raw?.unlockedArmors||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<armUniques.length))];
+    s.unlockedAchievements=[...new Set((raw?.unlockedAchievements||[]).filter(id=>achievements.some(a=>a.id===id)))];
+    Object.keys(s.upgrades).forEach(k=>s.upgrades[k]=Math.max(0,Math.floor(Number(s.upgrades[k])||0)));
+    Object.keys(s.stats).forEach(k=>s.stats[k]=Math.max(0,Math.floor(Number(s.stats[k])||0)));
+    s.settings.music=clamp(Number(s.settings.music)||0,0,1); s.settings.sfx=clamp(Number(s.settings.sfx)||0,0,1);
+    return s;
+  }
+
+  function playSound(name,vol=1){
+    const src=sfx[name]; if(!src) return;
+    const a=src.cloneNode(); a.volume=clamp(vol*userSettings.sfx,0,1); a.play().catch(()=>{});
+  }
+  function updateVolumes(){
+    userSettings.music=Number($("vol-music").value); userSettings.sfx=Number($("vol-sfx").value);
+    sfx.bg.volume=userSettings.music; state.settings={...userSettings}; queueSave();
+  }
+  window.updateVolumes=updateVolumes;
+
+  function showToast(msg){
+    const el=$("toast"); el.textContent=msg; el.style.opacity="1";
+    clearTimeout(showToast.t); showToast.t=setTimeout(()=>el.style.opacity="0",2200);
+  }
+  function openModal(id){$(id).style.display="flex"}
+  function closeModal(id){$(id).style.display="none"}
+  window.openModal=openModal; window.closeModal=closeModal;
+
+  function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
+  function getPrestigeMultiplier(){return 1+state.prestige*0.25}
+  function getPrestigeRequiredLevel(){return (state.prestige+1)*10}
+  function cumulativeLevel(tiers,tier,level,startTier=0){let total=0;for(let i=startTier;i<tier;i++)total+=tiers[i].length;return total+level}
+  function xpNeeded(){return state.level*state.level*100}
+
+  function equipmentUpgradeCost(type,eq){
+    if(eq.isUnique) return 0;
+    if(type==="armor"){
+      if(eq.t===0) return [80,120,150][eq.l]??150;
+      const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
+      return Math.floor(180*Math.pow(1.20,effective));
+    }
+    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
+    return Math.floor(150*Math.pow(1.45,effective));
+  }
+  function weaponAttack(eq){
+    if(eq.isUnique) return 95+(eq.idx*18)+(state.level*2);
+    const effective=cumulativeLevel(wepTiers,eq.t,eq.l);
+    return 7+(effective*7)+(state.level*2);
+  }
+  function armorDefense(eq){
+    if(eq.isUnique) return 50+(eq.idx*15);
+    if(eq.t===0) return 0;
+    const effective=cumulativeLevel(armTiers,eq.t,eq.l,1);
+    return (effective+1)*4;
+  }
+  function getDamageMitigation(){return playerDef<=0?0:playerDef/(playerDef+180)}
+
+  function updatePlayerBars(){
+    $("player-hp-bar").style.width=clamp(playerMaxHp?playerHp/playerMaxHp*100:0,0,100)+"%";
+    $("player-shield-bar").style.width=clamp(playerMaxShield?playerShield/playerMaxShield*100:0,0,100)+"%";
+  }
+  function updateCombatStats(){
+    currentEnemyMaxHp=Math.floor(state.level*18);
+    enemyAttack=Math.floor(state.level*4);
+    playerAtk=weaponAttack(state.equippedWeapon);
+    playerDef=armorDefense(state.equippedArmor);
+    playerMaxHp=50+(state.level*10)+((state.upgrades.potion||0)*30);
+    playerHp=Math.min(playerHp,playerMaxHp);
+    playerMaxShield=Math.floor(playerDef*4);
+    playerShield=Math.min(playerShield,playerMaxShield);
+    updatePlayerBars();
+  }
+
+  function getQuestStats(){
+    const duration=Math.min(180,30+state.level*3);
+    const lootMult=1+(state.upgrades.coin||0)*0.20;
+    return {
+      duration,
+      xp:Math.floor(75+state.level*12),
+      soul:Math.floor((25+state.level*8)*getPrestigeMultiplier()*lootMult),
+      blood:Math.floor((8+state.level*3)*getPrestigeMultiplier()*lootMult),
+      keyChance:Math.min(0.45,0.15+(state.upgrades.book||0)*0.05)
     };
-  </script>
+  }
+  function getRitualStats(){
+    const bracket=Math.floor((state.level-1)/10);
+    return {
+      bloodCost:10+bracket*5,
+      hpCostPercent:Math.min(35,8+bracket*3),
+      cooldownMS:(12+bracket*3)*1000,
+      rewardMult:getPrestigeMultiplier()*(1+Math.min(state.level,75)*0.03)
+    };
+  }
+  function getDimensionReward(){
+    return Math.ceil(5*getPrestigeMultiplier()*(1+Math.min(state.level,75)*0.02));
+  }
+  function getChestRewards(keyIndex){
+    const levelMult=1+Math.min(state.level,75)*0.06;
+    const soul=Math.floor(chestSoulBase[keyIndex]*levelMult*getPrestigeMultiplier());
+    return {soul,blood:Math.floor(soul*0.24)};
+  }
+
+  function renderMarket(){
+    if(uiCache.market) return; uiCache.market=true;
+    $("market").innerHTML=marketItems.map((item,i)=>`
+      <div class="shop-item">
+        <div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${item.icon}')"></span>
+          <div><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div></div>
+        </div>
+        <button class="primary market-buy" onclick="buyMarketItem(${i})">$${item.price}</button>
+      </div>`).join("");
+  }
+
+  const bankErrorMessages={
+    USER_DENIED:"Ödeme iptal edildi.",
+    INSUFFICIENT_FUNDS:"IC banka bakiyen yetersiz.",
+    NO_LINKED_BANK_ACCOUNT:"Uygulamaya şirket banka hesabı bağlanmamış.",
+    PERMISSION_DENIED:"Banka ödeme izni verilmemiş.",
+    PHONE_NOT_FOUND:"Telefon bulunamadı.",
+    PROTOCOL_MISMATCH:"Telefon SDK sürümü uyumsuz.",
+    UNKNOWN_ACTION:"Telefon bu ödeme işlemini desteklemiyor."
+  };
+  function lockMarket(v){document.querySelectorAll(".market-buy").forEach(b=>{b.disabled=v;v?b.setAttribute("aria-busy","true"):b.removeAttribute("aria-busy")})}
+  async function buyMarketItem(i){
+    if(marketPurchasePending) return;
+    const item=marketItems[i]; if(!item) return;
+    marketPurchasePending=true; lockMarket(true); let charged=false;
+    try{
+      await phone.bank.charge({amount:item.price,note:"Karaborsa: "+item.name});
+      charged=true; item.action(); state.stats.shop++; playSound("buy",.5);
+      await saveState(); updateUI(); showToast("Satın alım başarılı!");
+    }catch(e){
+      showToast(charged?"Ödeme alındı; ödül cihazda korundu. Kayıt tekrar denenecek.":(bankErrorMessages[e?.code]||"Ödeme gerçekleştirilemedi."));
+      if(charged) queueSave();
+    }finally{marketPurchasePending=false;lockMarket(false)}
+  }
+  window.buyMarketItem=buyMarketItem;
+
+  function renderInventory(){
+    const w=state.equippedWeapon,a=state.equippedArmor;
+    const wImg=w.isUnique?wepUniques[w.idx]:wepTiers[w.t]?.[w.l]||wepTiers[0][0];
+    const aImg=a.isUnique?armUniques[a.idx]:armTiers[a.t]?.[a.l]||armTiers[0][0];
+    $("eq-weapon-img").style.backgroundImage=`url("${CDN_URL}${wImg}")`;
+    $("eq-armor-img").style.backgroundImage=`url("${CDN_URL}${aImg}")`;
+    $("eq-weapon-name").textContent=w.isUnique?wepUniqueNames[w.idx]:`Asa S${w.t+1}-${w.l+1}`;
+    $("eq-armor-name").textContent=a.isUnique?armUniqueNames[a.idx]:`Cübbe S${a.t+1}-${a.l+1}`;
+    $("eq-weapon-name").style.color=w.isUnique?"var(--gold)":"#fff"; $("eq-armor-name").style.color=a.isUnique?"var(--gold)":"#fff";
+    $("eq-weapon-stat").textContent=`ATK: ${playerAtk}`; $("eq-armor-stat").textContent=`DEF: ${playerDef} · Azaltım %${Math.round(getDamageMitigation()*100)}`;
+    const wMax=w.t===wepTiers.length-1&&w.l===wepTiers[w.t].length-1;
+    const aMax=a.t===armTiers.length-1&&a.l===armTiers[a.t].length-1;
+    $("eq-weapon-upg").innerHTML=w.isUnique?`<button disabled>YADİGÂR</button>`:wMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('weapon')">${equipmentUpgradeCost("weapon",w)} RUH</button>`;
+    $("eq-armor-upg").innerHTML=a.isUnique?`<button disabled>YADİGÂR</button>`:aMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('armor')">${equipmentUpgradeCost("armor",a)} RUH</button>`;
+    $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})"><img src="${CDN_URL}${img}" style="width:24px;image-rendering:pixelated"><span class="key-count">x${state.keys[i]}</span></div>`).join("");
+    $("uniques").innerHTML=
+      wepUniques.map((img,i)=>`<div class="unique ${state.unlockedWeapons.includes(i)?"":"locked"} ${w.isUnique&&w.idx===i?"equipped":""}" onclick="equipUnique('weapon',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("")+
+      armUniques.map((img,i)=>`<div class="unique ${state.unlockedArmors.includes(i)?"":"locked"} ${a.isUnique&&a.idx===i?"equipped":""}" onclick="equipUnique('armor',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("");
+  }
+
+  async function upgradeEquipment(type){
+    const isWeapon=type==="weapon"; const eq=isWeapon?state.equippedWeapon:state.equippedArmor; if(eq.isUnique)return;
+    const tiers=isWeapon?wepTiers:armTiers; const maxT=tiers.length-1,maxL=tiers[eq.t].length-1;
+    if(eq.t===maxT&&eq.l===maxL) return;
+    const cost=equipmentUpgradeCost(type,eq); if(state.soul<cost){showToast("Yetersiz Ruh!");return}
+    state.soul-=cost;
+    if(eq.l<maxL) eq.l++; else {eq.t++;eq.l=0}
+    state.stats[isWeapon?"weapon_upg":"armor_upg"]++;
+    playSound(isWeapon?"weapon_upg":"robe_upg",.8); playEffectAt("player-sprite","5492udk.gif",1,10);
+    updateCombatStats(); await saveState(); updateUI(); showToast("Eşya güçlendirildi!");
+  }
+  window.upgradeEquipment=upgradeEquipment;
+
+  async function openChest(keyIndex){
+    if(state.keys[keyIndex]<=0){showToast("Bu anahtardan yok!");return}
+    state.keys[keyIndex]--; state.stats.chests++; playSound("chest",.6);
+    const gotUnique=Math.random()<uniqueChances[keyIndex];
+    if(gotUnique){
+      const isWeapon=Math.random()>.5,uArr=isWeapon?wepUniques:armUniques,uState=isWeapon?state.unlockedWeapons:state.unlockedArmors;
+      const missing=uArr.map((_,i)=>i).filter(i=>!uState.includes(i));
+      const idx=(missing.length?missing:uArr.map((_,i)=>i))[Math.floor(Math.random()*(missing.length||uArr.length))];
+      const wasNew=!uState.includes(idx); if(wasNew){uState.push(idx);state.stats.uniques++}
+      $("loot-title").textContent=wasNew?"Kadim Yadigâr Bulundu!":"Tanıdık Yadigâr";
+      $("loot-items").innerHTML=`<img src="${CDN_URL}${uArr[idx]}" style="width:42px;filter:drop-shadow(0 0 6px var(--gold))"><b style="color:var(--gold)">${wasNew?"Depoya eklendi":"Zaten sende vardı"}</b>`;
+    }else{
+      const r=getChestRewards(keyIndex); state.soul+=r.soul; state.blood+=r.blood;
+      $("loot-title").textContent="Kasa Ganimeti";
+      $("loot-items").innerHTML=`<b style="color:#d1b3ff">+${r.soul} Ruh</b><b style="color:#ff6666">+${r.blood} Kan</b>`;
+    }
+    playSound("loot",.6); openModal("loot"); updateCombatStats(); await saveState(); updateUI();
+  }
+  window.openChest=openChest;
+
+  function equipUnique(type,idx){
+    if(type==="weapon"&&state.unlockedWeapons.includes(idx)) state.equippedWeapon={isUnique:true,t:0,l:0,idx};
+    else if(type==="armor"&&state.unlockedArmors.includes(idx)) state.equippedArmor={isUnique:true,t:0,l:0,idx};
+    else return;
+    playSound("equip",.7); updateCombatStats(); queueSave(); updateUI();
+  }
+  window.equipUnique=equipUnique;
+
+  function applyCharacterSprite(anim){
+    if(!state.gender) return;
+    const el=$("player-sprite"),frames=frameCounts[anim]||6;
+    el.style.backgroundImage=`url("${CDN_URL}${sprites[state.gender][anim]}")`;
+    el.style.setProperty("--frames",frames); el.style.animation=`playerAnim ${anim==="dash"?".4s":".8s"} steps(${frames}) infinite`;
+    if(!["idle","dash"].includes(anim)&&!isDead) setTimeout(()=>applyCharacterSprite("idle"),450);
+  }
+  function showDamage(target,amount,type){
+    const el=document.createElement("div"); el.className=`damage ${type}`; el.textContent="-"+Math.max(0,Math.floor(amount));
+    el.style.left=target==="enemy-sprite"?`calc(75% + ${Math.floor(Math.random()*20)-10}px)`:`calc(20% + ${Math.floor(Math.random()*20)-10}px)`;
+    $("battle").appendChild(el); setTimeout(()=>el.remove(),800);
+  }
+  function playEffectAt(targetId,gif,scale=1,offsetY=0){
+    const target=$(targetId); if(!target)return; const eff=document.createElement("img"); eff.src=CDN_URL+gif;
+    Object.assign(eff.style,{position:"absolute",width:(100*scale)+"px",height:(100*scale)+"px",left:"50%",top:`calc(50% + ${offsetY}px)`,transform:"translate(-50%,-50%)",zIndex:"100",pointerEvents:"none"});
+    target.appendChild(eff); setTimeout(()=>eff.remove(),800);
+  }
+  function shootProjectile(type){
+    const p=document.createElement("img"); p.src=CDN_URL+(type==="player"?"mZbPRLE.gif":enemyAttackGif); p.style.position="absolute";p.style.bottom="42px";p.style.width="32px";p.style.zIndex="40";p.style.transition=".3s linear";
+    if(type==="player"){p.style.left="60px";setTimeout(()=>p.style.left="200px",10);playSound("p_atk",.15)}else{p.style.right="60px";p.style.transform="scaleX(-1)";setTimeout(()=>p.style.right="200px",10);playSound("e_atk",.15)}
+    $("battle").appendChild(p);setTimeout(()=>p.remove(),320);
+  }
+
+  function spawnEnemy(){
+    const el=$("enemy-sprite"); el.style.backgroundImage=`url("${CDN_URL}${enemyList[Math.floor(Math.random()*enemyList.length)]}")`; el.style.opacity="1";
+    updateCombatStats(); currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
+  }
+
+  function addXP(amount){
+    const oldTier=getTier(); state.xp+=Math.max(0,Number(amount)||0); let gained=0;
+    while(state.xp>=xpNeeded()){state.xp-=xpNeeded();state.level++;gained++}
+    if(gained){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;playSound("lvlup",.7);playEffectAt("player-sprite","UbY50AM.gif");applyCharacterSprite("jump");showToast(gained>1?`${gained} seviye yükseldin!`:"Seviye yükseldin!")}
+    const newTier=getTier(); updateUI(false);
+    if(oldTier.bg!==newTier.bg&&!isMapChanging){isMapChanging=true;currentEnemyHp=0;$("enemy-sprite").style.opacity="0";applyCharacterSprite("dash");setTimeout(()=>{ $("battle").style.backgroundImage=`url("${CDN_URL}${newTier.bg}")`;isMapChanging=false;applyCharacterSprite("idle");spawnEnemy();},900);return true}
+    return false;
+  }
+
+  function damageEnemy(){
+    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
+    state.stats.clicks++; currentEnemyHp-=playerAtk; shootProjectile("player");showDamage("enemy-sprite",playerAtk,"hp");
+    $("enemy-hp-bar").style.width=clamp(currentEnemyHp/currentEnemyMaxHp*100,0,100)+"%";
+    if(currentEnemyHp<=0){
+      state.stats.kills++;$("enemy-sprite").style.opacity="0";playSound("e_death",.5);
+      const pm=getPrestigeMultiplier(); state.soul+=Math.floor(10+state.level*2*pm); if(Math.random()>.5) state.blood+=Math.floor(5+state.level*pm*.5);
+      const changed=addXP(10*state.level); if(!changed)setTimeout(spawnEnemy,900); queueSave();
+    }
+  }
+
+  function killPlayer(message="ÖLDÜN!"){
+    if(isDead)return;isDead=true;state.stats.deaths++;playerHp=0;playSound("p_death",.8);showToast(message);$("player-sprite").style.opacity="0";updatePlayerBars();
+    setTimeout(()=>{isDead=false;playerHp=playerMaxHp;playerShield=playerMaxShield;$("player-sprite").style.opacity="1";applyCharacterSprite("idle");updatePlayerBars()},5000);
+  }
+  function enemyStrike(){
+    if(isDead||currentEnemyHp<=0||isMapChanging||!isCombatActive||isAFK)return;
+    let dmg=Math.max(1,Math.floor(enemyAttack*(1-getDamageMitigation())));
+    if(playerShield>0){const absorbed=Math.min(playerShield,dmg);playerShield-=absorbed;dmg-=absorbed;if(absorbed)showDamage("player-sprite",absorbed,"shield")}
+    if(dmg>0){playerHp-=dmg;showDamage("player-sprite",dmg,"hp")}
+    shootProjectile("enemy");updatePlayerBars();if(playerHp<=0)killPlayer();
+  }
+
+  function checkQuestStatus(){
+    const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"); $("quest-duration").textContent=q.duration+" SN";
+    if(state.questEndTime>now){
+      const total=Math.max(1000,(state.questEndTime-(state.questStartedAt||now)));const rem=state.questEndTime-now;const pct=clamp(100-rem/total*100,0,100);
+      btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
+    }else if(state.questEndTime>0){
+      btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
+    }else{
+      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>Gölgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+    }
+  }
+  async function questAction(){
+    const now=Date.now(),q=getQuestStats();
+    if(state.questEndTime>0&&state.questEndTime<=now){
+      state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html="";
+      if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
+      else{state.soul+=q.soul;state.blood+=q.blood;html=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="Kalıntı Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+    }else if(state.questEndTime<=0){playSound("quest_start",.5);state.questStartedAt=now;state.questEndTime=now+q.duration*1000}
+    checkQuestStatus();await saveState();updateUI();
+  }
+
+  function checkRitualStatus(){
+    const btn=$("btn-ritual"),now=Date.now();
+    if(state.ritualEndTime>now){btn.disabled=true;btn.className="";btn.textContent="Ritüel sürüyor..."}
+    else if(state.ritualEndTime>0){btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!"}
+    else if(state.ritualNextAvailable>now){btn.disabled=true;btn.className="";btn.textContent=`Bekleniyor (${Math.ceil((state.ritualNextAvailable-now)/1000)}s)`}
+    else{btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}XWcKSug.png')"></span>Ritüel Yap`}
+  }
+  async function ritualAction(){
+    if(isDead)return;const now=Date.now(),r=getRitualStats();
+    if(state.ritualEndTime>0&&state.ritualEndTime<=now){
+      state.ritualEndTime=0;state.stats.rituals++;const roll=state.pendingRitualRoll;let html="";
+      if(roll<.12){state.rune++;html=`<b style="color:#ff7a98">+1 Rün Kırığı</b>`}
+      else if(roll<.40){const d=Math.max(1,Math.floor(3*r.rewardMult));state.dark+=d;html=`<b style="color:#b84dff">+${d} Karanlık Öz</b>`}
+      else{const s=Math.floor((180+state.level*8)*r.rewardMult);state.soul+=s;html=`<b style="color:#d1b3ff">+${s} Ruh</b>`}
+      $("loot-title").textContent="Kan Ritüeli Sonucu";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);await saveState();updateUI();return;
+    }
+    if(state.ritualNextAvailable>now)return;
+    if(state.blood<r.bloodCost){showToast("Yetersiz Kan!");return}
+    state.blood-=r.bloodCost;const hpCost=Math.max(10,Math.floor(playerMaxHp*r.hpCostPercent/100));playerHp-=hpCost;showDamage("player-sprite",hpCost,"hp");updatePlayerBars();
+    if(playerHp<=0){killPlayer("Ritüel seni tüketti...");await saveState();updateUI();return}
+    state.ritualNextAvailable=now+r.cooldownMS;state.ritualEndTime=now+3000;state.pendingRitualRoll=Math.random();playSound("ritual",.7);playEffectAt("player-sprite","BvKsn1n.gif",1.4,-10);await saveState();updateUI();
+  }
+
+  function renderUpgrades(){
+    const sig=JSON.stringify([state.upgrades,money(state.soul),money(state.blood),money(state.dark)]);if(uiCache.upgrades===sig)return;uiCache.upgrades=sig;
+    $("upgrades").innerHTML=altarUpgrades.map(def=>{const lvl=state.upgrades[def.id]||0,max=lvl>=def.imgs.length-1,cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl)),unit=def.type==="soul"?"Ruh":def.type==="blood"?"Kan":"Öz";
+      return `<div class="shop-item"><div class="shop-info"><span class="icon icon-lg" style="background-image:url('${CDN_URL}${def.imgs[Math.min(lvl,def.imgs.length-1)]}')"></span><div><div class="shop-name">${def.name} <span style="color:var(--gold)">${max?"MAKS":roman[lvl]||lvl}</span></div><div class="shop-desc">${def.desc}</div></div></div><button onclick="buyAltarUpgrade('${def.id}')" ${max?"disabled":""}>${max?"MAX":cost+" "+unit}</button></div>`}).join("");
+  }
+  async function buyAltarUpgrade(id){
+    const def=altarUpgrades.find(x=>x.id===id);if(!def)return;const lvl=state.upgrades[id]||0;if(lvl>=def.imgs.length-1){showToast("Maksimum Seviye!");return}
+    const cost=Math.floor(def.baseCost*Math.pow(def.mult,lvl));if(state[def.type]<cost){showToast("Yetersiz Kaynak!");return}
+    state[def.type]-=cost;state.upgrades[id]=lvl+1;playSound("altar_upg",.8);playEffectAt("player-sprite","UbY50AM.gif");updateCombatStats();await saveState();updateUI();
+  }
+  window.buyAltarUpgrade=buyAltarUpgrade;
+
+  function achievementValue(a){
+    const s=state.stats;return ({kill:s.kills,click:s.clicks,death:s.deaths,quest:s.quests,ritual:s.rituals,shop:s.shop,chest:s.chests,mg_win:s.mg_win,upg_w:s.weapon_upg,upg_a:s.armor_upg,unique:s.uniques,level:state.level})[a.type]||0;
+  }
+  function checkAchievements(){
+    let changed=false;for(const a of achievements){if(!state.unlockedAchievements.includes(a.id)&&achievementValue(a)>=a.req){state.unlockedAchievements.push(a.id);showToast("🏆 "+a.name);playSound("equip",.8);changed=true}}
+    if(changed){queueSave();renderAchievements()}
+  }
+  function renderAchievements(){
+    $("ach-count").textContent=`${state.unlockedAchievements.length} / ${achievements.length}`;
+    $("ach-list").innerHTML=achievements.map(a=>{const u=state.unlockedAchievements.includes(a.id);return `<div class="ach ${u?"unlocked":""}"><img src="${CDN_URL}${a.icon}"><div><b>${a.name}</b><div class="tiny">${u?a.desc:"Sırrını öğrenmek için oynamaya devam et."}</div></div></div>`}).join("");
+  }
+  window.renderAchievements=renderAchievements;
+
+  async function executePrestige(){
+    closeModal("prestige-confirm");const keep={prestige:state.prestige+1,gender:state.gender,rune:state.rune,dark:state.dark,settings:clone(state.settings),stats:clone(state.stats),unlockedAchievements:[...state.unlockedAchievements]};
+    state=sanitizeState({...clone(defaultState),...keep});playerHp=50;playerShield=0;isDead=false;isMapChanging=false;updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;applyCharacterSprite("idle");spawnEnemy();await saveState();updateUI();playSound("lvlup",.8);showToast("Kadim Güç uyandı.")
+  }
+  window.executePrestige=executePrestige;
+
+  function switchTab(id,el){
+    playSound("tab",.5);document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));$("tab-"+id).classList.add("active");el?.classList.add("active");
+    isCombatActive=id==="main";document.body.classList.toggle("hide-battle",!isCombatActive);
+  }
+  window.switchTab=switchTab;
+
+  async function saveState(){
+    const snap=clone(state);try{localStorage.setItem(BACKUP_KEY,JSON.stringify(snap))}catch{}
+    saveChain=saveChain.catch(()=>{}).then(async()=>{let last;for(let i=0;i<3;i++){try{await phone.storage.set(SAVE_KEY,snap);return true}catch(e){last=e;await new Promise(r=>setTimeout(r,250*(i+1)))}}throw last});return saveChain;
+  }
+  function queueSave(){if(saveQueued)return;saveQueued=true;setTimeout(()=>{saveQueued=false;saveState().catch(()=>{})},400)}
+  async function hardResetGame(){
+    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");return}
+    state=sanitizeState(clone(defaultState));try{localStorage.removeItem(BACKUP_KEY)}catch{};await saveState().catch(()=>{});location.reload()
+  }
+  window.hardResetGame=hardResetGame;
+
+  function updateUI(updateBg=true){
+    $("creation").style.display=state.gender?"none":"flex";$("res-soul").textContent=money(state.soul);$("res-blood").textContent=money(state.blood);$("res-dark").textContent=money(state.dark);$("res-rune").textContent=money(state.rune);$("res-prestige").textContent=state.prestige;
+    const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
+    const r=getRitualStats();$("ritual-cost").textContent=`Bedel: ${r.bloodCost} Kan + %${r.hpCostPercent} Can`;
+    const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
+    const invSig=JSON.stringify([state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
+    renderUpgrades();checkQuestStatus();checkRitualStatus();
+    if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
+  }
+
+  async function selectGender(g){
+    state.gender=g;playSound("select",.8);if(sfx.bg.paused)sfx.bg.play().catch(()=>{});applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy();await saveState();updateUI()
+  }
+  window.selectGender=selectGender;
+
+  $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
+  $("btn-quest").onclick=questAction;
+  $("btn-ritual").onclick=ritualAction;
+  $("btn-mg").onclick=async function(){
+    if(!mgActive){
+      if(state.rune<1){showToast("Yeterli Rün Yok!");return}
+      state.rune--;await saveState();mgActive=true;mgPos=0;mgDir=1;mgSpeed=1.8+Math.random();this.textContent="KIR!";this.className="primary";$("mg-result").textContent="";
+      const loop=()=>{if(!mgActive)return;mgPos+=mgDir*mgSpeed;if(mgPos>=96){mgPos=96;mgDir=-1}if(mgPos<=0){mgPos=0;mgDir=1}$("mg-cursor").style.left=mgPos+"%";mgAnim=requestAnimationFrame(loop)};loop();
+    }else{
+      mgActive=false;cancelAnimationFrame(mgAnim);const win=mgPos>=42.5&&mgPos<=57.5;
+      if(win){const d=getDimensionReward();state.dark+=d;state.stats.mg_win++;addXP(300);$("mg-result").textContent=`BAŞARILI! +${d} Öz`;$("mg-result").style.color="var(--mor2)";playEffectAt("player-sprite","UbY50AM.gif")}
+      else{$("mg-result").textContent="ISKALADIN!";$("mg-result").style.color="var(--muted)"}
+      await saveState();updateUI();
+    }
+  };
+
+  ["click","touchstart"].forEach(evt=>document.addEventListener(evt,()=>{lastInteractTime=Date.now();if(isAFK){isAFK=false;$("player-afk").style.display="none";$("enemy-afk").style.display="none"}}));
+
+  setInterval(()=>{
+    if(isCombatActive&&!isAFK&&Date.now()-lastInteractTime>15000){isAFK=true;$("player-afk").style.display="block";$("enemy-afk").style.display="block"}
+    if(isCombatActive&&!isMapChanging&&!isAFK)enemyStrike()
+  },2000);
+
+  setInterval(()=>{
+    if((state.upgrades.dust||0)>0&&!isDead)state.soul+=(state.upgrades.dust||0)*5;
+    if((state.upgrades.scroll||0)>0&&!isDead)state.blood+=(state.upgrades.scroll||0)*2;
+    if(!isDead&&playerMaxShield>0&&playerShield<playerMaxShield){playerShield=Math.min(playerMaxShield,playerShield+Math.max(1,Math.floor(playerMaxShield*.02)));updatePlayerBars()}
+    checkQuestStatus();checkRitualStatus();checkAchievements();updateUI(false);
+  },1000);
+
+  async function boot(){
+    renderMarket();
+    try{
+      await phone.whenReady();
+      let saved=null;try{saved=await phone.storage.get(SAVE_KEY)}catch{}
+      if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
+      state=sanitizeState(saved||clone(defaultState));userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;
+      if(state.gender){applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}
+      updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
+    }catch(e){
+      console.error("Phone SDK init error",e);showToast("Telefon SDK başlatılamadı.");state=sanitizeState(clone(defaultState));updateUI();
+    }
+  }
+  boot();
+})();
+</script>
 </body>
 </html>
