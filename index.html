@@ -288,6 +288,7 @@
   "use strict";
 
   const CDN_URL = "https://cdn.jsdelivr.net/gh/lumifae13/kadimvadi@img/";
+  const LOCAL_AUDIO_URL = "https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
   const RAW_ASSET_URL = "https://raw.githubusercontent.com/lumifae13/kadimvadi/img/";
   const CHARACTER_ROOT = "character-v54/";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
@@ -387,16 +388,17 @@
   };
 
   const sfx = {
-    bg:new Audio("https://files.catbox.moe/74c7yc.mp3"),
-    p_atk:new Audio("https://files.catbox.moe/jxe6g6.wav"), e_atk:new Audio("https://files.catbox.moe/yqtnmq.wav"),
-    loot:new Audio("https://files.catbox.moe/sr74q7.wav"), lvlup:new Audio("https://files.catbox.moe/459gkz.wav"),
-    equip:new Audio("https://files.catbox.moe/ozg7s8.wav"), buy:new Audio("https://files.catbox.moe/9zh4gj.wav"),
-    mapchange:new Audio("https://files.catbox.moe/xnmhb5.wav"), chest:new Audio("https://files.catbox.moe/az4wl5.wav"),
-    e_death:new Audio("https://files.catbox.moe/t30v8r.wav"), p_death:new Audio("https://files.catbox.moe/k9gftq.wav"),
-    tab:new Audio("https://files.catbox.moe/t48nif.wav"), select:new Audio("https://files.catbox.moe/4z8lcp.wav"),
-    ritual:new Audio("https://files.catbox.moe/l2dgcz.wav"), quest_start:new Audio("https://files.catbox.moe/sfar5a.wav"),
-    rune:new Audio("https://files.catbox.moe/m52suq.wav"), altar_upg:new Audio("https://files.catbox.moe/xx3qu9.wav"),
-    weapon_upg:new Audio("https://files.catbox.moe/7m6qur.wav"), robe_upg:new Audio("https://files.catbox.moe/77a5fd.wav")
+    bg:new Audio(LOCAL_AUDIO_URL+"kv-bg.mp3"),
+    p_atk:new Audio(LOCAL_AUDIO_URL+"kv-player-attack.wav"), e_atk:new Audio(LOCAL_AUDIO_URL+"kv-enemy-attack.wav"),
+    loot:new Audio(LOCAL_AUDIO_URL+"gem.wav"), lvlup:new Audio(LOCAL_AUDIO_URL+"kv-level-up.wav"),
+    equip:new Audio(LOCAL_AUDIO_URL+"kv-equip.wav"), buy:new Audio(LOCAL_AUDIO_URL+"kv-buy.wav"),
+    mapchange:new Audio(LOCAL_AUDIO_URL+"kv-map-change.wav"), chest:new Audio(LOCAL_AUDIO_URL+"kv-chest.wav"),
+    e_death:new Audio(LOCAL_AUDIO_URL+"kv-enemy-death.wav"), p_death:new Audio(LOCAL_AUDIO_URL+"kv-player-death.wav"),
+    tab:new Audio(LOCAL_AUDIO_URL+"kv-tab.wav"), select:new Audio(LOCAL_AUDIO_URL+"kv-select.wav"),
+    ritual:new Audio(LOCAL_AUDIO_URL+"kv-ritual.wav"), quest_start:new Audio(LOCAL_AUDIO_URL+"kv-quest-start.wav"),
+    rune:new Audio(LOCAL_AUDIO_URL+"kv-rune.wav"), altar_upg:new Audio(LOCAL_AUDIO_URL+"kv-altar-upgrade.wav"),
+    weapon_upg:new Audio(LOCAL_AUDIO_URL+"kv-weapon-upgrade.wav"), robe_upg:new Audio(LOCAL_AUDIO_URL+"kv-robe-upgrade.wav"),
+    boss:new Audio(LOCAL_AUDIO_URL+"boss-warning.wav")
   };
   sfx.bg.loop = true;
 
@@ -752,6 +754,7 @@
   function spawnPlayerImpact(stage){
     const colors=[["#ffdb75","#ff5a28"],["#eaff75","#65d63e"],["#79fff2","#238cff"],["#e1a4ff","#763cff"],["#fff","#ff2f91"]][stage]||["#fff","#ff5a28"],impact=document.createElement("div"),size=54+stage*10;
     impact.className="combat-impact";impact.style.width=size+"px";impact.style.height=size+"px";impact.style.background=`radial-gradient(circle,${colors[0]} 0 10%,${colors[1]} 28%,transparent 68%)`;impact.style.boxShadow=`0 0 ${10+stage*5}px ${colors[1]}`;
+    impact.style.bottom=(currentEnemyProfile?.kind==="boss"?35:20)+"px";
     $("battle").appendChild(impact);setTimeout(()=>impact.remove(),350);
   }
   function shootProjectile(type){
@@ -769,7 +772,7 @@
     const el=$("enemy-sprite");
     const isBoss=v55BossesReady&&state.stats.kills%10===9;
     el.classList.remove("slime-v55","boss-v55");
-    if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    if(isBoss){currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`;playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
     else if(v55SlimesReady){currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
     else{currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
     el.style.backgroundPosition="0 0";el.style.opacity="1";
