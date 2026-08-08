@@ -51,7 +51,7 @@
     #player-title{margin:0;font-size:11px;color:#fff;text-shadow:0 1px 2px #000}
     .badge{font-size:8px;font-weight:900;padding:3px 6px;border-radius:4px;background:#0009;color:#d1b3ff;border:1px solid var(--mor3)}
     .bar{height:14px;border:1px solid var(--bordo3);background:#000d;border-radius:7px;overflow:hidden;position:relative}
-    .bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--mor3),var(--bordo2));transition:width .2s}
+    .bar-fill{height:100%;width:0;background:#6e4510 url("https://raw.githubusercontent.com/lumifae13/kadimvadi/img/hud-xp-fill.png") left center/auto 100% repeat-x;image-rendering:pixelated;transition:width .2s}
     .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
     #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
     #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(-1.5,1.5);transform-origin:center bottom}
@@ -66,12 +66,12 @@
     @keyframes enemyHitImpact{0%{transform:scale(.25);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.45);opacity:0}}
     .sheet-fx{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:43;image-rendering:pixelated}
     .sheet-projectile{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:40;image-rendering:pixelated;transition:left .3s linear}
-    .player-bars{position:absolute;left:-10px;bottom:-18px;width:68px;display:grid;gap:3px}
-    .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:12px;height:12px}
-    .mini-bg{flex:1;height:6px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
+    .player-bars{position:absolute;left:-10px;bottom:-18px;width:76px;display:grid;gap:3px}
+    .mini-row{display:flex;gap:3px;align-items:center}.mini-row img{width:14px;height:14px;object-fit:contain;image-rendering:pixelated}
+    .mini-bg{flex:1;height:7px;border:1px solid #594450;background:#050207;border-radius:3px;overflow:hidden}
     .mini-fill{height:100%;width:100%;transition:width .15s}
-    #player-hp-bar{background:linear-gradient(90deg,#075,#3c6)}
-    #player-shield-bar{background:linear-gradient(90deg,#036,#39f)}
+    #player-hp-bar{background:linear-gradient(90deg,#65051d,#f0264f)}
+    #player-shield-bar{background:#075ca8 url("https://raw.githubusercontent.com/lumifae13/kadimvadi/img/hud-shield-fill.png") left center/auto 100% repeat-x;image-rendering:pixelated}
     #enemy-hp-wrap{position:absolute;left:10%;bottom:-8px;width:80%;height:5px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
     #enemy-hp-bar{height:100%;width:100%;background:#f36;transition:width .15s}
     .afk{position:absolute;top:-25px;left:50%;transform:translateX(-50%);width:24px;height:24px;background-size:contain;background-repeat:no-repeat;display:none}
@@ -100,6 +100,8 @@
     .wardrobe-accessories{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:-2px 0 8px}.wardrobe-accessories .wardrobe-slot{height:43px}.wardrobe-accessories .wardrobe-slot-name{max-width:58px}
     .keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.key{height:44px;border:1px solid var(--bordo);background:#140005;border-radius:5px;position:relative;display:flex;align-items:center;justify-content:center}.key.locked{opacity:.25}.key-count{position:absolute;right:2px;bottom:2px;background:#000;border-radius:3px;padding:1px 3px;font-size:8px}
     .unique-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.unique{aspect-ratio:1;background:#050002;border:1px solid #222;border-radius:5px;display:flex;align-items:center;justify-content:center}.unique.locked{opacity:.18}.unique.equipped{border-color:var(--gold);box-shadow:inset 0 0 10px #b38b2280}
+    .atlas-icon{display:inline-block;width:32px;height:32px;background-repeat:no-repeat;image-rendering:pixelated;flex:0 0 auto}
+    .consumable-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.consumable-card{padding:6px 3px;border:1px solid #34202d;border-radius:6px;background:#080004;text-align:center}.consumable-card .atlas-icon{display:block;margin:0 auto 3px}.consumable-card button{min-height:25px;padding:2px;font-size:8px;margin-top:4px}
     .mg{height:36px;margin:16px 0;background:#000;border:2px solid var(--mor);border-radius:18px;position:relative;overflow:hidden}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#58008255;border-left:2px solid var(--mor2);border-right:2px solid var(--mor2)}.mg-cursor{position:absolute;left:0;top:0;width:4px;height:100%;background:#fff;box-shadow:0 0 8px #fff}
     #nav{position:absolute;left:0;right:0;bottom:var(--safe-bottom);height:48px;background:#050002fa;border-top:1px solid var(--bordo3);display:flex;z-index:20}
     .nav{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--muted);font-weight:800}.nav.active{color:#fff;border-top:2px solid var(--bordo2);background:#ffffff05}.nav .icon{width:23px;height:23px;opacity:.7}.nav.active .icon{opacity:1}
@@ -188,6 +190,8 @@
         <div class="panel"><b>Basic Monster Asset Pack</b><br>DeepDiveGameStudio</div>
         <div class="panel"><b>Items & Potions Icon Packs</b><br>Glionox</div>
         <div class="panel"><b>Effect and FX Pixel All Free</b><br>BDragon1727</div>
+        <div class="panel"><b>Hedgy's Swordtember 2020</b><br>The Wise Hedgehog · CC BY 4.0<br><a href="https://opengameart.org/content/hedgys-swordtember-2020" target="_blank" rel="noopener" style="color:var(--gold)">Kaynak ve lisans</a></div>
+        <div class="panel"><b>16x16 Assorted RPG Icons</b><br>Shade / Merchant Shade</div>
       </div>
     </div>
   </div>
@@ -227,7 +231,7 @@
       <canvas id="battle-character" width="80" height="64"></canvas>
       <div id="player-afk" class="afk" data-bg="xs7MP6T.png"></div>
       <div class="player-bars">
-        <div class="mini-row"><img data-src="UTi6qfN.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
+        <div class="mini-row"><img data-src="hud-health-orb.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
         <div class="mini-row"><img data-src="7uCbrSq.png"><div class="mini-bg"><div id="player-shield-bar" class="mini-fill"></div></div></div>
       </div>
     </div>
@@ -247,7 +251,7 @@
   <div id="content">
     <section id="tab-main" class="tab active">
       <div class="panel"><div class="head"><span>Karanlık Orman</span><span class="badge">Aktif</span></div><button id="btn-farm" class="primary"><span class="icon icon-sm" data-bg="rZ2HD2E.png"></span>Ruh Hasadı</button></div>
-      <div class="panel"><div class="head"><span>Eski Kalıntılar</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
+      <div class="panel"><div class="head"><span id="quest-title">Keşif Görevleri</span><span id="quest-duration" class="badge"></span></div><div class="bar" style="height:18px;margin-bottom:10px"><div id="quest-progress" class="bar-fill"></div><div id="quest-progress-text" class="bar-label" style="line-height:18px">HAZIR</div></div><button id="btn-quest" class="special"></button></div>
       <div class="panel purple"><div class="head"><span>Kan Ritüeli</span><span class="badge">Şans</span></div><div id="ritual-cost" class="tiny center" style="margin-bottom:10px"></div><button id="btn-ritual" class="special"><span class="icon icon-sm" data-bg="XWcKSug.png"></span>Ritüel Yap</button></div>
     </section>
 
@@ -282,6 +286,8 @@
         <div class="head"><span>Ganimet Sandığı</span></div>
         <div class="tiny center" style="margin-bottom:10px">Kalıntılardan düşen anahtarlarla aç. Her anahtar nadiren Yadigâr verebilir.</div>
         <div id="keys" class="keys-grid"></div>
+        <div class="head" style="margin-top:14px"><span>İksir Çantası</span></div>
+        <div id="consumables" class="consumable-grid"></div>
       </div>
       <div class="panel gold"><div class="head" style="color:var(--gold)"><span>Yadigâr Deposu</span></div><div class="tiny center" style="margin-bottom:10px">Tüm anahtarlardan nadiren düşebilen Kadim Yadigârlar. Kuşanmak için dokun.</div><div id="uniques" class="unique-grid"></div></div>
     </section>
@@ -476,11 +482,19 @@
   const frameCounts = {idle:6,dash:4,jump:8,death:6};
   const wepTiers = [["Sobgyzp.png","KmKYn2j.png","iLrkoIP.png","OnNJZib.png","DJwL46V.png"],["ufRauzO.png","BF39DDd.png","XlAL5e0.png","9Rd7Vcx.png","U4SvLci.png"],["79U9ddN.png","z1NAu65.png","eka9oKj.png","4gVPxxU.png","LEgUUIi.png"]];
   const armTiers = [["uiCTITp.png","0d6QvWe.png","AQiwNcp.png"],["chUVP49.png","rNXPeal.png","AGIHoXb.png","PZQ243K.png","AsFMSdt.png"],["0XVH5cj.png","OUgWUkQ.png","7M085ds.png","HigNrFC.png","fthODln.png"],["3WSmAuR.png","o70Kunf.png","IajSD07.png","ZwLdEMM.png"],["5l21f1v.png","k83JT0E.png","0lCeYQm.png","XjqYjpm.png","pz4wL1Q.png","KYrj5bB.png"],["a4a2sIF.png","t0YTMlA.png","Uo9HsOn.png","tljYYCo.png","4iMw6Nv.png","a7afDq0.png"]];
-  const wepUniques = ["S2x99Uo.png","FXXkBlx.png","gV4nwGa.png","usBDlxr.png","EVoaOUW.png","4jGKsVI.png","kfADGqF.png","iu2RLfz.png","6aoTbXQ.png"];
+  const wepUniques = ["S2x99Uo.png","FXXkBlx.png","gV4nwGa.png","usBDlxr.png","EVoaOUW.png","4jGKsVI.png","kfADGqF.png","iu2RLfz.png","6aoTbXQ.png",...Array.from({length:30},(_,i)=>`swordtember-${String(i+1).padStart(2,"0")}.png`)];
   const armUniques = ["VjkYGmr.png","aikRPrn.png","8K02ZOU.png","evwFKwB.png","mmyrNMr.png","mMEjivM.png","y4PTmZh.png","DKk5Axs.png"];
-  const wepUniqueNames = ["Kanlı Tırpan","Kader Kılıcı","Ruh Yiyen","Gölge Hançeri","Kızıl Gürz","Kadim Asa","Gece Kılıcı","Buzul Balta","Şeytan Mızrağı"];
+  const wepUniqueNames = ["Kanlı Tırpan","Kader Kılıcı","Ruh Yiyen","Gölge Hançeri","Kızıl Gürz","Kadim Asa","Gece Kılıcı","Buzul Balta","Şeytan Mızrağı","Kor Dişi","Yıldız Kırığı","Zehirli Sarmaşık","Gümüş Yemin","Alev Dansı","Ay Pençesi","Buz Mührü","Kan Gülü","Gece İğnesi","Fırtına Kanadı","Kuzgun Yemini","Kristal Kesik","Ejder Nefesi","Ruh Zinciri","Gölge Diken","Safir Kırağı","Kızıl Ant","Orman Fısıltısı","Boşluk Kılıcı","Güneş Parçası","Hayalet Dişi","Mercan Keski","Kader Sarmalı","Kara Şafak","Zümrüt Akım","Fırtına Çivisi","Ayaz Tacı","Cehennem Özü","Son Yemin","Yıldız Muhafızı"];
   const armUniqueNames = ["Gölgeler Cübbesi","Kızıl Zırh","Kadim Kalkan","Ruh Koruması","Gece Pelerini","Kemik Zırh","Lanetli Deri","Buzul Plaka"];
   const chestKeys = ["3pCe51s.png","LgBYg2I.png","LxANbXQ.png","pql7Og9.png","cu4AHcV.png","cJ3vWM9.png","J1fjm0c.png","R3paBEL.png"];
+  const RPG_ICON_ATLASES={
+    armours:{file:"rpg-icons-armours.png",columns:9,rows:19,count:171},books:{file:"rpg-icons-books.png",columns:14,rows:12,count:168},chests:{file:"rpg-icons-chests.png",columns:8,rows:6,count:48},consumables:{file:"rpg-icons-consumables.png",columns:44,rows:17,count:748},potions:{file:"rpg-icons-potions.png",columns:21,rows:15,count:315},weapons:{file:"rpg-icons-weapons.png",columns:8,rows:9,count:72},camping:{file:"rpg-icons-camping.png",columns:7,rows:1,count:7},tavern:{file:"rpg-icons-tavern.png",columns:7,rows:1,count:7},cave:{file:"rpg-icons-cave.png",columns:6,rows:4,count:24}
+  };
+  const RPG_ITEM_CATALOG={armours:Array.from({length:171},(_,index)=>({id:`armour-${index+1}`,atlas:"armours",index})),books:Array.from({length:168},(_,index)=>({id:`book-${index+1}`,atlas:"books",index})),chests:Array.from({length:48},(_,index)=>({id:`chest-${index+1}`,atlas:"chests",index})),consumables:Array.from({length:748},(_,index)=>({id:`consumable-${index+1}`,atlas:"consumables",index})),potions:Array.from({length:315},(_,index)=>({id:`potion-${index+1}`,atlas:"potions",index})),weapons:Array.from({length:72},(_,index)=>({id:`weapon-${index+1}`,atlas:"weapons",index}))};
+  const CHEST_ATLAS_INDICES=[0,8,16,24,32,40,6,46];
+  const CONSUMABLE_DEFS={health:{name:"Can İksiri",desc:"Canın %40'ını yeniler",atlas:"potions",index:2},shield:{name:"Kalkan İksiri",desc:"Kalkanın %50'sini yeniler",atlas:"potions",index:8},blood:{name:"Kan Özütü",desc:"Anında 50 Kan verir",atlas:"potions",index:14}};
+  const QUEST_TYPES={camping:{name:"Kayıp Kamp",atlas:"camping",index:1,soulMult:1.35,bloodMult:1,keyBonus:0},tavern:{name:"Terk Edilmiş Taverna",atlas:"tavern",index:0,soulMult:1,bloodMult:1.35,keyBonus:0},cave:{name:"Derin Mağara",atlas:"cave",index:3,soulMult:1,bloodMult:1,keyBonus:.1}};
+  function atlasIconStyle(atlasName,index,scale=2){const atlas=RPG_ICON_ATLASES[atlasName],safe=Math.max(0,Math.min(atlas.count-1,index|0)),x=safe%atlas.columns,y=Math.floor(safe/atlas.columns);return `width:${16*scale}px;height:${16*scale}px;background-image:url('${RAW_ASSET_URL}${atlas.file}');background-size:${atlas.columns*16*scale}px ${atlas.rows*16*scale}px;background-position:-${x*16*scale}px -${y*16*scale}px`}
   const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
   const chestSoulBase = [80,140,220,350,550,850,1250,1800];
 
@@ -596,11 +610,11 @@
 
   const defaultState = {
     gender:null,character:null,soul:0,blood:0,dark:0,rune:0,prestige:0,xp:0,level:1,
-    questEndTime:0,questStartedAt:0,
+    questEndTime:0,questStartedAt:0,questType:null,
     keys:[0,0,0,0,0,0,0,0],
     equippedWeapon:{isUnique:false,t:0,l:0,idx:-1},
     equippedArmor:{isUnique:false,t:0,l:0,idx:-1},
-    unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],purchasedMarketOffers:[],
+    unlockedWeapons:[],unlockedArmors:[],ownedCosmetics:[],purchasedMarketOffers:[],consumables:{health:0,shield:0,blood:0},
     upgrades:{book:0,dust:0,scroll:0,potion:0,coin:0},
     ritualEndTime:0,pendingRitualRoll:0,ritualNextAvailable:0,
     settings:{music:0.15,sfx:1},
@@ -625,7 +639,9 @@
     s.stats={...defaultState.stats,...(raw?.stats||{})};
     s.equippedWeapon={...defaultState.equippedWeapon,...(raw?.equippedWeapon||{})};
     s.equippedArmor={...defaultState.equippedArmor,...(raw?.equippedArmor||{})};
+    s.consumables={...defaultState.consumables,...(raw?.consumables||{})};Object.keys(s.consumables).forEach(k=>s.consumables[k]=Math.max(0,Math.floor(Number(s.consumables[k])||0)));
     s.gender=["female","male"].includes(s.gender)?s.gender:null;
+    s.questType=QUEST_TYPES[s.questType]?s.questType:null;
     s.character=s.gender?normalizeCharacter(raw?.character,s.gender):null;
     ["soul","blood","dark","rune","prestige","xp","level","questEndTime","questStartedAt","ritualEndTime","pendingRitualRoll","ritualNextAvailable"].forEach(k=>{
       s[k]=Number(s[k]); if(!Number.isFinite(s[k])) s[k]=defaultState[k];
@@ -710,13 +726,13 @@
 
   function getQuestStats(){
     const duration=Math.min(180,30+state.level*3);
-    const lootMult=1+(state.upgrades.coin||0)*0.20;
+    const lootMult=1+(state.upgrades.coin||0)*0.20,type=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;
     return {
       duration,
       xp:Math.floor(75+state.level*12),
-      soul:Math.floor((25+state.level*8)*getPrestigeMultiplier()*lootMult),
-      blood:Math.floor((8+state.level*3)*getPrestigeMultiplier()*lootMult),
-      keyChance:Math.min(0.45,0.15+(state.upgrades.book||0)*0.05)
+      soul:Math.floor((25+state.level*8)*getPrestigeMultiplier()*lootMult*type.soulMult),
+      blood:Math.floor((8+state.level*3)*getPrestigeMultiplier()*lootMult*type.bloodMult),
+      keyChance:Math.min(0.55,0.15+(state.upgrades.book||0)*0.05+type.keyBonus)
     };
   }
   function getRitualStats(){
@@ -818,7 +834,8 @@
     const aMax=a.t===armTiers.length-1&&a.l===armTiers[a.t].length-1;
     $("eq-weapon-upg").innerHTML=w.isUnique?`<button disabled>YADİGÂR</button>`:wMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('weapon')">${equipmentUpgradeCost("weapon",w)} RUH</button>`;
     $("eq-armor-upg").innerHTML=a.isUnique?`<button disabled>YADİGÂR</button>`:aMax?`<button disabled>MAX</button>`:`<button class="primary" onclick="upgradeEquipment('armor')">${equipmentUpgradeCost("armor",a)} RUH</button>`;
-    $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})"><img src="${CDN_URL}${img}" style="width:24px;image-rendering:pixelated"><span class="key-count">x${state.keys[i]}</span></div>`).join("");
+    $("keys").innerHTML=chestKeys.map((img,i)=>`<div class="key ${state.keys[i]>0?"":"locked"}" onclick="openChest(${i})" title="Seviye ${i+1} Sandık"><span class="atlas-icon" style="${atlasIconStyle("chests",CHEST_ATLAS_INDICES[i],2)}"></span><span class="key-count">x${state.keys[i]}</span></div>`).join("");
+    $("consumables").innerHTML=Object.entries(CONSUMABLE_DEFS).map(([id,item])=>`<div class="consumable-card"><span class="atlas-icon" style="${atlasIconStyle(item.atlas,item.index,2)}"></span><b style="font-size:8px">${item.name}</b><div class="tiny">x${state.consumables[id]}</div><button onclick="useConsumable('${id}')" ${state.consumables[id]>0?"":"disabled"}>KULLAN</button></div>`).join("");
     $("uniques").innerHTML=
       wepUniques.map((img,i)=>`<div class="unique ${state.unlockedWeapons.includes(i)?"":"locked"} ${w.isUnique&&w.idx===i?"equipped":""}" onclick="equipUnique('weapon',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("")+
       armUniques.map((img,i)=>`<div class="unique ${state.unlockedArmors.includes(i)?"":"locked"} ${a.isUnique&&a.idx===i?"equipped":""}" onclick="equipUnique('armor',${i})"><span class="icon" style="background-image:url('${CDN_URL}${img}')"></span></div>`).join("");
@@ -840,22 +857,33 @@
   async function openChest(keyIndex){
     if(state.keys[keyIndex]<=0){showToast("Bu anahtardan yok!");return}
     state.keys[keyIndex]--; state.stats.chests++; playSound("chest",.6);
-    const gotUnique=Math.random()<uniqueChances[keyIndex];
+    const gotUnique=Math.random()<uniqueChances[keyIndex],chestPreview=`<span class="atlas-icon" style="${atlasIconStyle("chests",CHEST_ATLAS_INDICES[keyIndex],3)};filter:drop-shadow(0 0 7px var(--gold))"></span>`,potionDrop=Math.random()<Math.min(.7,.28+keyIndex*.06)?Object.keys(CONSUMABLE_DEFS)[Math.floor(Math.random()*Object.keys(CONSUMABLE_DEFS).length)]:null;
+    if(potionDrop)state.consumables[potionDrop]++;
     if(gotUnique){
       const isWeapon=Math.random()>.5,uArr=isWeapon?wepUniques:armUniques,uState=isWeapon?state.unlockedWeapons:state.unlockedArmors;
       const missing=uArr.map((_,i)=>i).filter(i=>!uState.includes(i));
       const idx=(missing.length?missing:uArr.map((_,i)=>i))[Math.floor(Math.random()*(missing.length||uArr.length))];
       const wasNew=!uState.includes(idx); if(wasNew){uState.push(idx);state.stats.uniques++}
       $("loot-title").textContent=wasNew?"Kadim Yadigâr Bulundu!":"Tanıdık Yadigâr";
-      $("loot-items").innerHTML=`<img src="${CDN_URL}${uArr[idx]}" style="width:42px;filter:drop-shadow(0 0 6px var(--gold))"><b style="color:var(--gold)">${wasNew?"Depoya eklendi":"Zaten sende vardı"}</b>`;
+      $("loot-items").innerHTML=`${chestPreview}<img src="${CDN_URL}${uArr[idx]}" style="width:42px;filter:drop-shadow(0 0 6px var(--gold))"><b style="color:var(--gold)">${wasNew?"Depoya eklendi":"Zaten sende vardı"}</b>`;
     }else{
       const r=getChestRewards(keyIndex); state.soul+=r.soul; state.blood+=r.blood;
       $("loot-title").textContent="Kasa Ganimeti";
-      $("loot-items").innerHTML=`<b style="color:#d1b3ff">+${r.soul} Ruh</b><b style="color:#ff6666">+${r.blood} Kan</b>`;
+      $("loot-items").innerHTML=`${chestPreview}<b style="color:#d1b3ff">+${r.soul} Ruh</b><b style="color:#ff6666">+${r.blood} Kan</b>`;
     }
+    if(potionDrop){const item=CONSUMABLE_DEFS[potionDrop];$("loot-items").insertAdjacentHTML("beforeend",`<div style="display:flex;align-items:center;gap:6px"><span class="atlas-icon" style="${atlasIconStyle(item.atlas,item.index,2)}"></span><b>+1 ${item.name}</b></div>`)}
     playSound("loot",.6); openModal("loot"); updateCombatStats(); await saveState(); updateUI();
   }
   window.openChest=openChest;
+
+  async function useConsumable(id){
+    const item=CONSUMABLE_DEFS[id];if(!item||state.consumables[id]<=0)return;
+    if(id==="health"){if(playerHp>=playerMaxHp){showToast("Canın zaten dolu.");return}playerHp=Math.min(playerMaxHp,playerHp+Math.ceil(playerMaxHp*.4))}
+    if(id==="shield"){if(playerMaxShield<=0){showToast("Kalkan kapasiten yok.");return}if(playerShield>=playerMaxShield){showToast("Kalkanın zaten dolu.");return}playerShield=Math.min(playerMaxShield,playerShield+Math.ceil(playerMaxShield*.5))}
+    if(id==="blood")state.blood+=50;
+    state.consumables[id]--;playSound("equip",.45);playEffectAt("player-sprite","UbY50AM.gif",.75,4);updatePlayerBars();await saveState();uiCache.inventory="";updateUI(false);showToast(item.name+" kullanıldı.")
+  }
+  window.useConsumable=useConsumable;
 
   function equipUnique(type,idx){
     if(type==="weapon"&&state.unlockedWeapons.includes(idx)) state.equippedWeapon={isUnique:true,t:0,l:0,idx};
@@ -984,24 +1012,24 @@
   }
 
   function checkQuestStatus(){
-    const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"); $("quest-duration").textContent=q.duration+" SN";
+    const q=getQuestStats(),now=Date.now(),btn=$("btn-quest"),type=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;$("quest-title").textContent=state.questType?type.name:"Keşif Görevleri"; $("quest-duration").textContent=q.duration+" SN";
     if(state.questEndTime>now){
       const total=Math.max(1000,(state.questEndTime-(state.questStartedAt||now)));const rem=state.questEndTime-now;const pct=clamp(100-rem/total*100,0,100);
       btn.disabled=true;btn.className="";btn.textContent=`Araştırılıyor (${Math.ceil(rem/1000)}s)`;$("quest-progress").style.width=pct+"%";$("quest-progress-text").textContent=Math.floor(pct)+"%";
     }else if(state.questEndTime>0){
       btn.disabled=false;btn.className="primary";btn.textContent="Ganimeti Topla!";$("quest-progress").style.width="100%";$("quest-progress-text").textContent="TAMAMLANDI";
     }else{
-      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="icon icon-sm" style="background-image:url('${CDN_URL}3IngNRT.png')"></span>Gölgelere Dal (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
+      btn.disabled=false;btn.className="special";btn.innerHTML=`<span class="atlas-icon" style="${atlasIconStyle(type.atlas,type.index,1.5)}"></span>Yeni Keşfe Çık (${q.duration}s)`;$("quest-progress").style.width="0%";$("quest-progress-text").textContent="HAZIR";
     }
   }
   async function questAction(){
     const now=Date.now(),q=getQuestStats();
     if(state.questEndTime>0&&state.questEndTime<=now){
-      state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html="";
-      if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
-      else{state.soul+=q.soul;state.blood+=q.blood;html=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
-      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent="Kalıntı Ganimeti";$("loot-items").innerHTML=html;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
-    }else if(state.questEndTime<=0){playSound("quest_start",.5);state.questStartedAt=now;state.questEndTime=now+q.duration*1000}
+      const completedType=QUEST_TYPES[state.questType]||QUEST_TYPES.camping;state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;addXP(q.xp);let html=`<span class="atlas-icon" style="${atlasIconStyle(completedType.atlas,completedType.index,2)}"></span>`;
+      if(Math.random()<q.keyChance){const tiers=Math.min(8,Math.floor(state.level/10)+1);const k=Math.floor(Math.random()*tiers);state.keys[k]++;html+=`<img src="${CDN_URL}${chestKeys[k]}" style="width:30px"><b>Seviye ${k+1} Anahtar</b>`}
+      else{state.soul+=q.soul;state.blood+=q.blood;html+=`<b style="color:#d1b3ff">+${q.soul} Ruh</b><b style="color:#ff6666">+${q.blood} Kan</b>`}
+      html+=`<b style="color:var(--gold)">+${q.xp} XP</b>`;$("loot-title").textContent=completedType.name+" Ganimeti";$("loot-items").innerHTML=html;state.questType=null;openModal("loot");playSound("loot",.6);applyCharacterSprite("jump");
+    }else if(state.questEndTime<=0){state.questType=Object.keys(QUEST_TYPES)[Math.floor(Math.random()*Object.keys(QUEST_TYPES).length)];playSound("quest_start",.5);state.questStartedAt=now;state.questEndTime=now+getQuestStats().duration*1000}
     checkQuestStatus();await saveState();updateUI();
   }
 
@@ -1081,7 +1109,7 @@
     const tier=getTier();$("player-title").textContent=tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)$("battle").style.backgroundImage=`url("${CDN_URL}${tier.bg}")`;
     const r=getRitualStats();$("ritual-cost").textContent=`Bedel: ${r.bloodCost} Kan + %${r.hpCostPercent} Can`;
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=()=>openModal("prestige-confirm");
-    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
+    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.unlockedWeapons,state.unlockedArmors,money(state.soul),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}
     renderUpgrades();checkQuestStatus();checkRitualStatus();
     if(!mgActive){$("btn-mg").disabled=state.rune<1;$("btn-mg").textContent=state.rune>=1?"Boyutu Arala (1 Rün)":"Rün Yetersiz";$("btn-mg").className=state.rune>=1?"special":""}
   }
