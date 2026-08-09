@@ -102,7 +102,6 @@
     #enemy-hp-wrap{position:absolute;left:10%;bottom:-8px;width:80%;height:5px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
     #enemy-hp-bar{height:100%;width:100%;background:#f36;transition:width .15s}
     #enemy-info{position:absolute;right:7px;top:30px;z-index:32;text-align:right;pointer-events:none}#enemy-name{display:block;color:#fff;font-size:9px;font-weight:900;text-shadow:0 1px 3px #000}#region-name{display:block;color:#e0ad4e;font-size:7px;text-shadow:0 1px 3px #000}.ability-callout{position:absolute;right:12px;top:51px;z-index:55;padding:3px 6px;border:1px solid #a33b59;border-radius:4px;background:#170008e8;color:#ffb4ca;font-size:8px;font-weight:900;animation:abilityPop .9s forwards;pointer-events:none}@keyframes abilityPop{0%{transform:translateY(5px);opacity:0}20%{transform:none;opacity:1}75%{opacity:1}100%{transform:translateY(-8px);opacity:0}}#combat-loot{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);z-index:54;min-width:90px;max-width:180px;padding:4px 7px;border:1px solid #6e5315;border-radius:10px;background:#100900e8;color:#f1d26a;text-align:center;font-size:8px;font-weight:900;opacity:0;pointer-events:none}#combat-loot.show{animation:lootChip 1.6s forwards}@keyframes lootChip{0%{opacity:0;transform:translate(-50%,6px)}15%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
-    .afk{position:absolute;top:-25px;left:50%;transform:translateX(-50%);width:24px;height:24px;background-size:contain;background-repeat:no-repeat;display:none}
     .damage{position:absolute;top:40px;font-size:16px;font-weight:900;z-index:60;pointer-events:none;text-shadow:0 2px 4px #000;animation:float .8s forwards}
     .damage.hp{color:#ff4967}.damage.shield{color:#69c9ff;font-size:14px}
     @keyframes float{to{transform:translateY(-40px) scale(1.15);opacity:0}}
@@ -293,7 +292,6 @@
     <div id="combat-loot"></div>
     <div id="player-sprite">
       <canvas id="battle-character" width="80" height="64"></canvas>
-      <div id="player-afk" class="afk" data-bg="xs7MP6T.png"></div>
       <div class="player-bars">
         <div class="mini-row"><img data-src="hud-health-orb.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
         <div class="mini-row"><img data-src="7uCbrSq.png"><div class="mini-bg"><div id="player-shield-bar" class="mini-fill"></div></div></div>
@@ -301,7 +299,6 @@
     </div>
     <div id="battle-pet"></div>
     <div id="enemy-sprite">
-      <div id="enemy-afk" class="afk" data-bg="xs7MP6T.png"></div>
       <div id="enemy-hp-wrap"><div id="enemy-hp-bar"></div></div>
     </div>
   </div>
@@ -810,7 +807,7 @@
   let state = clone(defaultState);
   let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
   let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
-  let isDead=false,isMapChanging=false,isCombatActive=false,isAFK=false,introStarted=false,activeTabId="main",lastInteractTime=Date.now();
+  let isDead=false,isMapChanging=false,isCombatActive=false,introStarted=false,activeTabId="main";
   let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
   let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null,gemInfusionTarget="weapon";
   let userSettings={music:0.15,sfx:1};
@@ -870,8 +867,8 @@
   function closeModal(id){$(id).style.display="none"}
   window.openModal=openModal; window.closeModal=closeModal;
   function openGoddessHub(){isCombatActive=false;renderGoddessHub();openModal("goddess-hub")}
-  function closeGoddessHub(){closeModal("goddess-hub");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
-  function closeRewardModal(){closeModal("loot");if(pendingBossRespawn){pendingBossRespawn=false;spawnEnemy()}isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted;lastInteractTime=Date.now()}
+  function closeGoddessHub(){closeModal("goddess-hub");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted}
+  function closeRewardModal(){closeModal("loot");if(pendingBossRespawn){pendingBossRespawn=false;spawnEnemy()}isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted}
   Object.assign(window,{openGoddessHub,closeGoddessHub,closeRewardModal});
 
   function getTier(){return [...levelTiers].reverse().find(t=>state.level>=t.min)||levelTiers[0]}
