@@ -957,7 +957,7 @@
     playerAtk=weaponAttack(state.equippedWeapon);
     playerDef=armorDefense(state.equippedArmor);
     
-    // YENİ: Oyuncunun temel can çarpanını (14 yerine 18 yaparak) biraz daha sağlamlaştırdık
+    // Oyuncunun taban can eğrisi erken oyundaki ani ölümleri azaltır.
     const armorTrait=equipmentCondition("armor")>0?getArmorTrait(state.equippedArmor):{},dropArmor=activeEquipmentBonuses("armor"),pet=activePet(),baseHp=55+(state.level*19)+((state.upgrades.potion||0)*30);playerMaxHp=Math.floor(baseHp*(1+(armorTrait.hp||0)+(dropArmor.hp||0)+(pet.hp||0)));
     playerHp=Math.min(playerHp,playerMaxHp);
     playerMaxShield=Math.floor(playerDef*4*(1+(armorTrait.shield||0)+(dropArmor.shield||0))+baseHp*(pet.shield||0));
@@ -1104,9 +1104,9 @@
     const gotUnique=state.level>=15&&Math.random()<uniqueChances[keyIndex],chestPreview=`<span class="atlas-icon" style="${atlasIconStyle("chests",CHEST_ATLAS_INDICES[keyIndex],3)};filter:drop-shadow(0 0 7px var(--gold))"></span>`,potionDrop=Math.random()<Math.min(.7,.28+keyIndex*.06)?Object.keys(CONSUMABLE_DEFS)[Math.floor(Math.random()*Object.keys(CONSUMABLE_DEFS).length)]:null;
     if(potionDrop)state.consumables[potionDrop]++;
     if(gotUnique){
-      const isWeapon=Math.random()>.5,uArr=isWeapon?wepUniques:armUniques,uState=isWeapon?state.unlockedWeapons:state.unlockedArmors;
-      const missing=uArr.map((_,i)=>i).filter(i=>!uState.includes(i));
-      const idx=(missing.length?missing:uArr.map((_,i)=>i))[Math.floor(Math.random()*(missing.length||uArr.length))];
+      const isWeapon=Math.random()>.5,uArr=isWeapon?wepUniques:armUniques,uState=isWeapon?state.unlockedWeapons:state.unlockedArmors,candidates=isWeapon?relicWeaponIndicesForClass(state.playerClass):uArr.map((_,i)=>i);
+      const missing=candidates.filter(i=>!uState.includes(i));
+      const pool=missing.length?missing:candidates,idx=pool[Math.floor(Math.random()*pool.length)];
       const wasNew=!uState.includes(idx); if(wasNew){uState.push(idx);state.stats.uniques++}
       $("loot-title").textContent=wasNew?"Kadim Yadigâr Bulundu!":"Tanıdık Yadigâr";
       $("loot-items").innerHTML=`${chestPreview}${isWeapon?`<span style="${uniqueWeaponIconStyle(idx,2.5)};filter:drop-shadow(0 0 6px var(--gold))"></span>`:`<img src="${CDN_URL}${uArr[idx]}" style="width:42px;filter:drop-shadow(0 0 6px var(--gold))">`}<b style="color:var(--gold)">${wasNew?"Depoya eklendi":"Zaten sende vardı"}</b>`;
@@ -1158,6 +1158,7 @@
   }
   window.equipUnique=equipUnique;
   function uniqueWeaponClass(idx){return WEAPON_RELIC_CLASSES[idx]||"warrior"}
+  function relicWeaponIndicesForClass(classId){return wepUniques.map((_,idx)=>idx).filter(idx=>uniqueWeaponClass(idx)===(classId||"mage"))}
 
   function applyCharacterSprite(anim){
     if(!state.gender||!battleRenderer)return;
@@ -1247,7 +1248,7 @@
     if(state.level>=5&&Math.random()<(isBoss ? 0.28 : 0.07)+(activePet().gemFind||0)){const gemPool=(region.drop?.elements||["arcane","poison","fire","dark","blood"]).filter(e=>e!=="physical"),gem=gemPool[Math.floor(Math.random()*gemPool.length)]||"arcane";state.gems[gem]++;found.push(`+1 ${ELEMENT_NAMES[gem]} Gemi`)}
     if(state.level>=25&&Math.random()<.08*lootMult){const darkGain=Math.max(1,Math.floor(lootMult));state.dark+=darkGain;found.push(`+${darkGain} Öz`)}
     if(isBoss&&state.level>=15&&Math.random()<.06){const petId=state.level>=35?"fox":"dog";if(!state.ownedPets.includes(petId)){state.ownedPets.push(petId);found.push("Yeni Pet: "+PETS[petId].name)}}
-    if(isBoss&&state.level>=25&&Math.random()<.035){const weapon=Math.random()>.42,list=weapon?wepUniques:armUniques,owned=weapon?state.unlockedWeapons:state.unlockedArmors,idx=Math.floor(Math.random()*list.length);if(!owned.includes(idx)){owned.push(idx);state.stats.uniques++;found.push("Yadigâr: "+(weapon?wepUniqueNames[idx]:armUniqueNames[idx]))}}
+    if(isBoss&&state.level>=25&&Math.random()<.035){const weapon=Math.random()>.42,list=weapon?wepUniques:armUniques,owned=weapon?state.unlockedWeapons:state.unlockedArmors,candidates=weapon?relicWeaponIndicesForClass(state.playerClass):list.map((_,idx)=>idx),missing=candidates.filter(idx=>!owned.includes(idx)),pool=missing.length?missing:candidates,idx=pool[Math.floor(Math.random()*pool.length)];if(!owned.includes(idx)){owned.push(idx);state.stats.uniques++;found.push("Yadigâr: "+(weapon?wepUniqueNames[idx]:armUniqueNames[idx]))}}
     const item=generateLootEquipment(isBoss);if(item){if(state.itemInventory.length<30){state.itemInventory.push(item);state.stats[`loot_${item.type}`]=(state.stats[`loot_${item.type}`]||0)+1;found.push(`${RARITIES[item.rarity].name} ${item.type==="weapon"?"Silah":"Zırh"}`)}else{state.soul+=RARITIES[item.rarity].salvage;found.push(`Envanter dolu: +${RARITIES[item.rarity].salvage} Ruh`)}}
     showCombatLoot(found);return found;
   }
@@ -1373,8 +1374,9 @@
     const now=Date.now(),q=getQuestStats();
     if(state.questEndTime>0&&state.questEndTime<=now){
       const completedType=QUEST_TYPES[state.questType]||QUEST_TYPES.camping,risk=QUEST_RISKS[state.questRisk]||QUEST_RISKS.safe;
-      state.questEndTime=0;state.questStartedAt=0;state.stats.quests++;
-      if(risk.fail&&Math.random()<risk.fail){const soulLost=Math.min(state.soul,Math.floor(state.soul*risk.soulLoss)),bloodLost=Math.min(state.blood,Math.floor(state.blood*risk.bloodLoss));state.soul-=soulLost;state.blood-=bloodLost;const damaged=damageEquippedDurability(risk.durabilityLoss);state.stats.questFails++;$("loot-title").textContent=completedType.name+" Başarısız";$("loot-items").innerHTML=`<span class="atlas-icon" style="${equipmentIconStyle({atlas:"raven",index:BLACKSMITH_ICONS.broken},2)}"></span><b style="color:#ff758b">${risk.name} geri püskürttü</b><b>${soulLost?`-${soulLost} Ruh`:"Ruh kaybı yok"}${bloodLost?` · -${bloodLost} Kan`:""}</b><b>${damaged.length?`${damaged.join(" ve ")} dayanıklılığı -${risk.durabilityLoss}`:"Kuşanılmış ekipman zarar görmedi"}</b>`;state.questType=null;state.questRisk=null;openModal("loot");playSound("e_atk",.25);checkQuestStatus();await saveState();updateUI();return}
+      state.questEndTime=0;state.questStartedAt=0;
+      if(risk.fail&&Math.random()<risk.fail){const soulLost=Math.min(state.soul,Math.floor(state.soul*risk.soulLoss),Math.ceil(q.soul*1.5)),bloodLost=Math.min(state.blood,Math.floor(state.blood*risk.bloodLoss),Math.ceil(q.blood*1.25));state.soul-=soulLost;state.blood-=bloodLost;const damaged=damageEquippedDurability(risk.durabilityLoss);state.stats.questFails++;$("loot-title").textContent=completedType.name+" Başarısız";$("loot-items").innerHTML=`<span class="atlas-icon" style="${equipmentIconStyle({atlas:"raven",index:BLACKSMITH_ICONS.broken},2)}"></span><b style="color:#ff758b">${risk.name} geri püskürttü</b><b>${soulLost?`-${soulLost} Ruh`:"Ruh kaybı yok"}${bloodLost?` · -${bloodLost} Kan`:""}</b><b>${damaged.length?`${damaged.join(" ve ")} dayanıklılığı -${risk.durabilityLoss}`:"Kuşanılmış ekipman zarar görmedi"}</b>`;state.questType=null;state.questRisk=null;openModal("loot");playSound("e_atk",.25);checkQuestStatus();await saveState();updateUI();return}
+      state.stats.quests++;
       addXP(q.xp);
       let html=`<span class="atlas-icon" style="${atlasIconStyle(completedType.atlas,completedType.index,2)}"></span>`;
       
