@@ -1,0 +1,10 @@
+node_modules/
+.wrangler/
+npm-debug.log*
+dev.*.log
+.dev.vars*
+.env*
+!.env.example
+tmp-inspect/
+dist/
+worker-configuration.d.ts

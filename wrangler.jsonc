@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kadim-vadi",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-08-08",
+  "send_metrics": false,
+  "vars": {
+    "DOWNTOWN_VERIFY_URL": "https://phone-gw.downtownrpg.com/api/identity/verify"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kadim-vadi-db",
+      "database_id": "4e30465f-47ae-42c2-b769-499ad92063ec",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
