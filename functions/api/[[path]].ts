@@ -330,12 +330,12 @@ export const onRequest: PagesFunction<Bindings> = async context => {
       await context.env.DB.prepare("SELECT 1").first();
       return json({ ok: true, service: "kadim-vadi-cloud-save" }, 200, "no-store");
     }
-    if (path === "session") return createSession(context);
-    if (path === "save") return saveRoute(context);
-    if (path === "profile") return profile(context);
-    if (path === "profile/rename-intent") return createRenameIntent(context);
-    if (path === "profile/rename-commit") return commitRenameIntent(context);
-    if (path === "leaderboard") return leaderboard(context);
+    if (path === "session") return await createSession(context);
+    if (path === "save") return await saveRoute(context);
+    if (path === "profile") return await profile(context);
+    if (path === "profile/rename-intent") return await createRenameIntent(context);
+    if (path === "profile/rename-commit") return await commitRenameIntent(context);
+    if (path === "leaderboard") return await leaderboard(context);
     return json({ error: "NOT_FOUND" }, 404);
   } catch (error) {
     if (error instanceof ApiError) return json({ error: error.code, message: error.message }, error.status);
