@@ -1,0 +1,25 @@
+{
+  "name": "kadim-vadi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-pages.mjs",
+    "cf:dev": "npm run build && wrangler pages dev dist",
+    "cf:deploy": "npm run build && wrangler pages deploy dist",
+    "cf:deploy:preview": "npm run build && wrangler pages deploy dist --branch preview",
+    "cf:types": "wrangler types",
+    "cf:functions:build": "wrangler pages functions build --outdir .wrangler/functions-build",
+    "check:inline-js": "node scripts/check-inline-js.mjs",
+    "db:migrate:local": "wrangler d1 migrations apply kadim-vadi-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply kadim-vadi-db --remote",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run build && npm run check:inline-js && npm run cf:types && npm run typecheck && npm test && npm run cf:functions:build"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.20.3",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.120.0"
+  }
+}
