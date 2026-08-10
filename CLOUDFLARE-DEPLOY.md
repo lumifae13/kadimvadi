@@ -15,7 +15,7 @@ Proje Cloudflare Pages Functions ve D1 kullanır. Oyun dosyaları Pages üzerind
 
 Yalnız gerçekten kullanılan uygulama iznini aç:
 
-- `bank.charge`: Market ödemeleri ve ücretli kullanıcı adı değişimi.
+- `bank.charge`: Market ödemeleri. Ücretli kullanıcı adı değişimi, sunucuda ödeme doğrulaması tamamlanana kadar kapalıdır.
 
 Oyuncuyu eşlemek için kullanılan `phone.identity.token()` ayrıca izin istemez. Kullanıcı adları Kadim Vadi profilinde tutulduğu için `identity.name`, `phone.identity` veya `citizen.identity` açılmamalıdır.
 
@@ -61,7 +61,8 @@ GitHub bağlantılı Pages kurulumu kullanılacaksa build komutu `npm run check`
 - Downtown kimlik token'ı sunucuda doğrulanır; D1'e açık `characterId` ile doğrudan yazılamaz.
 - Yalnız Downtown telefonunda doğrulanmış oturumlar profil, bulut kayıt ve leaderboard uçlarına erişebilir. Normal tarayıcı oyunu yalnız `localStorage` üzerinde çalışır; D1'e oyuncu yazmaz, sıralamayı okuyamaz ve sıralamaya girmez.
 - Uygulama oturum token'ları D1'de yalnız SHA-256 özetiyle ve en fazla 15 dakika tutulur.
-- Bulut kaydı 200 KB ile sınırlıdır ve revision kontrolü aynı kaydın iki cihazda sessizce ezilmesini engeller.
+- Bulut kaydı 200 KB ile sınırlıdır ve revision kontrolü aynı kaydın iki cihazda sessizce ezilmesini engeller. Çakışmada oyuncu Ayarlar'dan bulut kaydını veya bu cihazdaki kaydı açıkça seçer.
 - Kullanıcı adı 3-16 karakterdir, benzersizdir ve isim değiştirme isteği ödeme öncesi 10 dakika rezerve edilir.
-- Downtown ödeme doğrulama makbuzu sunmadığı için ücretli isim değişiminin sunucu tarafında ödeme kanıtı henüz doğrulanamaz. Downtown işlem kimliği/makbuz doğrulaması sağladığında commit rotasına eklenmelidir.
+- Telefon içi `bank.charge` sunucuda doğrulanabilir makbuz sunmadığı için ücretli isim değişimi hem arayüzde hem API'de kapalıdır. Downtown OAuth ödeme istemcisi ve imzalı callback yapılandırıldığında yeniden açılmalıdır; yalnız istemci başarısına güvenilmemelidir.
+- Her Downtown karakteri için en fazla beş etkin uygulama oturumu tutulur; böylece telefon/cihaz geçişi çalışırken oturum tablosu sınırsız büyümez.
 - Leaderboard şimdilik ödülsüz betadır; oyun ilerlemesi istemci tarafından üretildiği için ödüllü rekabet öncesinde sunucu tarafı savaş doğrulaması gerekir.

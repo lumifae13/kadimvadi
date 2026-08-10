@@ -29,6 +29,9 @@ type RenameIntentRow = { intent_id: string; username: string; username_key: stri
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff" };
 const MAX_REQUEST_BYTES = 220_000;
 const USERNAME_CHANGE_PRICE = 750;
+// Downtown's in-phone bank API currently returns no server-verifiable receipt.
+// Keep paid renames closed until the OAuth payment callback can be verified here.
+const PAID_RENAME_ENABLED = false;
 const USERNAME_CHANGE_COOLDOWN = 24 * 60 * 60_000;
 const RENAME_INTENT_LIFETIME = 10 * 60_000;
 
@@ -91,8 +94,8 @@ function publicProfile(row: Pick<SessionRow, "public_id" | "username" | "is_gene
 }
 
 async function verifyDowntownIdentity(request: Request, env: Bindings): Promise<{ characterId: number; expiresAt: number }> {
-  if (!env.DOWNTOWN_SERVICE_KEY) throw new ApiError(503, "IDENTITY_NOT_CONFIGURED", "Kimlik servisi henüz yapılandırılmadı.");
   const token = bearerToken(request);
+  if (!env.DOWNTOWN_SERVICE_KEY) throw new ApiError(503, "IDENTITY_NOT_CONFIGURED", "Kimlik servisi henüz yapılandırılmadı.");
   let response: Response;
   try {
     response = await fetch(env.DOWNTOWN_VERIFY_URL, {
@@ -160,10 +163,17 @@ async function createSession(context: ApiContext): Promise<Response> {
     await context.env.DB.prepare("UPDATE players SET last_seen_at = ? WHERE character_id = ?").bind(now, identity.characterId).run();
   }
   if (!player) throw new ApiError(500, "PLAYER_CREATE_FAILED", "Oyuncu profili oluşturulamadı.");
-  await context.env.DB.prepare("INSERT INTO sessions (token_hash, character_id, expires_at, created_at) VALUES (?, ?, ?, ?)")
-    .bind(tokenHash, identity.characterId, identity.expiresAt, now).run();
-  context.waitUntil(context.env.DB.batch([
+  await context.env.DB.batch([
     context.env.DB.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now),
+    context.env.DB.prepare("INSERT INTO sessions (token_hash, character_id, expires_at, created_at) VALUES (?, ?, ?, ?)")
+      .bind(tokenHash, identity.characterId, identity.expiresAt, now),
+    context.env.DB.prepare(`
+      DELETE FROM sessions WHERE character_id = ? AND token_hash NOT IN (
+        SELECT token_hash FROM sessions WHERE character_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 5
+      )
+    `).bind(identity.characterId, identity.characterId),
+  ]);
+  context.waitUntil(context.env.DB.batch([
     context.env.DB.prepare("DELETE FROM username_change_intents WHERE expires_at <= ?").bind(now),
   ]));
   return json({ sessionToken, expiresAt: identity.expiresAt, player: publicProfile(player) }, 201);
@@ -224,6 +234,9 @@ async function createRenameIntent(context: ApiContext): Promise<Response> {
   if (key === session.username.toLocaleLowerCase("tr-TR")) throw new ApiError(400, "USERNAME_UNCHANGED", "Bu zaten mevcut kullanıcı adın.");
   const now = Date.now();
   const free = session.is_generated === 1 && session.name_changes === 0;
+  if (!free && !PAID_RENAME_ENABLED) {
+    throw new ApiError(503, "PAID_RENAME_UNAVAILABLE", "Ücretli kullanıcı adı değişimi güvenli ödeme doğrulaması tamamlanana kadar kapalı.");
+  }
   if (!free && session.last_name_change_at && now < session.last_name_change_at + USERNAME_CHANGE_COOLDOWN) {
     throw new ApiError(429, "RENAME_COOLDOWN", "Kullanıcı adını günde bir kez değiştirebilirsin.");
   }
@@ -264,6 +277,9 @@ async function commitRenameIntent(context: ApiContext): Promise<Response> {
     FROM username_change_intents WHERE intent_id = ? AND character_id = ?
   `).bind(intentId, session.character_id).first<RenameIntentRow>();
   if (!intent || (!intent.used_at && intent.expires_at <= now)) throw new ApiError(410, "RENAME_INTENT_EXPIRED", "İsim değiştirme isteğinin süresi dolmuş.");
+  if (intent.price > 0 && !PAID_RENAME_ENABLED) {
+    throw new ApiError(503, "PAID_RENAME_UNAVAILABLE", "Ücretli kullanıcı adı değişimi güvenli ödeme doğrulaması tamamlanana kadar kapalı.");
+  }
   if (intent.used_at) {
     const current = await context.env.DB.prepare(`
       SELECT public_id, username, is_generated, name_changes, last_name_change_at FROM players WHERE character_id = ?
