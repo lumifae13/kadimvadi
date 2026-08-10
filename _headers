@@ -3,3 +3,4 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
   Permissions-Policy: camera=(), geolocation=(), microphone=()
+  Access-Control-Allow-Origin: *
