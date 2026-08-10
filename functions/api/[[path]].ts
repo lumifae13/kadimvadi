@@ -93,13 +93,25 @@ function publicProfile(row: Pick<SessionRow, "public_id" | "username" | "is_gene
 async function verifyDowntownIdentity(request: Request, env: Bindings): Promise<{ characterId: number; expiresAt: number }> {
   if (!env.DOWNTOWN_SERVICE_KEY) throw new ApiError(503, "IDENTITY_NOT_CONFIGURED", "Kimlik servisi henüz yapılandırılmadı.");
   const token = bearerToken(request);
-  const response = await fetch(env.DOWNTOWN_VERIFY_URL, {
-    method: "POST",
-    headers: { authorization: `Bearer ${env.DOWNTOWN_SERVICE_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ token }),
-  });
-  const payload: unknown = await response.json();
-  if (!response.ok || payload === null || typeof payload !== "object") throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
+  let response: Response;
+  try {
+    response = await fetch(env.DOWNTOWN_VERIFY_URL, {
+      method: "POST",
+      headers: { authorization: `Bearer ${env.DOWNTOWN_SERVICE_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+  } catch {
+    throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
+  }
+  if (response.status === 401 || response.status === 403) throw new ApiError(401, "INVALID_IDENTITY", "Downtown kimliği doğrulanamadı.");
+  if (!response.ok) throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisi geçersiz yanıt verdi.");
+  }
+  if (payload === null || typeof payload !== "object") throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisi geçersiz yanıt verdi.");
   const result = payload as Record<string, unknown>;
   const characterId = Number(result.characterId);
   if (result.valid !== true || !Number.isSafeInteger(characterId) || characterId <= 0) throw new ApiError(401, "INVALID_IDENTITY", "Downtown kimliği doğrulanamadı.");
