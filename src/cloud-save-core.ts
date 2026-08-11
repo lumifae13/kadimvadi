@@ -73,6 +73,25 @@ export function isoWeekKeyUtc(date = new Date()): string {
   return `${isoYear}-W${String(week).padStart(2, "0")}`;
 }
 
+function calendarDateInTimeZone(date: Date, timeZone: string): Date {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = (type: "year" | "month" | "day") => Number(parts.find(part => part.type === type)?.value);
+  return new Date(Date.UTC(value("year"), value("month") - 1, value("day")));
+}
+
+export function dayKeyInTimeZone(date: Date, timeZone: string): string {
+  return utcDayKey(calendarDateInTimeZone(date, timeZone));
+}
+
+export function isoWeekKeyInTimeZone(date: Date, timeZone: string): string {
+  return isoWeekKeyUtc(calendarDateInTimeZone(date, timeZone));
+}
+
 export function summarizeState(state: Record<string, unknown>): SaveSummary {
   const stats = isRecord(state.stats) ? state.stats : {};
   const playerClass = ["mage", "warrior", "ranger"].includes(String(state.playerClass))

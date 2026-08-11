@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ApiError, isSaveRegression, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, sanitizePortrait, summarizeState, utcDayKey } from "../src/cloud-save-core";
+import { ApiError, dayKeyInTimeZone, isSaveRegression, isoWeekKeyInTimeZone, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, sanitizePortrait, summarizeState, utcDayKey } from "../src/cloud-save-core";
 
 describe("cloud save validation", () => {
   it("derives a stable leaderboard summary from game state", () => {
@@ -57,5 +57,11 @@ describe("cloud save validation", () => {
     expect(isoWeekKeyUtc(new Date("2027-01-01T00:00:00Z"))).toBe("2026-W53");
     expect(isoWeekKeyUtc(new Date("2027-01-04T00:00:00Z"))).toBe("2027-W01");
     expect(utcDayKey(new Date("2027-01-04T23:59:59Z"))).toBe("2027-01-04");
+  });
+
+  it("refreshes leaderboard days and weeks at Istanbul midnight", () => {
+    expect(dayKeyInTimeZone(new Date("2026-08-11T20:59:59Z"), "Europe/Istanbul")).toBe("2026-08-11");
+    expect(dayKeyInTimeZone(new Date("2026-08-11T21:00:00Z"), "Europe/Istanbul")).toBe("2026-08-12");
+    expect(isoWeekKeyInTimeZone(new Date("2027-01-03T21:00:00Z"), "Europe/Istanbul")).toBe("2027-W01");
   });
 });

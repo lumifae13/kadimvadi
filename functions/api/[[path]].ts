@@ -1,4 +1,4 @@
-import { ApiError, isSaveRegression, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, utcDayKey } from "../../src/cloud-save-core";
+import { ApiError, dayKeyInTimeZone, isSaveRegression, isoWeekKeyInTimeZone, normalizeUsername, parseSavePayload, sanitizeCosmeticIds } from "../../src/cloud-save-core";
 
 type Bindings = Env & { DOWNTOWN_SERVICE_KEY?: string };
 type ApiContext = Parameters<PagesFunction<Bindings>>[0];
@@ -38,6 +38,7 @@ const CORS_HEADERS = {
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff", ...CORS_HEADERS };
 const MAX_REQUEST_BYTES = 220_000;
 const RENAME_INTENT_LIFETIME = 10 * 60_000;
+const LEADERBOARD_TIME_ZONE = "Europe/Istanbul";
 
 function json(data: unknown, status = 200, cacheControl = "no-store"): Response {
   return Response.json(data, { status, headers: { ...JSON_HEADERS, "cache-control": cacheControl } });
@@ -445,8 +446,8 @@ async function leaderboard(context: ApiContext): Promise<Response> {
   await requireSession(context.request, context.env);
   const now = Date.now();
   const date = new Date(now);
-  const periodKey = isoWeekKeyUtc(date);
-  const snapshotDay = utcDayKey(date);
+  const periodKey = isoWeekKeyInTimeZone(date, LEADERBOARD_TIME_ZONE);
+  const snapshotDay = dayKeyInTimeZone(date, LEADERBOARD_TIME_ZONE);
   const generatedAt = await refreshWeeklyLeaderboard(context.env, periodKey, snapshotDay, now);
   const requested = Number(new URL(context.request.url).searchParams.get("limit") || 25);
   const limit = Math.min(50, Math.max(5, Number.isFinite(requested) ? Math.floor(requested) : 25));
