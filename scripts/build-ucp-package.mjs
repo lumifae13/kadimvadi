@@ -1,11 +1,22 @@
 import { cp, mkdir, readdir, rm, stat } from "node:fs/promises";
+import { spawn } from "node:child_process";
 import { basename, join, relative, resolve, sep } from "node:path";
+import ffmpegPath from "ffmpeg-static";
 
 const root = resolve(import.meta.dirname, "..");
 const output = resolve(root, "ucp-package");
 const outputRelative = relative(root, output);
 const excludedAudio = /\.(?:mp3|ogg|wav)$/i;
 const packagedAudioDirectory = `${sep}phone-audio${sep}`;
+const v62Root = join(root, "game-assets", "v62");
+const excludedUnusedAssets = new Set([
+  "blood-blue.png",
+  "blood-green.png",
+  "blood.png",
+  "buff-blue.png",
+  "goddess-npc-showcase.gif",
+  join("character-v54", "manifest.json"),
+]);
 
 if (basename(output) !== "ucp-package" || outputRelative.startsWith("..") || outputRelative === "") {
   throw new Error("Güvensiz UCP çıktı yolu reddedildi.");
@@ -20,10 +31,30 @@ for (const file of await readdir(root)) {
 }
 
 await cp(join(root, "assets"), join(output, "assets"), { recursive: true });
-await cp(join(root, "game-assets", "v62"), join(output, "game-assets", "v62"), {
+await cp(v62Root, join(output, "game-assets", "v62"), {
   recursive: true,
-  filter: source => source.includes(packagedAudioDirectory) || !excludedAudio.test(source),
+  filter: source => {
+    const relativeAsset = relative(v62Root, source);
+    if (excludedUnusedAssets.has(relativeAsset)) return false;
+    return source.includes(packagedAudioDirectory) || !excludedAudio.test(source);
+  },
 });
+
+function runFfmpeg(args) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(ffmpegPath, args, { stdio: "inherit" });
+    child.on("error", rejectPromise);
+    child.on("exit", code => code === 0 ? resolvePromise() : rejectPromise(new Error(`FFmpeg ${code} koduyla kapandı.`)));
+  });
+}
+
+if (!ffmpegPath) throw new Error("ffmpeg-static çalıştırılabilir dosyası bulunamadı.");
+await runFfmpeg([
+  "-hide_banner", "-loglevel", "error", "-y",
+  "-i", join(v62Root, "5uCOUOu.png"),
+  "-vf", "scale=704:384:flags=neighbor", "-frames:v", "1",
+  join(output, "game-assets", "v62", "5uCOUOu.png"),
+]);
 
 async function directoryBytes(directory) {
   let total = 0;
