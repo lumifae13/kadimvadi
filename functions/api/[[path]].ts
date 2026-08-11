@@ -419,9 +419,12 @@ async function leaderboard(context: ApiContext): Promise<Response> {
   const requested = Number(new URL(context.request.url).searchParams.get("limit") || 25);
   const limit = Math.min(50, Math.max(5, Number.isFinite(requested) ? Math.floor(requested) : 25));
   const { results } = await context.env.DB.prepare(`
-    SELECT public_id, username, player_class, level, prestige, total_kills, unique_count, power_score, portrait_json
-    FROM leaderboard_snapshots WHERE period_key = ?
-    ORDER BY power_score DESC, level DESC, total_kills DESC, character_id ASC
+    SELECT l.public_id, p.username AS username, l.player_class, l.level, l.prestige,
+      l.total_kills, l.unique_count, l.power_score, l.portrait_json
+    FROM leaderboard_snapshots l
+    JOIN players p ON p.character_id = l.character_id
+    WHERE l.period_key = ?
+    ORDER BY l.power_score DESC, l.level DESC, l.total_kills DESC, l.character_id ASC
     LIMIT ?
   `).bind(periodKey, limit).all<LeaderboardRow>();
   return json({
