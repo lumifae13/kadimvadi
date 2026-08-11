@@ -20,7 +20,7 @@
     html,body{width:100%;height:100%;margin:0}
     body{
       width:100%; height:100dvh; min-height:632px;
-      overflow:hidden; background:#030001 url("https://kadim-vadi.pages.dev/game-assets/v63/dark-matter.png");
+      overflow:hidden; background-color:#030001;background-image:var(--asset-dark-matter,none);
       color:var(--label); font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       user-select:none; -webkit-tap-highlight-color:transparent;
     }
@@ -74,7 +74,7 @@
     #player-title{margin:0;font-size:11px;color:#fff;text-shadow:0 1px 2px #000}
     .badge{font-size:8px;font-weight:900;padding:3px 6px;border-radius:4px;background:#0009;color:#d1b3ff;border:1px solid var(--mor3)}
     .bar{height:14px;border:1px solid var(--bordo3);background:#000d;border-radius:7px;overflow:hidden;position:relative}
-    .bar-fill{height:100%;width:0;background:#6e4510 url("https://kadim-vadi.pages.dev/game-assets/v63/hud-xp-fill.png") left center/auto 100% repeat-x;image-rendering:pixelated;transition:width .2s}
+    .bar-fill{height:100%;width:0;background-color:#6e4510;background-image:var(--asset-hud-xp,none);background-position:left center;background-size:auto 100%;background-repeat:repeat-x;image-rendering:pixelated;transition:width .2s}
     .bar-label{position:absolute;inset:0;text-align:center;font-size:9px;line-height:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
     #player-sprite{position:absolute;left:14px;bottom:25px;width:80px;height:64px;background-repeat:no-repeat;z-index:16;image-rendering:pixelated}
     #battle-character{position:absolute;inset:0;width:80px;height:64px;image-rendering:pixelated;transform:scale(-1.5,1.5);transform-origin:center bottom}
@@ -100,7 +100,7 @@
     .mini-bg{flex:1;height:6px;border:1px solid #594450;background:#050207;border-radius:3px;overflow:hidden}
     .mini-fill{height:100%;width:100%;transition:width .15s}
     #player-hp-bar{background:linear-gradient(90deg,#65051d,#f0264f)}
-    #player-shield-bar{background:#075ca8 url("https://kadim-vadi.pages.dev/game-assets/v63/hud-shield-fill.png") left center/auto 100% repeat-x;image-rendering:pixelated}
+    #player-shield-bar{background-color:#075ca8;background-image:var(--asset-hud-shield,none);background-position:left center;background-size:auto 100%;background-repeat:repeat-x;image-rendering:pixelated}
     #enemy-hp-wrap{position:absolute;left:10%;bottom:-8px;width:80%;height:5px;border:1px solid #333;background:#000;border-radius:3px;overflow:hidden}
     #enemy-hp-bar{height:100%;width:100%;background:#f36;transition:width .15s}
     #enemy-info{position:absolute;right:7px;top:30px;z-index:32;text-align:right;pointer-events:none}#enemy-name{display:block;color:#fff;font-size:9px;font-weight:900;text-shadow:0 1px 3px #000}#region-name{display:block;color:#e0ad4e;font-size:7px;text-shadow:0 1px 3px #000}.ability-callout{position:absolute;right:12px;top:51px;z-index:55;padding:3px 6px;border:1px solid #a33b59;border-radius:4px;background:#170008e8;color:#ffb4ca;font-size:8px;font-weight:900;animation:abilityPop .9s forwards;pointer-events:none}@keyframes abilityPop{0%{transform:translateY(5px);opacity:0}20%{transform:none;opacity:1}75%{opacity:1}100%{transform:translateY(-8px);opacity:0}}#combat-loot{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);z-index:54;min-width:90px;max-width:180px;padding:4px 7px;border:1px solid #6e5315;border-radius:10px;background:#100900e8;color:#f1d26a;text-align:center;font-size:8px;font-weight:900;opacity:0;pointer-events:none}#combat-loot.show{animation:lootChip 1.6s forwards}@keyframes lootChip{0%{opacity:0;transform:translate(-50%,6px)}15%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
@@ -134,8 +134,8 @@
     #battle-pet{position:absolute;left:73px;bottom:19px;width:32px;height:32px;z-index:15;background-repeat:no-repeat;image-rendering:pixelated;display:none;filter:drop-shadow(0 0 3px #000);animation:petIdle .75s steps(1) infinite}@keyframes petIdle{from{background-position:0 0}to{background-position:var(--pet-end,-160px) 0}}.pet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pet-card{padding:5px;border:1px solid #34202d;border-radius:6px;background:#080004;text-align:center;opacity:.35}.pet-card.owned{opacity:1}.pet-card.equipped{border-color:var(--gold);box-shadow:inset 0 0 9px #b38b2255}.pet-preview{width:48px;height:40px;margin:auto;background-repeat:no-repeat;background-position:0 0;background-size:auto 48px;image-rendering:pixelated}.trait-line{margin-top:3px;color:#d9b4ff;font-size:8px;line-height:1.25}
     .pet-card button{min-height:23px;margin-top:3px;padding:1px;font-size:7px}.drop-inventory{display:grid;gap:5px}.drop-item{display:grid;grid-template-columns:34px minmax(0,1fr) 52px;gap:7px;align-items:center;padding:7px 6px;border:1px solid #30202a;border-radius:6px;background:#070003}.drop-item.rare{border-color:#326fa1}.drop-item.epic{border-color:#813cb1}.drop-item.relic{border-color:#a8811f}.drop-item button{width:100%;min-width:0;min-height:25px;padding:2px;font-size:7px}.drop-actions{display:grid;gap:3px}.rarity{font-size:7px;font-weight:900;text-transform:uppercase}.loot-traits{margin-top:3px;color:#d9b4ff;font-size:7px;line-height:1.3}.loot-compare{display:inline-block;margin-left:3px;padding:1px 3px;border-radius:3px;background:#142018;color:#78e09b;font-size:7px}.loot-compare.down{background:#281016;color:#ff7c8e}.loot-compare.same{background:#18131c;color:#aaa}.goddess-shop{display:grid;grid-template-columns:1fr 1fr;gap:5px}.goddess-offer{padding:6px;border:1px solid #5f4515;border-radius:6px;background:#130b00}.goddess-offer button{min-height:27px;margin-top:4px;font-size:8px}.streak-badge{color:#ffcf5a;font-weight:900}
     .goddess-card{display:grid;grid-template-columns:62px 1fr;gap:9px;align-items:center;background:linear-gradient(135deg,#2a1308,#12000d);border-color:#9a6724}.goddess-portrait{width:62px;height:62px;border:1px solid var(--gold);border-radius:7px;background:center/cover no-repeat;image-rendering:pixelated;box-shadow:0 0 12px #e7a52b45}.goddess-card h3{margin:0;color:#f4c65b;font-size:13px}.goddess-dialogue{font-size:9px;color:#ead9bd;margin:3px 0 7px}.goddess-rep{height:7px;border:1px solid #6b4315;background:#090202;border-radius:5px;overflow:hidden}.goddess-rep>i{display:block;height:100%;background:linear-gradient(90deg,#9f5f19,#ffdc68)}
-    .daily-grid{display:grid;gap:6px}.daily-mission{display:grid;grid-template-columns:30px 1fr auto;gap:7px;align-items:center;padding:7px;border:1px solid #352231;border-radius:6px;background:#090006}.daily-mission.done{border-color:#927022;background:#171000}.daily-mission button{width:auto;min-width:58px;min-height:28px;font-size:8px;padding:0 6px}.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.choice-card{min-height:82px!important;padding:6px 3px!important;display:block!important;text-transform:none!important;font-size:9px!important}.choice-card b{display:block;color:#f1d26a;margin-bottom:4px}.choice-card span{display:block;color:var(--muted);font-size:8px;line-height:1.25}.ritual-grid{display:grid;gap:5px}.ritual-choice{min-height:42px;justify-content:flex-start;text-align:left;text-transform:none}.ritual-choice small{color:var(--muted);font-weight:400}.dimension-seals{display:flex;justify-content:center;gap:9px;margin:7px 0}.dimension-seal{width:20px;height:20px;border:1px solid #71329a;border-radius:50%;background:#100016 url("https://kadim-vadi.pages.dev/game-assets/v63/KND00E1.png") center/15px no-repeat;filter:grayscale(1) brightness(.5)}.dimension-seal.hit{filter:none;background-color:#401060;box-shadow:0 0 10px #b84dff}.dimension-seal.miss{filter:hue-rotate(110deg) grayscale(.4);background-color:#3d0b17;border-color:#9b2948}
-    .dimension-panel{position:relative;overflow:hidden;background:linear-gradient(#150321e8,#050008f2),url("https://kadim-vadi.pages.dev/game-assets/v63/region-church-decor.png") center/auto 100%;border-color:#71329a!important}.dimension-panel>*{position:relative;z-index:2}.dimension-gate-wrap{height:118px;display:flex;align-items:center;justify-content:center;position:relative}.dimension-gate{width:100px;height:100px;position:relative;display:grid;place-items:center;filter:brightness(.72);transition:filter .25s,transform .25s}.dimension-gate::before,.dimension-gate::after{content:"";position:absolute;border:2px solid #793bb0;border-radius:50%;inset:8px;box-shadow:inset 0 0 12px #782ca8,0 0 9px #38164c}.dimension-gate::after{inset:20px;border-style:dashed;animation:dimensionSpin 9s linear infinite reverse}.dimension-gate.active{filter:none;animation:dimensionBreathe 1.4s ease-in-out infinite}.dimension-gate.charge-1::before{border-color:#c676ff;box-shadow:0 0 15px #9d43e8}.dimension-gate.charge-2{filter:brightness(1.35)}.dimension-gate.success{filter:brightness(1.7);transform:scale(1.08)}.dimension-gate.failed{filter:grayscale(.8) brightness(.45);transform:scale(.94)}.dimension-shield{position:absolute;width:51px;height:47px;background:url("https://kadim-vadi.pages.dev/game-assets/v63/legacy-energy-shield.png") 0 0/408px 47px no-repeat;transform:scale(1.65);animation:dimensionShield .9s steps(8) infinite;opacity:.82}.dimension-core{width:34px;height:34px;background:url("https://kadim-vadi.pages.dev/game-assets/v63/KND00E1.png") center/contain no-repeat;z-index:3;filter:drop-shadow(0 0 8px #e6a8ff)}.dimension-burst{position:absolute;width:144px;height:128px;background:url("https://kadim-vadi.pages.dev/game-assets/v63/legacy-ground-explosion.png") 0 0/1008px 128px no-repeat;opacity:0;pointer-events:none}.dimension-gate.success .dimension-burst{opacity:1;animation:dimensionBurst .75s steps(7) forwards}.mg{height:38px;margin:8px 0 12px;background:#020006cc;border:2px solid var(--mor);border-radius:8px;position:relative;overflow:hidden;box-shadow:inset 0 0 12px #6b218066}.mg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 18px,#5d287322 19px 20px);pointer-events:none}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#9d43e844;border-left:2px solid #d18aff;border-right:2px solid #d18aff;box-shadow:0 0 12px #9d43e8}.mg-cursor{position:absolute;left:0;top:0;width:5px;height:100%;background:#fff;box-shadow:0 0 11px #fff,0 0 17px #b84dff;z-index:2}
+    .daily-grid{display:grid;gap:6px}.daily-mission{display:grid;grid-template-columns:30px 1fr auto;gap:7px;align-items:center;padding:7px;border:1px solid #352231;border-radius:6px;background:#090006}.daily-mission.done{border-color:#927022;background:#171000}.daily-mission button{width:auto;min-width:58px;min-height:28px;font-size:8px;padding:0 6px}.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.choice-card{min-height:82px!important;padding:6px 3px!important;display:block!important;text-transform:none!important;font-size:9px!important}.choice-card b{display:block;color:#f1d26a;margin-bottom:4px}.choice-card span{display:block;color:var(--muted);font-size:8px;line-height:1.25}.ritual-grid{display:grid;gap:5px}.ritual-choice{min-height:42px;justify-content:flex-start;text-align:left;text-transform:none}.ritual-choice small{color:var(--muted);font-weight:400}.dimension-seals{display:flex;justify-content:center;gap:9px;margin:7px 0}.dimension-seal{width:20px;height:20px;border:1px solid #71329a;border-radius:50%;background-color:#100016;background-image:var(--asset-dimension-rune,none);background-position:center;background-size:15px;background-repeat:no-repeat;filter:grayscale(1) brightness(.5)}.dimension-seal.hit{filter:none;background-color:#401060;box-shadow:0 0 10px #b84dff}.dimension-seal.miss{filter:hue-rotate(110deg) grayscale(.4);background-color:#3d0b17;border-color:#9b2948}
+    .dimension-panel{position:relative;overflow:hidden;background-image:linear-gradient(#150321e8,#050008f2),var(--asset-dimension-panel,none);background-position:center;background-size:auto 100%;border-color:#71329a!important}.dimension-panel>*{position:relative;z-index:2}.dimension-gate-wrap{height:118px;display:flex;align-items:center;justify-content:center;position:relative}.dimension-gate{width:100px;height:100px;position:relative;display:grid;place-items:center;filter:brightness(.72);transition:filter .25s,transform .25s}.dimension-gate::before,.dimension-gate::after{content:"";position:absolute;border:2px solid #793bb0;border-radius:50%;inset:8px;box-shadow:inset 0 0 12px #782ca8,0 0 9px #38164c}.dimension-gate::after{inset:20px;border-style:dashed;animation:dimensionSpin 9s linear infinite reverse}.dimension-gate.active{filter:none;animation:dimensionBreathe 1.4s ease-in-out infinite}.dimension-gate.charge-1::before{border-color:#c676ff;box-shadow:0 0 15px #9d43e8}.dimension-gate.charge-2{filter:brightness(1.35)}.dimension-gate.success{filter:brightness(1.7);transform:scale(1.08)}.dimension-gate.failed{filter:grayscale(.8) brightness(.45);transform:scale(.94)}.dimension-shield{position:absolute;width:51px;height:47px;background-image:var(--asset-dimension-shield,none);background-position:0 0;background-size:408px 47px;background-repeat:no-repeat;transform:scale(1.65);animation:dimensionShield .9s steps(8) infinite;opacity:.82}.dimension-core{width:34px;height:34px;background-image:var(--asset-dimension-rune,none);background-position:center;background-size:contain;background-repeat:no-repeat;z-index:3;filter:drop-shadow(0 0 8px #e6a8ff)}.dimension-burst{position:absolute;width:144px;height:128px;background-image:var(--asset-dimension-burst,none);background-position:0 0;background-size:1008px 128px;background-repeat:no-repeat;opacity:0;pointer-events:none}.dimension-gate.success .dimension-burst{opacity:1;animation:dimensionBurst .75s steps(7) forwards}.mg{height:38px;margin:8px 0 12px;background:#020006cc;border:2px solid var(--mor);border-radius:8px;position:relative;overflow:hidden;box-shadow:inset 0 0 12px #6b218066}.mg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 18px,#5d287322 19px 20px);pointer-events:none}.mg-target{position:absolute;left:42.5%;width:15%;height:100%;background:#9d43e844;border-left:2px solid #d18aff;border-right:2px solid #d18aff;box-shadow:0 0 12px #9d43e8}.mg-cursor{position:absolute;left:0;top:0;width:5px;height:100%;background:#fff;box-shadow:0 0 11px #fff,0 0 17px #b84dff;z-index:2}
     @keyframes dimensionShield{to{background-position:-408px 0}}@keyframes dimensionSpin{to{transform:rotate(360deg)}}@keyframes dimensionBreathe{50%{transform:scale(1.04)}}@keyframes dimensionBurst{to{background-position:-1008px 0}}@media(prefers-reduced-motion:reduce){.dimension-gate,.dimension-gate::after,.dimension-shield{animation:none!important}}
     #nav{position:absolute;left:0;right:0;bottom:var(--safe-bottom);height:var(--nav-height);background:#050002fa;border-top:1px solid var(--bordo3);display:flex;z-index:20}
     .nav{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 1px 1px;font-size:10px;color:var(--muted);font-weight:800;touch-action:manipulation}.nav.active{color:#fff;border-top:2px solid var(--bordo2);background:#ffffff08}.nav .icon{width:25px;height:25px;opacity:.7}.nav.active .icon{opacity:1}
@@ -156,7 +156,7 @@
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img,.ach .achievement-atlas{width:32px;height:32px;filter:grayscale(1);opacity:.3;flex:0 0 auto}.ach.unlocked img,.ach.unlocked .achievement-atlas{filter:none;opacity:1}.achievement-class{display:inline-block;margin-left:4px;padding:1px 4px;border:1px solid #765918;border-radius:3px;color:#f1d26a;font-size:7px;text-transform:uppercase}
     .tiny{font-size:10px;line-height:1.45;color:var(--muted)} .center{text-align:center}
     input[type="range"]{width:100%}
-    .eq{background:#090004b8}.wardrobe-slot{position:relative;background:#090004a8}.wardrobe-slot.filled{background:#18000ca8}.eq-icon:after,.wardrobe-slot:before{content:"";position:absolute;inset:0;background:url("https://kadim-vadi.pages.dev/game-assets/v63/ui-slot-deco.png") center/100% 100% no-repeat;image-rendering:pixelated;pointer-events:none}.wardrobe-slot>*{position:relative;z-index:1}
+    .eq{background:#090004b8}.wardrobe-slot{position:relative;background:#090004a8}.wardrobe-slot.filled{background:#18000ca8}.eq-icon:after,.wardrobe-slot:before{content:"";position:absolute;inset:0;background-image:var(--asset-ui-slot,none);background-position:center;background-size:100% 100%;background-repeat:no-repeat;image-rendering:pixelated;pointer-events:none}.wardrobe-slot>*{position:relative;z-index:1}
 
     /* Telefon okunabilirlik geçişi: küçük metinleri büyütür, yoğun kartları taşırmadan akıtır. */
     body{font-size:13px;line-height:1.45}
@@ -379,7 +379,7 @@
       </div>
       
       <div class="panel goddess-card">
-        <div class="goddess-portrait" style="background-image:url('https://kadim-vadi.pages.dev/game-assets/v63/goddess-portrait.png')"></div>
+        <div class="goddess-portrait" data-bg="goddess-portrait.png"></div>
         <div>
           <h3>Tanrıça'nın Çağrısı</h3>
           <div class="goddess-dialogue">Avlarını, seferlerini ve kan adağını bana getir.</div>
@@ -494,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v63-alpha";
+  const GAME_VERSION = "v64-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -513,11 +513,50 @@
   const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
   const money = n => Math.floor(Number(n)||0);
 
+  const PHONE_ASSET_BRIDGE=location.origin!==new URL(SITE_URL).origin;
+  const runtimeAssetUrls=new Map(),runtimeAssetPromises=new Map();
+  const absoluteAssetUrl=value=>/^https?:\/\//i.test(value||"")?value:new URL(value||"",ASSET_URL).href;
+  async function resolveRuntimeAssetUrl(value){
+    const remote=absoluteAssetUrl(value);if(!PHONE_ASSET_BRIDGE)return remote;
+    if(runtimeAssetUrls.has(remote))return runtimeAssetUrls.get(remote);
+    if(runtimeAssetPromises.has(remote))return runtimeAssetPromises.get(remote);
+    const pending=fetch(remote,{cache:"force-cache"}).then(response=>{if(!response.ok)throw new Error(`Asset ${response.status}`);return response.blob()}).then(blob=>{const local=URL.createObjectURL(blob);runtimeAssetUrls.set(remote,local);runtimeAssetPromises.delete(remote);return local}).catch(error=>{runtimeAssetPromises.delete(remote);throw error});
+    runtimeAssetPromises.set(remote,pending);return pending;
+  }
+  const runtimeAssetUrl=value=>runtimeAssetUrls.get(absoluteAssetUrl(value))||absoluteAssetUrl(value);
+  async function preloadVisualAsset(value){
+    const src=await resolveRuntimeAssetUrl(value);return new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=src});
+  }
+  async function setAssetBackground(el,value){if(!el||!value)return false;try{el.style.backgroundImage=`url("${await resolveRuntimeAssetUrl(value)}")`;return true}catch{return false}}
+
+  const STATIC_ASSET_GROUPS={
+    base:{"--asset-dark-matter":"dark-matter.png","--asset-hud-xp":"hud-xp-fill.png","--asset-hud-shield":"hud-shield-fill.png"},
+    chest:{"--asset-ui-slot":"ui-slot-deco.png"},
+    mini:{"--asset-dimension-rune":"KND00E1.png","--asset-dimension-panel":"region-church-decor.png","--asset-dimension-shield":"legacy-energy-shield.png","--asset-dimension-burst":"legacy-ground-explosion.png"}
+  };
+  async function hydrateStaticAssets(group){const entries=Object.entries(STATIC_ASSET_GROUPS[group]||{});await Promise.all(entries.map(async([name,file])=>{try{document.documentElement.style.setProperty(name,`url("${await resolveRuntimeAssetUrl(file)}")`)}catch{}}))}
+
+  function hydrateAssetElement(el){
+    if(!PHONE_ASSET_BRIDGE||!el)return Promise.resolve();const jobs=[];
+    if(el instanceof HTMLImageElement){const src=el.getAttribute("src")||"";if(src.startsWith(ASSET_URL))jobs.push(resolveRuntimeAssetUrl(src).then(local=>{if(el.getAttribute("src")===src)el.src=local}).catch(()=>{}))}
+    const bg=el.style?.backgroundImage||"",urls=[...bg.matchAll(/url\(["']?(https?:\/\/[^"')]+)["']?\)/g)].map(match=>match[1]).filter(url=>url.startsWith(ASSET_URL));
+    if(urls.length)jobs.push(Promise.all(urls.map(resolveRuntimeAssetUrl)).then(locals=>{let next=bg;urls.forEach((url,index)=>next=next.split(url).join(locals[index]));if(el.style.backgroundImage===bg)el.style.backgroundImage=next}).catch(()=>{}));
+    return Promise.all(jobs);
+  }
+  const assetIntersectionObserver="IntersectionObserver" in window?new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){assetIntersectionObserver.unobserve(entry.target);hydrateAssetElement(entry.target)}}),{rootMargin:"100px"}):null;
+  function assetNearViewport(el){const rect=el.getBoundingClientRect();return rect.width>0&&rect.height>0&&rect.bottom>-100&&rect.top<innerHeight+100&&rect.right>-100&&rect.left<innerWidth+100}
+  function watchAssetElement(el){if(!el||el.nodeType!==1)return;if(assetNearViewport(el)||!assetIntersectionObserver)hydrateAssetElement(el);else assetIntersectionObserver.observe(el)}
+  function watchAssetTree(root=document){if(root?.nodeType===1)watchAssetElement(root);root?.querySelectorAll?.('img,[data-src],[data-bg],[style*="background-image"]').forEach(watchAssetElement)}
+  async function hydrateVisibleAssets(root=document){const nodes=[...(root?.nodeType===1?[root]:[]),...(root?.querySelectorAll?.('img,[data-src],[data-bg],[style*="background-image"]')||[])];await Promise.all(nodes.filter(assetNearViewport).map(hydrateAssetElement))}
+
   function initCDN(){
-    document.querySelectorAll("[data-src]").forEach(el => el.src = CDN_URL + el.dataset.src);
-    document.querySelectorAll("[data-bg]").forEach(el => el.style.backgroundImage = `url("${CDN_URL}${el.dataset.bg}")`);
+    document.querySelectorAll("[data-src]").forEach(el=>resolveRuntimeAssetUrl(el.dataset.src).then(src=>el.src=src).catch(()=>{}));
+    document.querySelectorAll("[data-bg]").forEach(el=>setAssetBackground(el,el.dataset.bg));
+    watchAssetTree(document);
+    new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>watchAssetTree(node));if(record.type==="attributes")watchAssetElement(record.target)})).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["src"]});
   }
   initCDN();
+  hydrateStaticAssets("base");
 
   const ASSET_TEST_MODE=new URLSearchParams(location.search).has("asset-test");
   function diagnosticImage(url){return new Promise(resolve=>{const image=new Image(),done=ok=>resolve(ok);image.onload=()=>done(true);image.onerror=()=>done(false);image.src=url;setTimeout(()=>done(false),5000)})}
@@ -532,7 +571,7 @@
     try{const response=await fetch(audioUrl,{cache:"no-store"});if(response.ok){const blobUrl=URL.createObjectURL(await response.blob());blobAudioOk=await diagnosticAudio(blobUrl);URL.revokeObjectURL(blobUrl)}}catch{}
     try{const response=await fetch(location.href,{cache:"no-store"});csp=(response.headers.get("content-security-policy")||"YOK").slice(0,140)}catch{}
     const ok=imageOk&&fetchStatus.startsWith("200")&&audioOk;
-    if(ASSET_TEST_MODE||!ok)showAssetDiagnostic([`${GAME_VERSION} · ${location.origin}`,`GÖRSEL: ${imageOk?"OK":"BLOKLU"}`,`FETCH: ${fetchStatus}`,`BLOB GÖRSEL: ${blobImageOk?"OK":"BLOKLU"}`,`DATA GÖRSEL: ${dataImageOk?"OK":"BLOKLU"}`,`SES: ${audioOk?"OK":"BLOKLU"}`,`BLOB SES: ${blobAudioOk?"OK":"BLOKLU"}`,`SDK: ${typeof PhoneSDK!=="undefined"?"OK":"YOK"}`,`CSP: ${csp}`],ok);
+    if(ASSET_TEST_MODE)showAssetDiagnostic([`${GAME_VERSION} · ${location.origin}`,`GÖRSEL: ${imageOk?"OK":"BLOKLU"}`,`FETCH: ${fetchStatus}`,`BLOB GÖRSEL: ${blobImageOk?"OK":"BLOKLU"}`,`DATA GÖRSEL: ${dataImageOk?"OK":"BLOKLU"}`,`SES: ${audioOk?"OK":"BLOKLU"}`,`BLOB SES: ${blobAudioOk?"OK":"BLOKLU"}`,`SDK: ${typeof PhoneSDK!=="undefined"?"OK":"YOK"}`,`CSP: ${csp}`],ok);
     return ok;
   }
 
@@ -545,7 +584,7 @@
       const image=new Image();image.decoding="async";
       image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>resolve(false),{once:true})});
       image.addEventListener("load",()=>{creatorRenderer?.draw();creatorConfirmRenderer?.draw();battleRenderer?.draw();inventoryRenderer?.draw()});
-      image.src=CDN_URL+path;
+      resolveRuntimeAssetUrl(path).then(src=>image.src=src).catch(()=>image.dispatchEvent(new Event("error")));
       characterImageCache.set(path,image);
     }
     return characterImageCache.get(path);
@@ -633,32 +672,62 @@
     identity: { token: async()=>null }
   };
 
+  let sharedAudioContext=null;const decodedAudioBuffers=new Map();
+  function audioContext(){const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return null;return sharedAudioContext||(sharedAudioContext=new Context())}
+  async function decodedAudio(url){if(decodedAudioBuffers.has(url))return decodedAudioBuffers.get(url);const pending=fetch(url,{cache:"force-cache"}).then(response=>{if(!response.ok)throw new Error(`Audio ${response.status}`);return response.arrayBuffer()}).then(data=>{const context=audioContext();if(!context)throw new Error("Web Audio unavailable");return context.decodeAudioData(data.slice(0))});decodedAudioBuffers.set(url,pending);return pending}
+  class RuntimeAudio{
+    constructor(url){this.src=url;this.volume=1;this.loop=false;this.currentTime=0;this.source=null;this.gain=null}
+    async play(){const context=audioContext();if(!context)throw new Error("Web Audio unavailable");const resume=context.resume(),buffer=decodedAudio(this.src);await resume;const decoded=await buffer;this.pause();this.source=context.createBufferSource();this.gain=context.createGain();this.source.buffer=decoded;this.source.loop=this.loop;this.gain.gain.value=clamp(this.volume,0,1);this.source.connect(this.gain).connect(context.destination);this.source.start(0,Math.max(0,this.currentTime||0)%Math.max(.01,decoded.duration));this.source.onended=()=>{if(!this.loop)this.source=null};return true}
+    pause(){if(this.source){try{this.source.stop()}catch{}this.source=null}}
+    cloneNode(){const copy=new RuntimeAudio(this.src);copy.volume=this.volume;copy.loop=this.loop;return copy}
+  }
+  const gameAudio=file=>PHONE_ASSET_BRIDGE?new RuntimeAudio(LOCAL_AUDIO_URL+file):new Audio(LOCAL_AUDIO_URL+file);
   const sfx = {
-    bg:new Audio(LOCAL_AUDIO_URL+"kv-bg.mp3"),
-    p_atk:new Audio(LOCAL_AUDIO_URL+"kv-player-attack.mp3"), e_atk:new Audio(LOCAL_AUDIO_URL+"kv-enemy-attack.mp3"),
-    loot:new Audio(LOCAL_AUDIO_URL+"gem.mp3"), lvlup:new Audio(LOCAL_AUDIO_URL+"kv-level-up.mp3"),
-    equip:new Audio(LOCAL_AUDIO_URL+"kv-equip.mp3"), buy:new Audio(LOCAL_AUDIO_URL+"kv-buy.mp3"),
-    mapchange:new Audio(LOCAL_AUDIO_URL+"kv-map-change.mp3"), chest:new Audio(LOCAL_AUDIO_URL+"kv-chest.mp3"),
-    e_death:new Audio(LOCAL_AUDIO_URL+"kv-enemy-death.mp3"), p_death:new Audio(LOCAL_AUDIO_URL+"kv-player-death.mp3"),
-    tab:new Audio(LOCAL_AUDIO_URL+"kv-tab.mp3"), select:new Audio(LOCAL_AUDIO_URL+"kv-select.mp3"),
-    ritual:new Audio(LOCAL_AUDIO_URL+"kv-ritual.mp3"), quest_start:new Audio(LOCAL_AUDIO_URL+"kv-quest-start.mp3"),
-    rune:new Audio(LOCAL_AUDIO_URL+"kv-rune.mp3"), altar_upg:new Audio(LOCAL_AUDIO_URL+"kv-altar-upgrade.mp3"),
-    weapon_upg:new Audio(LOCAL_AUDIO_URL+"kv-weapon-upgrade.mp3"), robe_upg:new Audio(LOCAL_AUDIO_URL+"kv-robe-upgrade.mp3"),
-    boss:new Audio(LOCAL_AUDIO_URL+"boss-warning.mp3")
+    bg:gameAudio("kv-bg.mp3"),
+    p_atk:gameAudio("kv-player-attack.mp3"), e_atk:gameAudio("kv-enemy-attack.mp3"),
+    loot:gameAudio("gem.mp3"), lvlup:gameAudio("kv-level-up.mp3"),
+    equip:gameAudio("kv-equip.mp3"), buy:gameAudio("kv-buy.mp3"),
+    mapchange:gameAudio("kv-map-change.mp3"), chest:gameAudio("kv-chest.mp3"),
+    e_death:gameAudio("kv-enemy-death.mp3"), p_death:gameAudio("kv-player-death.mp3"),
+    tab:gameAudio("kv-tab.mp3"), select:gameAudio("kv-select.mp3"),
+    ritual:gameAudio("kv-ritual.mp3"), quest_start:gameAudio("kv-quest-start.mp3"),
+    rune:gameAudio("kv-rune.mp3"), altar_upg:gameAudio("kv-altar-upgrade.mp3"),
+    weapon_upg:gameAudio("kv-weapon-upgrade.mp3"), robe_upg:gameAudio("kv-robe-upgrade.mp3"),
+    boss:gameAudio("boss-warning.mp3")
   };
   sfx.bg.loop = true;
+
+  const assetStagePromises=new Map();let assetLoaderDepth=0;
+  function assetLoader(){let el=$("asset-stage-loader");if(el)return el;el=document.createElement("div");el.id="asset-stage-loader";el.style.cssText="display:none;position:absolute;left:50%;bottom:calc(var(--nav-height) + var(--safe-bottom) + 7px);transform:translateX(-50%);z-index:320;padding:6px 10px;border:1px solid #8d3154;border-radius:14px;background:#100007ed;color:#fff;font:900 9px Arial;white-space:nowrap;box-shadow:0 3px 12px #000";$("app").appendChild(el);return el}
+  async function withAssetLoader(label,job){const el=assetLoader(),ticket=++assetLoaderDepth;let shown=false;const timer=setTimeout(()=>{shown=true;el.textContent=`${label} · yükleniyor`;el.style.display="block"},120);try{return await job}finally{clearTimeout(timer);if(ticket===assetLoaderDepth){if(shown)el.textContent="Hazır";setTimeout(()=>{if(ticket===assetLoaderDepth)el.style.display="none"},shown?220:0)}}}
+  function ensureAssetStage(id){
+    if(assetStagePromises.has(id))return assetStagePromises.get(id);
+    const pending=(async()=>{
+      if(id==="main"){
+        const combatVisuals=[enemyAttackGif,"legacy-enemy-explosion.png","legacy-player-death.png","UbY50AM.gif",...WEAPON_HIT_FX.map(item=>item.file),...WEAPON_PROJECTILE_FX.map(item=>item.file)];
+        const combatAudio=PHONE_ASSET_BRIDGE?["p_atk","e_atk","e_death","p_death","boss"].map(name=>decodedAudio(sfx[name].src).catch(()=>null)):[];
+        await Promise.all([preloadRegionScenes(REGION_SCENE_FILES[getCombatRegion().scene]||[],3),preloadV55Enemies(),preloadWithLimit(combatVisuals,preloadVisualAsset,3),...combatAudio]);applyCombatRegionScene()
+      }
+      else if(id==="chest"){await hydrateStaticAssets("chest");await preloadWithLimit([RAVEN_ATLAS.file,RPG_ICON_ATLASES.chests.file,RPG_ICON_ATLASES.potions.file],preloadVisualAsset,2);uiCache.inventory=false;renderInventory()}
+      else if(id==="camp"){await preloadWithLimit([RAVEN_ATLAS.file],preloadVisualAsset,2);renderUpgrades()}
+      else if(id==="mini"){await hydrateStaticAssets("mini");await preloadWithLimit([RAVEN_ATLAS.file,...Object.values(FORGE_GEM_FILES)],preloadVisualAsset,2);renderForge()}
+      else if(id==="shop"){await preloadWithLimit([RAVEN_ATLAS.file],preloadVisualAsset,2);uiCache.market=false;renderMarket()}
+      const tab=$("tab-"+id);watchAssetTree(tab);await hydrateVisibleAssets(tab);return true;
+    })().catch(error=>{assetStagePromises.delete(id);console.error("Asset stage failed",id,error);throw error});
+    assetStagePromises.set(id,pending);return pending;
+  }
 
   async function startGameIntro(){
     if(introStarted)return;introStarted=true;const button=$("intro-start");button.disabled=true;button.textContent="Hazırlanıyor...";
     sfx.bg.volume=userSettings.music;sfx.bg.play().catch(()=>{});
-    runAssetDiagnostics().catch(()=>{if(ASSET_TEST_MODE)showAssetDiagnostic([`${GAME_VERSION} · TANILAMA HATASI`],false)});
+    if(ASSET_TEST_MODE)runAssetDiagnostics().catch(()=>showAssetDiagnostic([`${GAME_VERSION} · TANILAMA HATASI`],false));
     if(!characterAssets.length)await loadCharacterManifest();
     const starterPaths=startupCharacterPaths();
     await preloadCharacterAssets((done,total)=>{const percent=total?Math.round(done/total*100):100;$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`},starterPaths,3);
-    $("intro-progress-text").textContent="Bölge hazırlanıyor...";await preloadRegionScenes(REGION_SCENE_FILES[getCombatRegion().scene]||[],3);
+    if(state.gender&&state.playerClass){$("intro-progress-text").textContent="Macera hazırlanıyor...";await ensureAssetStage("main")}
     $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
     if(state.gender&&state.playerClass){isCombatActive=activeTabId==="main";applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
-    updateUI();warmRemainingCharacterAssets(starterPaths);setTimeout(()=>preloadRegionScenes(undefined,2).catch(()=>{}),2000);
+    updateUI();if(!PHONE_ASSET_BRIDGE){warmRemainingCharacterAssets(starterPaths);setTimeout(()=>preloadRegionScenes(undefined,2).catch(()=>{}),2000)}
   }
   window.startGameIntro=startGameIntro;
 
@@ -716,7 +785,7 @@
   const BOSS_PREVIEW_ID=new URLSearchParams(location.search).get("boss");
   const V55_RAW_URL=ASSET_URL;
   let v55SlimesReady=false,v55BossesReady=false,animatedBossesReady=false,regionEnemiesReady=false,currentEnemyProfile=null,currentRegion=null,currentEnemyGroupSize=1,bossAnimationTimer=null,bossAnimationToken=0,enemyStrikeCount=0,pendingBossRespawn=false;
-  async function preloadEnemySet(list,onReady){const results=await preloadWithLimit(list.map(enemy=>enemy.sprite),file=>new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=V55_RAW_URL+file}),3);onReady(results.every(Boolean))}
+  async function preloadEnemySet(list,onReady){const results=await preloadWithLimit(list.map(enemy=>enemy.sprite),preloadVisualAsset,3);onReady(results.every(Boolean))}
   async function preloadV55Enemies(){await preloadEnemySet(V55_SLIME_ENEMIES,ready=>v55SlimesReady=ready);await preloadEnemySet(V55_BOSS_ENEMIES,ready=>v55BossesReady=ready);await preloadEnemySet(ANIMATED_BOSSES.flatMap(b=>Object.values(b.animations).map(a=>({sprite:a.file}))),ready=>animatedBossesReady=ready);await preloadEnemySet(REGION_ANIMATED_ENEMIES,ready=>regionEnemiesReady=ready)}
   const enemyAttackGif = "Yku2dxV.gif";
   const sprites = {female:{idle:"VbwzaIQ.png",dash:"SU7Wm8d.png",jump:"AvyZjtx.png",death:"ScaOYPs.png"},male:{idle:"vb9bSml.png",dash:"QA7fwcY.png",jump:"wb8tVhJ.png",death:"ScaOYPs.png"}};
@@ -824,7 +893,7 @@
   }
 
   function uniqueWeaponIconStyle(idx,scale=1.5){const token=wepUniques[idx];if(token?.startsWith("@raven:"))return equipmentIconStyle({type:"weapon",atlas:"raven",index:Number(token.split(":")[1])},scale);if(token?.startsWith("@sword")){const [,atlas,index]=token.match(/^@(sword\d+):(\d+)$/)||[];return equipmentIconStyle({type:"weapon",atlas,index:Number(index)},scale)}return `width:${32*scale}px;height:${32*scale}px;background-image:url('${CDN_URL}${token}');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block`}
-  function forgeGemIconStyle(element){return `background-image:url('./${FORGE_GEM_FILES[element]}')`}
+  function forgeGemIconStyle(element){return `background-image:url('${RAW_ASSET_URL}${FORGE_GEM_FILES[element]}')`}
   function starterWeapon(classId=state.playerClass||"mage"){const starter=STARTER_GEAR[classId]||STARTER_GEAR.mage;return {type:"weapon",classId,weaponType:starter.weaponType,atlas:"raven",index:starter.index,name:starter.name,element:"physical",power:0}}
   function starterArmor(classId=state.playerClass||"mage"){const starter=STARTER_ARMOR[classId]||STARTER_ARMOR.mage;return {type:"armor",classId,atlas:"raven",index:starter.index,name:starter.name,element:"physical",power:0}}
   const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
@@ -1118,10 +1187,10 @@
   function getCombatRegion(){return [...COMBAT_REGIONS].reverse().find(r=>state.level>=r.min)||COMBAT_REGIONS[0]}
   function applyCombatRegionScene(region=getCombatRegion()){
     const scene=$("region-scene"),files=REGION_SCENE_FILES[region.scene]||REGION_SCENE_FILES.cliffs;scene.className=`scene-${region.scene}`;scene.dataset.region=region.id;
-    files.forEach((file,index)=>{$(`region-layer-${index+1}`).style.backgroundImage=file?`url("${RAW_ASSET_URL}${file}")`:""});
+    files.forEach((file,index)=>{const layer=$(`region-layer-${index+1}`);if(file)setAssetBackground(layer,file);else layer.style.backgroundImage=""});
     $("battle").style.backgroundImage="none";
   }
-  async function preloadRegionScenes(selectedFiles,limit=3){const files=selectedFiles?.length?selectedFiles:Object.values(REGION_SCENE_FILES).flat();return preloadWithLimit(files,file=>new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=RAW_ASSET_URL+file}),limit)}
+  async function preloadRegionScenes(selectedFiles,limit=3){const files=selectedFiles?.length?selectedFiles:Object.values(REGION_SCENE_FILES).flat();return preloadWithLimit(files,preloadVisualAsset,limit)}
   function getPrestigeMultiplier(){return 1+state.prestige*0.25}
   function getPrestigeXpMultiplier(){return 1+state.prestige*0.15}
   function getPrestigeRequiredLevel(){return 10+state.prestige*8}
@@ -1368,7 +1437,7 @@
   }
   window.useConsumable=useConsumable;
 
-  function renderBattlePet(){const pet=PETS[state.equippedPet],el=$("battle-pet");if(!pet||!state.ownedPets.includes(state.equippedPet)){el.style.display="none";return}el.style.display="block";el.style.backgroundImage=`url("${RAW_ASSET_URL}${pet.file}")`;el.style.backgroundSize=`${pet.frames*32}px auto`;el.style.setProperty("--pet-end",`-${pet.frames*32}px`);el.style.animationTimingFunction=`steps(${pet.frames})`}
+  function renderBattlePet(){const pet=PETS[state.equippedPet],el=$("battle-pet");if(!pet||!state.ownedPets.includes(state.equippedPet)){el.style.display="none";return}el.style.display="block";setAssetBackground(el,pet.file);el.style.backgroundSize=`${pet.frames*32}px auto`;el.style.setProperty("--pet-end",`-${pet.frames*32}px`);el.style.animationTimingFunction=`steps(${pet.frames})`}
   async function equipPet(id){if(!state.ownedPets.includes(id)||!PETS[id])return;state.equippedPet=id;updateCombatStats();renderBattlePet();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false);showToast(PETS[id].name+" sana katıldı.")}
   async function feedPet(id){if(!state.ownedPets.includes(id))return;const p=state.petProgress[id];if(p.level>=20){showToast("Bu yoldaş maksimum seviyede.");return}const cost=p.level*50;if(state.soul<cost){showToast("Yetersiz Ruh!");return}state.soul-=cost;p.xp+=25;while(p.xp>=p.level*50&&p.level<20){p.xp-=p.level*50;p.level++;showToast(`${PETS[id].name} Seviye ${p.level}!`)}updateCombatStats();uiCache.inventory="";await saveState();updateUI(false)}
   async function equipLootItem(id){const item=state.itemInventory.find(i=>i.id===id);if(!item)return;if(!isLootCompatible(item)){showToast(`Bu eşya ${CLASS_DEFS[item.classId].name} sınıfına ait.`);return}state.equippedLootItems[item.type]=id;if(item.type==="weapon")state.equippedWeapon={isUnique:false,t:0,l:0,idx:0};if(item.type==="armor")state.equippedArmor={isUnique:false,t:0,l:0,idx:0};closeModal("equipment-detail");updateCombatStats();uiCache.inventory="";playSound("equip",.5);await saveState();updateUI(false)}
@@ -1414,7 +1483,7 @@
     $("battle").appendChild(el); setTimeout(()=>el.remove(),800);
   }
   function playEffectAt(targetId,gif,scale=1,offsetY=0){
-    const target=$(targetId); if(!target)return; const eff=document.createElement("img"); eff.src=CDN_URL+gif;
+    const target=$(targetId); if(!target)return; const eff=document.createElement("img"); resolveRuntimeAssetUrl(gif).then(src=>eff.src=src).catch(()=>{});
     Object.assign(eff.style,{position:"absolute",width:(100*scale)+"px",height:(100*scale)+"px",left:"50%",top:`calc(50% + ${offsetY}px)`,transform:"translate(-50%,-50%)",zIndex:"100",pointerEvents:"none"});
     target.appendChild(eff); setTimeout(()=>eff.remove(),800);
   }
@@ -1437,7 +1506,7 @@
   }
   function playSheetFX({file,frameWidth,frameHeight,frames,scale=1,left,right,bottom,duration=650,filter}){
     const fx=document.createElement("div"),width=frameWidth*scale,height=frameHeight*scale,sheetWidth=frameWidth*frames*scale;
-    fx.className="sheet-fx";fx.style.width=width+"px";fx.style.height=height+"px";fx.style.backgroundImage=`url("${V55_RAW_URL}${file}")`;fx.style.backgroundSize=`${sheetWidth}px ${height}px`;if(left!=null)fx.style.left=left+"px";if(right!=null)fx.style.right=right+"px";fx.style.bottom=bottom+"px";if(filter)fx.style.filter=filter;
+    fx.className="sheet-fx";fx.style.width=width+"px";fx.style.height=height+"px";setAssetBackground(fx,file);fx.style.backgroundSize=`${sheetWidth}px ${height}px`;if(left!=null)fx.style.left=left+"px";if(right!=null)fx.style.right=right+"px";fx.style.bottom=bottom+"px";if(filter)fx.style.filter=filter;
     $("battle").appendChild(fx);let frame=0;const timer=setInterval(()=>{frame++;if(frame>=frames){clearInterval(timer);fx.remove();return}fx.style.backgroundPosition=`-${frame*width}px 0`},duration/frames);setTimeout(()=>{clearInterval(timer);fx.remove()},duration+80);
   }
   function spawnEnemyDeathImpact(){
@@ -1455,21 +1524,21 @@
   ];
   function shootPlayerSheetProjectile(stage){
     const cfg=WEAPON_PROJECTILE_FX[stage],trait=getWeaponTrait(state.equippedWeapon),p=document.createElement("div"),width=cfg.frameWidth*cfg.scale,height=cfg.frameHeight*cfg.scale,sheetWidth=cfg.frameWidth*cfg.frames*cfg.scale,filters={fire:"hue-rotate(205deg) saturate(2.2)",poison:"hue-rotate(285deg) saturate(1.8)",arcane:"none",dark:"hue-rotate(70deg) saturate(1.8)",blood:"hue-rotate(185deg) saturate(2.2)"};
-    p.className="sheet-projectile";p.dataset.weaponEffectStage=String(stage);p.style.width=width+"px";p.style.height=height+"px";p.style.left="52px";p.style.bottom=(34-Math.max(0,(height-48)/2))+"px";p.style.backgroundImage=`url("${V55_RAW_URL}${cfg.file}")`;p.style.backgroundSize=`${sheetWidth}px ${height}px`;p.style.filter=`${filters[trait.element]||"none"} drop-shadow(0 0 ${7+stage*3}px ${stage>=3?"#b96cff":"#65baff"})`;
+    p.className="sheet-projectile";p.dataset.weaponEffectStage=String(stage);p.style.width=width+"px";p.style.height=height+"px";p.style.left="52px";p.style.bottom=(34-Math.max(0,(height-48)/2))+"px";setAssetBackground(p,cfg.file);p.style.backgroundSize=`${sheetWidth}px ${height}px`;p.style.filter=`${filters[trait.element]||"none"} drop-shadow(0 0 ${7+stage*3}px ${stage>=3?"#b96cff":"#65baff"})`;
     $("battle").appendChild(p);let frame=0;const timer=setInterval(()=>{frame=(frame+1)%cfg.frames;p.style.backgroundPosition=`-${frame*width}px 0`},65);setTimeout(()=>p.style.left="205px",10);setTimeout(()=>{clearInterval(timer);p.remove()},330);
   }
   function shootProjectile(type){
     if(type==="player"){
       const stage=weaponEffectStage(state.equippedWeapon);shootPlayerSheetProjectile(stage);setTimeout(()=>spawnPlayerImpact(stage),245);playSound("p_atk",Math.min(.35,.15+stage*.04));return;
     }
-    const p=document.createElement("img"),isBoss=currentEnemyProfile?.kind==="boss";p.src=CDN_URL+enemyAttackGif;p.style.position="absolute";p.style.zIndex="40";p.style.transition=".3s linear";p.style.width=(isBoss?62:32)+"px";p.style.bottom=(isBoss?32:42)+"px";p.style.right="60px";p.style.transform="scaleX(-1)";if(isBoss)p.style.filter="hue-rotate(235deg) saturate(2) brightness(1.25) drop-shadow(0 0 12px #a52ad8)";setTimeout(()=>p.style.right="200px",10);setTimeout(()=>spawnEnemyHitImpact(isBoss),245);playSound("e_atk",isBoss ? .26 : .15);$("battle").appendChild(p);setTimeout(()=>p.remove(),320);
+    const p=document.createElement("img"),isBoss=currentEnemyProfile?.kind==="boss";resolveRuntimeAssetUrl(enemyAttackGif).then(src=>p.src=src).catch(()=>{});p.style.position="absolute";p.style.zIndex="40";p.style.transition=".3s linear";p.style.width=(isBoss?62:32)+"px";p.style.bottom=(isBoss?32:42)+"px";p.style.right="60px";p.style.transform="scaleX(-1)";if(isBoss)p.style.filter="hue-rotate(235deg) saturate(2) brightness(1.25) drop-shadow(0 0 12px #a52ad8)";setTimeout(()=>p.style.right="200px",10);setTimeout(()=>spawnEnemyHitImpact(isBoss),245);playSound("e_atk",isBoss ? .26 : .15);$("battle").appendChild(p);setTimeout(()=>p.remove(),320);
   }
 
   function isAnimatedBoss(){return currentEnemyProfile?.renderer==="sheet-v60"}
   function playBossAnimation(name,{loop=false,onDone=null}={}){
     if(!isAnimatedBoss())return false;const def=currentEnemyProfile.animations?.[name];if(!def)return false;
     clearInterval(bossAnimationTimer);const token=++bossAnimationToken,el=$("enemy-sprite"),size=100;let frame=0;
-    el.style.backgroundImage=`url("${V55_RAW_URL}${def.file}")`;el.style.backgroundSize=`${def.frames*size}px ${size}px`;el.style.backgroundPosition="0 0";
+    setAssetBackground(el,def.file);el.style.backgroundSize=`${def.frames*size}px ${size}px`;el.style.backgroundPosition="0 0";
     bossAnimationTimer=setInterval(()=>{if(token!==bossAnimationToken){clearInterval(bossAnimationTimer);return}frame++;if(frame>=def.frames){if(loop)frame=0;else{clearInterval(bossAnimationTimer);onDone?.();return}}el.style.backgroundPosition=`-${frame*size}px 0`},1000/(def.fps||8));
     return true;
   }
@@ -1504,7 +1573,7 @@
   function setupRegionSheetEnemy(profile){
     const el=$("enemy-sprite"),scale=profile.scale||1,nativeLeft=["region-burning-ghoul.png","region-shuriken-dude.png","region-gothic-wizard.png"].includes(profile.sprite),direction=nativeLeft?scale:-scale;currentEnemyProfile={...profile,renderer:"region-sheet"};currentEnemyGroupSize=profile.group||1;
     el.classList.add("region-sheet-enemy");if(profile.kind==="elite")el.classList.add("elite-enemy");if(profile.kind==="boss")el.classList.add("boss-region-enemy");if(currentEnemyGroupSize>1)el.classList.add("grouped-enemy");
-    el.style.backgroundImage=`url("${V55_RAW_URL}${profile.sprite}")`;el.style.backgroundSize=`${profile.frames*96}px 96px`;el.style.setProperty("--enemy-frames",profile.frames);el.style.setProperty("--enemy-duration",`${profile.frames/profile.fps}s`);el.style.setProperty("--enemy-sheet-end",`${-profile.frames*96}px`);el.style.transform=`scale(${direction},${scale})`;
+    setAssetBackground(el,profile.sprite);el.style.backgroundSize=`${profile.frames*96}px 96px`;el.style.setProperty("--enemy-frames",profile.frames);el.style.setProperty("--enemy-duration",`${profile.frames/profile.fps}s`);el.style.setProperty("--enemy-sheet-end",`${-profile.frames*96}px`);el.style.transform=`scale(${direction},${scale})`;
   }
 
   function spawnEnemy(){
@@ -1512,10 +1581,10 @@
     currentRegion=getCombatRegion();applyCombatRegionScene(currentRegion);enemyStrikeCount=0;
     const requestedBoss=ANIMATED_BOSSES.find(b=>b.id===BOSS_PREVIEW_ID)||REGION_ANIMATED_ENEMIES.find(b=>b.id===BOSS_PREVIEW_ID&&b.kind==="boss"),isBoss=(animatedBossesReady||regionEnemiesReady||v55BossesReady)&&(state.stats.kills%10===9||!!requestedBoss),isElite=!isBoss&&state.stats.kills%5===4;
     clearInterval(bossAnimationTimer);bossAnimationToken++;el.classList.remove("slime-v55","boss-v55","boss-animated-v60","region-sheet-enemy","elite-enemy","boss-region-enemy","grouped-enemy");el.style.backgroundSize="";el.style.transform="";el.style.filter="";
-    if(isBoss){const bossId=requestedBoss?.id||currentRegion.bosses[Math.floor(Math.random()*currentRegion.bosses.length)],animated=ANIMATED_BOSSES.find(b=>b.id===bossId),regionBoss=REGION_ANIMATED_ENEMIES.find(b=>b.id===bossId);if(animated&&animatedBossesReady){currentEnemyGroupSize=1;currentEnemyProfile={...animated,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true})}else if(regionBoss&&regionEnemiesReady)setupRegionSheetEnemy(regionBoss);else{currentEnemyGroupSize=1;currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
+    if(isBoss){const bossId=requestedBoss?.id||currentRegion.bosses[Math.floor(Math.random()*currentRegion.bosses.length)],animated=ANIMATED_BOSSES.find(b=>b.id===bossId),regionBoss=REGION_ANIMATED_ENEMIES.find(b=>b.id===bossId);if(animated&&animatedBossesReady){currentEnemyGroupSize=1;currentEnemyProfile={...animated,renderer:"sheet-v60"};el.classList.add("boss-animated-v60");playBossAnimation("idle",{loop:true})}else if(regionBoss&&regionEnemiesReady)setupRegionSheetEnemy(regionBoss);else{currentEnemyGroupSize=1;currentEnemyProfile=V55_BOSS_ENEMIES[Math.floor(Math.random()*V55_BOSS_ENEMIES.length)];el.classList.add("boss-v55");setAssetBackground(el,currentEnemyProfile.sprite)}playSound("boss",.38);showToast(`BOSS: ${currentEnemyProfile.name}`)}
     else if(regionEnemiesReady){const ids=currentRegion[isElite?"elites":"enemies"],pool=REGION_ANIMATED_ENEMIES.filter(enemy=>ids.includes(enemy.id)),selected=pool[Math.floor(Math.random()*pool.length)];if(selected)setupRegionSheetEnemy(selected)}
-    else if(v55SlimesReady){currentEnemyGroupSize=3;currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");el.style.backgroundImage=`url("${V55_RAW_URL}${currentEnemyProfile.sprite}")`}
-    else{currentEnemyGroupSize=1;currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};el.style.backgroundImage=`url("${CDN_URL}${currentEnemyProfile.sprite}")`}
+    else if(v55SlimesReady){currentEnemyGroupSize=3;currentEnemyProfile=V55_SLIME_ENEMIES[Math.floor(Math.random()*V55_SLIME_ENEMIES.length)]||V55_SLIME_ENEMIES[0];el.classList.add("slime-v55");setAssetBackground(el,currentEnemyProfile.sprite)}
+    else{currentEnemyGroupSize=1;currentEnemyProfile={id:"legacy",name:"Kadim Yaratık",element:"physical",sprite:enemyList[Math.floor(Math.random()*enemyList.length)]};setAssetBackground(el,currentEnemyProfile.sprite)}
     el.style.backgroundPosition="0 0";el.style.opacity="1";if(currentEnemyProfile?.filter)el.style.filter=currentEnemyProfile.filter;$("enemy-name").textContent=(currentEnemyProfile.kind==="elite"?"ELİT · ":currentEnemyGroupSize>1?currentEnemyGroupSize+"× ":"")+currentEnemyProfile.name;$("region-name").textContent=currentRegion.name;
     updateCombatStats();currentEnemyHp=currentEnemyMaxHp; $("enemy-hp-bar").style.width="100%";
   }
@@ -1704,16 +1773,20 @@
   }
   Object.assign(window,{openPrestigeModal,selectPrestigeClass,executePrestige});
 
-  function switchTab(id,el){
+  let tabSwitchToken=0;
+  async function switchTab(id,el){
+    const token=++tabSwitchToken,labels={main:"Macera",chest:"Kasa",camp:"Sunak",mini:"Boyut",shop:"Market"};
     playSound("tab",.5);
     document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
     document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));
     $("tab-"+id).classList.add("active");
     el?.classList.add("active");
     activeTabId=id;
-    isCombatActive=id==="main"&&!!state.gender&&introStarted;
+    isCombatActive=false;
     document.body.classList.toggle("hide-battle",id!=="main");
-    if(id==="shop")renderMarket();
+    try{await withAssetLoader(labels[id]||"Bölüm",ensureAssetStage(id))}catch{showToast("Bazı görseller alınamadı; yeniden deneyebilirsin.")}
+    if(token!==tabSwitchToken)return;
+    updateUI(false);isCombatActive=id==="main"&&!!state.gender&&introStarted;
     if(id==="main"){
       checkQuestStatus(); // Macera sekmesine dönüldüğünde kalıntıları tazeler
     }
@@ -1738,8 +1811,8 @@
     const tier=getTier();$("player-title").textContent=state.playerClass?`${tier.title} · ${CLASS_DEFS[state.playerClass].name}`:tier.title;$("level-display").textContent=state.level;$("xp-bar").style.width=clamp(state.xp/xpNeeded()*100,0,100)+"%";if(updateBg)applyCombatRegionScene();
     $("goddess-rep-bar").style.width=(state.goddess.reputation%100)+"%";
     const req=getPrestigeRequiredLevel(),pb=$("btn-prestige");pb.textContent=`Gereksinim: Seviye ${req}`;pb.disabled=state.level<req;pb.onclick=openPrestigeModal;
-    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.gems,state.playerClass,state.ownedPets,state.equippedPet,state.petProgress,state.itemInventory,state.equippedLootItems,state.relicForge,state.unlockedWeapons,state.unlockedArmors,money(state.soul),money(state.blood),playerAtk,playerDef]);if(uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}renderForge();renderCombatStatusIcons();
-    renderUpgrades();checkQuestStatus();
+    const invSig=JSON.stringify([state.character,state.ownedCosmetics,state.equippedWeapon,state.equippedArmor,state.keys,state.consumables,state.gems,state.playerClass,state.ownedPets,state.equippedPet,state.petProgress,state.itemInventory,state.equippedLootItems,state.relicForge,state.unlockedWeapons,state.unlockedArmors,money(state.soul),money(state.blood),playerAtk,playerDef]);if(activeTabId==="chest"&&uiCache.inventory!==invSig){uiCache.inventory=invSig;renderInventory()}if(activeTabId==="mini")renderForge();if(activeTabId==="main")renderCombatStatusIcons();
+    if(activeTabId==="camp")renderUpgrades();checkQuestStatus();
     if(!mgActive){const continuing=dimensionRound>0;$("btn-mg").disabled=!continuing&&state.rune<1;$("btn-mg").textContent=continuing?"Sonraki Mühür":state.rune>=1?"Mührü Uyandır (1 Rün)":"Rün Yetersiz";$("btn-mg").className=continuing||state.rune>=1?"special":""}
   }
 
@@ -1801,8 +1874,8 @@
     if(state.equippedWeapon.isUnique&&uniqueWeaponClass(state.equippedWeapon.idx)!==state.playerClass)state.equippedWeapon={isUnique:false,t:0,l:0,idx:0};
     state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);
     const granted=[state.character.hairId,state.character.topId,state.character.bottomId,state.character.outfitId,state.character.socksId,state.character.shoesId].filter(id=>id&&!isMarketExclusiveCosmetic(id));state.ownedCosmetics=[...new Set([...state.ownedCosmetics,...granted])];
-    creatorStep="appearance";creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
-    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();
+    creatorStep="appearance";creatorForcedOpen=false;isCombatActive=false;battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    updateCombatStats();if(isNew){await withAssetLoader("Macera",ensureAssetStage("main"));playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}isCombatActive=activeTabId==="main";playSound("select",.8);await saveState();
     if(desiredUsername){try{await changeUsername(desiredUsername)}catch(error){showToast(error?.message||"Kullanıcı adı kaydedilemedi; Market'ten tekrar deneyebilirsin.")}}
     updateUI();showToast(isNew?`Karakterin hazır · ${cloudSync.player?.username||localPlayer().username}`:"Karakter görünümü güncellendi.");
   }
@@ -1857,14 +1930,12 @@
   },1000);
 
   async function boot(){
-    renderMarket();
     await loadCharacterManifest();
     let saved=null;
     try{phoneContext=await phone.whenReady();try{saved=await phone.storage.get(SAVE_KEY)}catch{}}catch(error){console.error("Phone SDK init error",error);showToast("Telefon bağlantısı kurulamadı; yerel kayıt açıldı.");setCloudStatus(isPhone?"offline":"local")}
     if(!saved){try{saved=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch{}}
-    const cloudSaved=isPhone&&phoneContext?await fetchCloudSave():null;state=sanitizeState(mergeCosmeticEntitlements(cloudSaved||saved||clone(defaultState)));if(isPhone&&phoneContext&&!cloudSaved&&saved)scheduleCloudSave(state);if(!cloudSync.player)cloudSync.player=localPlayer();const leaderboardButton=$("leaderboard-open");if(leaderboardButton)leaderboardButton.hidden=!isPhone||!phoneContext;userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;uiCache.market=false;renderMarket();setCloudStatus(cloudSync.status);
+    const cloudSaved=isPhone&&phoneContext?await fetchCloudSave():null;state=sanitizeState(mergeCosmeticEntitlements(cloudSaved||saved||clone(defaultState)));if(isPhone&&phoneContext&&!cloudSaved&&saved)scheduleCloudSave(state);if(!cloudSync.player)cloudSync.player=localPlayer();const leaderboardButton=$("leaderboard-open");if(leaderboardButton)leaderboardButton.hidden=!isPhone||!phoneContext;userSettings={...state.settings};$("vol-music").value=userSettings.music;$("vol-sfx").value=userSettings.sfx;sfx.bg.volume=userSettings.music;uiCache.market=false;setCloudStatus(cloudSync.status);
     initCharacterSystem();
-    preloadV55Enemies();
     if(state.gender){updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield}
     updateUI();setInterval(()=>saveState().catch(()=>{}),10000);
   }
