@@ -5,7 +5,6 @@
   "scripts": {
     "build:audio": "node scripts/build-phone-audio.mjs",
     "build": "npm run build:audio && node scripts/build-pages.mjs",
-    "build:ucp": "npm run build:audio && node scripts/build-ucp-package.mjs",
     "cf:dev": "npm run build && wrangler pages dev dist",
     "cf:deploy": "npm run build && wrangler pages deploy dist",
     "cf:deploy:preview": "npm run build && wrangler pages deploy dist --branch preview",
@@ -16,7 +15,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply kadim-vadi-db --remote",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run build && npm run build:ucp && npm run check:inline-js && npm run cf:types && npm run typecheck && npm test && npm run cf:functions:build"
+    "check": "npm run build && npm run check:inline-js && npm run cf:types && npm run typecheck && npm test && npm run cf:functions:build"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.20.3",

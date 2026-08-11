@@ -4,7 +4,7 @@ import { basename, join, resolve } from "node:path";
 import ffmpegPath from "ffmpeg-static";
 
 const root = resolve(import.meta.dirname, "..");
-const source = join(root, "game-assets", "v62");
+const source = join(root, "game-assets", "v63");
 const output = join(source, "phone-audio");
 const files = [
   "kv-bg.mp3",
