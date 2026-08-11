@@ -494,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v64-alpha";
+  const GAME_VERSION = "v65-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -516,16 +516,21 @@
   const PHONE_ASSET_BRIDGE=location.origin!==new URL(SITE_URL).origin;
   const runtimeAssetUrls=new Map(),runtimeAssetPromises=new Map();
   const absoluteAssetUrl=value=>/^https?:\/\//i.test(value||"")?value:new URL(value||"",ASSET_URL).href;
+  const assetRetryDelay=attempt=>new Promise(resolve=>setTimeout(resolve,180*Math.pow(2,attempt)));
+  async function fetchRuntimeAssetBlob(remote,attempts=3){
+    let lastError;for(let attempt=0;attempt<attempts;attempt++){try{const response=await fetch(remote,{cache:attempt?"reload":"force-cache"});if(!response.ok)throw new Error(`Asset ${response.status}`);const blob=await response.blob();if(!blob.size)throw new Error("Asset empty");return blob}catch(error){lastError=error;if(attempt+1<attempts)await assetRetryDelay(attempt)}}throw lastError||new Error("Asset fetch failed")
+  }
+  function forgetRuntimeAsset(value){const remote=absoluteAssetUrl(value),local=runtimeAssetUrls.get(remote);if(local?.startsWith("blob:"))URL.revokeObjectURL(local);runtimeAssetUrls.delete(remote);runtimeAssetPromises.delete(remote)}
   async function resolveRuntimeAssetUrl(value){
     const remote=absoluteAssetUrl(value);if(!PHONE_ASSET_BRIDGE)return remote;
     if(runtimeAssetUrls.has(remote))return runtimeAssetUrls.get(remote);
     if(runtimeAssetPromises.has(remote))return runtimeAssetPromises.get(remote);
-    const pending=fetch(remote,{cache:"force-cache"}).then(response=>{if(!response.ok)throw new Error(`Asset ${response.status}`);return response.blob()}).then(blob=>{const local=URL.createObjectURL(blob);runtimeAssetUrls.set(remote,local);runtimeAssetPromises.delete(remote);return local}).catch(error=>{runtimeAssetPromises.delete(remote);throw error});
+    const pending=fetchRuntimeAssetBlob(remote).then(blob=>{const local=URL.createObjectURL(blob);runtimeAssetUrls.set(remote,local);runtimeAssetPromises.delete(remote);return local}).catch(error=>{runtimeAssetPromises.delete(remote);throw error});
     runtimeAssetPromises.set(remote,pending);return pending;
   }
   const runtimeAssetUrl=value=>runtimeAssetUrls.get(absoluteAssetUrl(value))||absoluteAssetUrl(value);
-  async function preloadVisualAsset(value){
-    const src=await resolveRuntimeAssetUrl(value);return new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=src});
+  async function preloadVisualAsset(value,attempts=2){
+    for(let attempt=0;attempt<attempts;attempt++){const src=await resolveRuntimeAssetUrl(value);const ok=await new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(true);image.onerror=()=>resolve(false);image.src=src});if(ok)return true;forgetRuntimeAsset(value);if(attempt+1<attempts)await assetRetryDelay(attempt)}throw new Error(`Asset decode failed: ${value}`)
   }
   async function setAssetBackground(el,value){if(!el||!value)return false;try{el.style.backgroundImage=`url("${await resolveRuntimeAssetUrl(value)}")`;return true}catch{return false}}
 
@@ -553,7 +558,7 @@
     document.querySelectorAll("[data-src]").forEach(el=>resolveRuntimeAssetUrl(el.dataset.src).then(src=>el.src=src).catch(()=>{}));
     document.querySelectorAll("[data-bg]").forEach(el=>setAssetBackground(el,el.dataset.bg));
     watchAssetTree(document);
-    new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>watchAssetTree(node));if(record.type==="attributes")watchAssetElement(record.target)})).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["src"]});
+    new MutationObserver(records=>records.forEach(record=>{record.addedNodes.forEach(node=>watchAssetTree(node));if(record.type==="attributes")watchAssetElement(record.target)})).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["src","style"]});
   }
   initCDN();
   hydrateStaticAssets("base");
@@ -582,7 +587,7 @@
     if(!path)return null;
     if(!characterImageCache.has(path)){
       const image=new Image();image.decoding="async";
-      image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>resolve(false),{once:true})});
+      image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>{if(characterImageCache.get(path)===image)characterImageCache.delete(path);forgetRuntimeAsset(path);resolve(false)},{once:true})});
       image.addEventListener("load",()=>{creatorRenderer?.draw();creatorConfirmRenderer?.draw();battleRenderer?.draw();inventoryRenderer?.draw()});
       resolveRuntimeAssetUrl(path).then(src=>image.src=src).catch(()=>image.dispatchEvent(new Event("error")));
       characterImageCache.set(path,image);
@@ -596,8 +601,9 @@
     await Promise.all(Array.from({length:workers},async()=>{while(cursor<queue.length){const index=cursor++;try{results[index]=await loader(queue[index])}catch{results[index]=false}finished++;onProgress?.(finished,queue.length)}}));
     return results;
   }
+  async function preloadRequiredAssets(items,limit=2){const results=await preloadWithLimit(items,preloadVisualAsset,limit);if(results.some(result=>result!==true))throw new Error("Required assets could not be prepared");return results}
   async function preloadCharacterAssets(onProgress,paths=characterAssets.map(asset=>asset.runtimePath),limit=4){
-    return preloadWithLimit(paths,async path=>{const image=getCharacterImage(path);return image?image._ready:false},limit,onProgress);
+    return preloadWithLimit(paths,async path=>{for(let attempt=0;attempt<3;attempt++){const image=getCharacterImage(path),ready=image?await image._ready:false;if(ready)return true;if(attempt<2)await assetRetryDelay(attempt)}return false},limit,onProgress);
   }
   function startupCharacterPaths(){
     const characters=[creatorDraft,state.character&&state.gender?normalizeCharacter(state.character,state.gender):null].filter(Boolean);
@@ -674,7 +680,7 @@
 
   let sharedAudioContext=null;const decodedAudioBuffers=new Map();
   function audioContext(){const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return null;return sharedAudioContext||(sharedAudioContext=new Context())}
-  async function decodedAudio(url){if(decodedAudioBuffers.has(url))return decodedAudioBuffers.get(url);const pending=fetch(url,{cache:"force-cache"}).then(response=>{if(!response.ok)throw new Error(`Audio ${response.status}`);return response.arrayBuffer()}).then(data=>{const context=audioContext();if(!context)throw new Error("Web Audio unavailable");return context.decodeAudioData(data.slice(0))});decodedAudioBuffers.set(url,pending);return pending}
+  async function decodedAudio(url){if(decodedAudioBuffers.has(url))return decodedAudioBuffers.get(url);const pending=fetchRuntimeAssetBlob(absoluteAssetUrl(url)).then(blob=>blob.arrayBuffer()).then(data=>{const context=audioContext();if(!context)throw new Error("Web Audio unavailable");return context.decodeAudioData(data.slice(0))});decodedAudioBuffers.set(url,pending);pending.catch(()=>{if(decodedAudioBuffers.get(url)===pending)decodedAudioBuffers.delete(url)});return pending}
   class RuntimeAudio{
     constructor(url){this.src=url;this.volume=1;this.loop=false;this.currentTime=0;this.source=null;this.gain=null}
     async play(){const context=audioContext();if(!context)throw new Error("Web Audio unavailable");const resume=context.resume(),buffer=decodedAudio(this.src);await resume;const decoded=await buffer;this.pause();this.source=context.createBufferSource();this.gain=context.createGain();this.source.buffer=decoded;this.source.loop=this.loop;this.gain.gain.value=clamp(this.volume,0,1);this.source.connect(this.gain).connect(context.destination);this.source.start(0,Math.max(0,this.currentTime||0)%Math.max(.01,decoded.duration));this.source.onended=()=>{if(!this.loop)this.source=null};return true}
@@ -708,10 +714,10 @@
         const combatAudio=PHONE_ASSET_BRIDGE?["p_atk","e_atk","e_death","p_death","boss"].map(name=>decodedAudio(sfx[name].src).catch(()=>null)):[];
         await Promise.all([preloadRegionScenes(REGION_SCENE_FILES[getCombatRegion().scene]||[],3),preloadV55Enemies(),preloadWithLimit(combatVisuals,preloadVisualAsset,3),...combatAudio]);applyCombatRegionScene()
       }
-      else if(id==="chest"){await hydrateStaticAssets("chest");await preloadWithLimit([RAVEN_ATLAS.file,RPG_ICON_ATLASES.chests.file,RPG_ICON_ATLASES.potions.file],preloadVisualAsset,2);uiCache.inventory=false;renderInventory()}
-      else if(id==="camp"){await preloadWithLimit([RAVEN_ATLAS.file],preloadVisualAsset,2);renderUpgrades()}
-      else if(id==="mini"){await hydrateStaticAssets("mini");await preloadWithLimit([RAVEN_ATLAS.file,...Object.values(FORGE_GEM_FILES)],preloadVisualAsset,2);renderForge()}
-      else if(id==="shop"){await preloadWithLimit([RAVEN_ATLAS.file],preloadVisualAsset,2);uiCache.market=false;renderMarket()}
+      else if(id==="chest"){await hydrateStaticAssets("chest");await preloadRequiredAssets([RAVEN_ATLAS.file,RPG_ICON_ATLASES.chests.file,RPG_ICON_ATLASES.potions.file],2);uiCache.inventory=false;renderInventory()}
+      else if(id==="camp"){await preloadRequiredAssets([RAVEN_ATLAS.file],1);renderUpgrades()}
+      else if(id==="mini"){await hydrateStaticAssets("mini");await preloadRequiredAssets([RAVEN_ATLAS.file,...Object.values(FORGE_GEM_FILES)],2);renderForge()}
+      else if(id==="shop"){await preloadRequiredAssets([RAVEN_ATLAS.file],1);uiCache.market=false;renderMarket()}
       const tab=$("tab-"+id);watchAssetTree(tab);await hydrateVisibleAssets(tab);return true;
     })().catch(error=>{assetStagePromises.delete(id);console.error("Asset stage failed",id,error);throw error});
     assetStagePromises.set(id,pending);return pending;
@@ -876,24 +882,24 @@
   };
   const RARITIES={common:{name:"Normal",mult:1,color:"#aaa",salvage:20},rare:{name:"Nadir",mult:1.35,color:"#64b8ff",salvage:55},epic:{name:"Epik",mult:1.8,color:"#c06cff",salvage:120},relic:{name:"Yadigâr",mult:2.5,color:"#e3b94d",salvage:260}};
   const GODDESS_OFFERS=[{id:"supply",name:"Erzak Sandığı",rep:25,cost:180,desc:"1 uygun seviye sandık"},{id:"refresh",name:"Emir Yenile",rep:50,cost:250,desc:"Günlük ilerlemeyi sıfırlamadan yeni başlangıç"},{id:"wisp",name:"Kor Wisp",rep:100,cost:0,desc:"100 itibarda alınabilen kalıcı Ruh yoldaşı"},{id:"relicChest",name:"Yadigâr Kasası",rep:200,cost:900,desc:"Sv.15+ yüksek seviye sandık"}];
-  function atlasIconStyle(atlasName,index,scale=2){const atlas=RPG_ICON_ATLASES[atlasName],safe=Math.max(0,Math.min(atlas.count-1,index|0)),x=safe%atlas.columns,y=Math.floor(safe/atlas.columns);return `width:${16*scale}px;height:${16*scale}px;background-image:url('${RAW_ASSET_URL}${atlas.file}');background-size:${atlas.columns*16*scale}px ${atlas.rows*16*scale}px;background-position:-${x*16*scale}px -${y*16*scale}px`}
+  function atlasIconStyle(atlasName,index,scale=2){const atlas=RPG_ICON_ATLASES[atlasName],safe=Math.max(0,Math.min(atlas.count-1,index|0)),x=safe%atlas.columns,y=Math.floor(safe/atlas.columns);return `width:${16*scale}px;height:${16*scale}px;background-image:url('${runtimeAssetUrl(atlas.file)}');background-size:${atlas.columns*16*scale}px ${atlas.rows*16*scale}px;background-position:-${x*16*scale}px -${y*16*scale}px`}
   function equipmentIconStyle(item,scale=2){
     // Hangi paket olursa olsun temel ölçüyü daima 16 üzerinden hesapla:
     const size = 16 * scale;
     if(item?.atlas==="raven"){
       const safe=Math.max(0,Math.min(RAVEN_ATLAS.count-1,item.index|0)),x=safe%16,y=Math.floor(safe/16);
-      return `width:${size}px;height:${size}px;background-image:url('${RAW_ASSET_URL}${RAVEN_ATLAS.file}');background-size:${RAVEN_ATLAS.columns*size}px ${RAVEN_ATLAS.rows*size}px;background-position:-${x*size}px -${y*size}px;background-repeat:no-repeat;image-rendering:pixelated;display:inline-block`;
+      return `width:${size}px;height:${size}px;background-image:url('${runtimeAssetUrl(RAVEN_ATLAS.file)}');background-size:${RAVEN_ATLAS.columns*size}px ${RAVEN_ATLAS.rows*size}px;background-position:-${x*size}px -${y*size}px;background-repeat:no-repeat;image-rendering:pixelated;display:inline-block`;
     }
-    if(item?.iconFile)return `width:${size}px;height:${size}px;background-image:url('${CDN_URL}${item.iconFile}');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block`;
+    if(item?.iconFile)return `width:${size}px;height:${size}px;background-image:url('${runtimeAssetUrl(item.iconFile)}');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block`;
     if(item?.atlas&&SWORDTEMBER_ATLASES[item.atlas]){
       const atlas=SWORDTEMBER_ATLASES[item.atlas],safe=Math.max(0,Math.min(29,item.index|0)),x=safe%6,y=Math.floor(safe/6);
-      return `width:${size}px;height:${size}px;background-image:url('${RAW_ASSET_URL}${atlas.file}');background-size:${atlas.columns*size}px ${atlas.rows*size}px;background-position:-${x*size}px -${y*size}px;background-repeat:no-repeat;image-rendering:pixelated;display:inline-block`;
+      return `width:${size}px;height:${size}px;background-image:url('${runtimeAssetUrl(atlas.file)}');background-size:${atlas.columns*size}px ${atlas.rows*size}px;background-position:-${x*size}px -${y*size}px;background-repeat:no-repeat;image-rendering:pixelated;display:inline-block`;
     }
     return atlasIconStyle(item?.type==="armor"?"armours":"weapons",item?.index||0,scale)
   }
 
-  function uniqueWeaponIconStyle(idx,scale=1.5){const token=wepUniques[idx];if(token?.startsWith("@raven:"))return equipmentIconStyle({type:"weapon",atlas:"raven",index:Number(token.split(":")[1])},scale);if(token?.startsWith("@sword")){const [,atlas,index]=token.match(/^@(sword\d+):(\d+)$/)||[];return equipmentIconStyle({type:"weapon",atlas,index:Number(index)},scale)}return `width:${32*scale}px;height:${32*scale}px;background-image:url('${CDN_URL}${token}');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block`}
-  function forgeGemIconStyle(element){return `background-image:url('${RAW_ASSET_URL}${FORGE_GEM_FILES[element]}')`}
+  function uniqueWeaponIconStyle(idx,scale=1.5){const token=wepUniques[idx];if(token?.startsWith("@raven:"))return equipmentIconStyle({type:"weapon",atlas:"raven",index:Number(token.split(":")[1])},scale);if(token?.startsWith("@sword")){const [,atlas,index]=token.match(/^@(sword\d+):(\d+)$/)||[];return equipmentIconStyle({type:"weapon",atlas,index:Number(index)},scale)}return `width:${32*scale}px;height:${32*scale}px;background-image:url('${runtimeAssetUrl(token)}');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block`}
+  function forgeGemIconStyle(element){return `background-image:url('${runtimeAssetUrl(FORGE_GEM_FILES[element])}')`}
   function starterWeapon(classId=state.playerClass||"mage"){const starter=STARTER_GEAR[classId]||STARTER_GEAR.mage;return {type:"weapon",classId,weaponType:starter.weaponType,atlas:"raven",index:starter.index,name:starter.name,element:"physical",power:0}}
   function starterArmor(classId=state.playerClass||"mage"){const starter=STARTER_ARMOR[classId]||STARTER_ARMOR.mage;return {type:"armor",classId,atlas:"raven",index:starter.index,name:starter.name,element:"physical",power:0}}
   const uniqueChances = [0.01,0.02,0.04,0.08,0.14,0.20,0.27,0.35];
@@ -1131,8 +1137,9 @@
   async function ensureCloudSession(force=false){
     if(!isPhone){cloudSync.player=cloudSync.player||localPlayer();setCloudStatus("local");return false}
     if(!force&&cloudSync.sessionToken&&cloudSync.expiresAt>Date.now()+30000)return true;
-    setCloudStatus("connecting");const identityResult=await phone.identity.token(),identityToken=typeof identityResult==="string"?identityResult:identityResult?.token;if(!identityToken)throw new Error("Downtown kimlik token'ı alınamadı.");
-    const data=await responseJson(await fetch(`${CLOUD_API_URL}session`,{method:"POST",headers:{authorization:`Bearer ${identityToken}`}}));cloudSync.sessionToken=data.sessionToken;cloudSync.expiresAt=Number(data.expiresAt)||0;cloudSync.player=data.player;setCloudStatus("synced");return true;
+    setCloudStatus("connecting");let lastError;
+    for(let attempt=0;attempt<2;attempt++){try{const identityResult=await phone.identity.token(),identityToken=typeof identityResult==="string"?identityResult:identityResult?.token;if(!identityToken)throw new Error("Downtown kimlik token'ı alınamadı.");const data=await responseJson(await fetch(`${CLOUD_API_URL}session`,{method:"POST",headers:{authorization:`Bearer ${String(identityToken).trim()}`}}));cloudSync.sessionToken=data.sessionToken;cloudSync.expiresAt=Number(data.expiresAt)||0;cloudSync.player=data.player;setCloudStatus("synced");return true}catch(error){lastError=error;if(error?.status!==401||attempt>0)throw error;await new Promise(resolve=>setTimeout(resolve,220))}}
+    throw lastError||new Error("Downtown kimliği doğrulanamadı.");
   }
   async function cloudApi(path,options={},retry=true){await ensureCloudSession();const headers={...(options.headers||{}),authorization:`Bearer ${cloudSync.sessionToken}`};if(options.body&&!headers["content-type"])headers["content-type"]="application/json";const response=await fetch(`${CLOUD_API_URL}${path}`,{...options,headers});if(response.status===401&&retry){await ensureCloudSession(true);return cloudApi(path,options,false)}return responseJson(response)}
   function mergeCosmeticEntitlements(save,ids=cloudSync.cosmeticEntitlements){if(!save||!Array.isArray(ids)||!ids.length)return save;return {...save,ownedCosmetics:[...new Set([...(Array.isArray(save.ownedCosmetics)?save.ownedCosmetics:[]),...ids])]}}
