@@ -143,14 +143,15 @@
     #intro{display:flex;position:absolute;inset:0;z-index:340;background:radial-gradient(circle at 50% 38%,#27000e,#070002 58%,#000);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
     #intro-logo{width:240px;max-width:90%;image-rendering:pixelated;filter:drop-shadow(0 0 14px #9e0024);margin-bottom:8px}
     #intro-start{width:190px;margin-top:20px}.intro-progress{height:3px;width:190px;background:#23000a;margin-top:10px;border-radius:2px;overflow:hidden}.intro-progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--mor2),var(--bordo2));transition:width .12s}
-    #creation{display:flex;position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,#26000d,#050002 58%,#000);z-index:300;align-items:center;justify-content:flex-start;flex-direction:column;text-align:center;padding:14px 12px 22px;overflow-y:auto}
+    #creation{display:flex;position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,#26000d,#050002 58%,#000);z-index:300;align-items:center;justify-content:flex-start;flex-direction:column;text-align:center;padding:max(14px,env(safe-area-inset-top)) 12px max(18px,env(safe-area-inset-bottom));overflow-y:auto}
     .creator-title{margin:0;color:#fff;font:900 17px/1.2 Georgia,serif;letter-spacing:.5px;text-shadow:0 0 10px #9e0024}
+    .creator-step{width:100%;display:flex;align-items:center;flex-direction:column}.creator-step-badge{margin:5px 0 1px;color:#d0a859;font-size:9px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
     .gender-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:220px;margin:10px auto 8px}.gender-switch button{min-height:36px}.gender-switch button.active{border-color:var(--gold);color:#f1d26a;background:linear-gradient(#4a3500,#211700)}
     .creator-stage{width:244px;height:196px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 67%);box-shadow:inset 0 0 25px #000,0 0 12px #58008255;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
     .creator-stage:after{content:"";position:absolute;left:42px;right:42px;bottom:22px;height:10px;border-radius:50%;background:#000a;filter:blur(3px)}
     #creator-canvas{width:240px;height:192px;image-rendering:pixelated;position:relative;z-index:2}
     .creator-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;width:100%;margin-top:10px}.creator-tab{min-width:0;min-height:29px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
-    .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}
+    .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}.creator-confirm-stage{width:178px;height:144px;margin:12px auto 6px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 69%);box-shadow:inset 0 0 22px #000,0 0 11px #58008244;display:grid;place-items:center;position:relative;overflow:hidden}.creator-confirm-stage:after{content:"";position:absolute;left:38px;right:38px;bottom:16px;height:8px;border-radius:50%;background:#000a;filter:blur(3px)}#creator-confirm-canvas{width:176px;height:141px;image-rendering:pixelated;position:relative;z-index:2}.creator-identity{width:100%;max-width:284px}.creator-identity .username-field{margin-top:7px}.creator-identity .class-grid{margin:7px 0 9px}.creator-identity-actions{display:grid;grid-template-columns:88px 1fr;gap:7px;width:100%;margin-top:5px}
     #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img,.ach .achievement-atlas{width:32px;height:32px;filter:grayscale(1);opacity:.3;flex:0 0 auto}.ach.unlocked img,.ach.unlocked .achievement-atlas{filter:none;opacity:1}.achievement-class{display:inline-block;margin-left:4px;padding:1px 4px;border:1px solid #765918;border-radius:3px;color:#f1d26a;font-size:7px;text-transform:uppercase}
     .tiny{font-size:10px;line-height:1.45;color:var(--muted)} .center{text-align:center}
@@ -195,34 +196,44 @@
   </div>
 
   <div id="creation">
-    <h2 class="creator-title">Kanın Sahibine Biçim Ver</h2>
-    <div class="tiny">Kadim Vadi seni bu suretle hatırlayacak.</div>
-    <div id="creator-username-wrap" class="username-field"><label for="creator-username">Kullanıcı adı</label><input id="creator-username" class="username-input" maxlength="16" autocomplete="off" placeholder="Boşsa rastgele Maceracı adı verilir"><div class="tiny">Hesap başına yalnızca bir kez seçilebilir. Boş bırakırsan Market'ten daha sonra seçebilirsin.</div></div>
-    <div class="gender-switch">
-      <button id="gender-female" onclick="setCreatorGender('female')">Kadın</button>
-      <button id="gender-male" onclick="setCreatorGender('male')">Erkek</button>
+    <h2 id="creator-title" class="creator-title">Kanın Sahibine Biçim Ver</h2>
+    <div id="creator-subtitle" class="tiny">Kadim Vadi seni bu suretle hatırlayacak.</div>
+    <div id="creator-step-badge" class="creator-step-badge">Görünüm · 1/2</div>
+    <div id="creator-appearance-step" class="creator-step">
+      <div class="gender-switch">
+        <button id="gender-female" onclick="setCreatorGender('female')">Kadın</button>
+        <button id="gender-male" onclick="setCreatorGender('male')">Erkek</button>
+      </div>
+      <div class="creator-stage"><canvas id="creator-canvas" width="80" height="64"></canvas></div>
+      <div class="creator-tabs">
+        <button class="creator-tab active" data-category="skin" onclick="setCreatorCategory('skin')">Ten</button>
+        <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">Saç</button>
+        <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">İçlik</button>
+        <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Üst</button>
+        <button class="creator-tab" data-category="bottom" onclick="setCreatorCategory('bottom')">Alt</button>
+        <button class="creator-tab" data-category="socks" onclick="setCreatorCategory('socks')">Çorap</button>
+        <button class="creator-tab" data-category="shoes" onclick="setCreatorCategory('shoes')">Ayakkabı</button>
+        <button class="creator-tab" data-category="outfit" onclick="setCreatorCategory('outfit')">Tam</button>
+        <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
+      </div>
+      <div class="creator-picker">
+        <button onclick="cycleCreator(-1)" aria-label="Önceki">‹</button>
+        <div class="creator-choice"><b id="creator-choice-name">Yükleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
+        <button onclick="cycleCreator(1)" aria-label="Sonraki">›</button>
+      </div>
+      <div class="creator-actions">
+        <button onclick="randomizeCreator()">Rastgele</button>
+        <button id="creator-next-button" class="primary" onclick="continueCharacterCreation()">Devam</button>
+      </div>
     </div>
-    <div id="creator-class-wrap" style="width:100%;max-width:284px"><div class="tiny">Sınıfını seç · yalnızca prestijde değiştirilebilir</div><div id="creator-classes" class="class-grid"></div></div>
-    <div class="creator-stage"><canvas id="creator-canvas" width="80" height="64"></canvas></div>
-    <div class="creator-tabs">
-      <button class="creator-tab active" data-category="skin" onclick="setCreatorCategory('skin')">Ten</button>
-      <button class="creator-tab" data-category="hair" onclick="setCreatorCategory('hair')">Saç</button>
-      <button class="creator-tab" data-category="basewear" onclick="setCreatorCategory('basewear')">İçlik</button>
-      <button class="creator-tab" data-category="top" onclick="setCreatorCategory('top')">Üst</button>
-      <button class="creator-tab" data-category="bottom" onclick="setCreatorCategory('bottom')">Alt</button>
-      <button class="creator-tab" data-category="socks" onclick="setCreatorCategory('socks')">Çorap</button>
-      <button class="creator-tab" data-category="shoes" onclick="setCreatorCategory('shoes')">Ayakkabı</button>
-      <button class="creator-tab" data-category="outfit" onclick="setCreatorCategory('outfit')">Tam</button>
-      <button class="creator-tab" data-category="special" onclick="setCreatorCategory('special')">Özel</button>
-    </div>
-    <div class="creator-picker">
-      <button onclick="cycleCreator(-1)" aria-label="Önceki">‹</button>
-      <div class="creator-choice"><b id="creator-choice-name">Yükleniyor...</b><span id="creator-choice-count" class="tiny"></span></div>
-      <button onclick="cycleCreator(1)" aria-label="Sonraki">›</button>
-    </div>
-    <div class="creator-actions">
-      <button onclick="randomizeCreator()">Rastgele</button>
-      <button class="primary" onclick="finishCharacterCreation()">Karakteri Oluştur</button>
+    <div id="creator-identity-step" class="creator-step creator-identity" hidden>
+      <div class="creator-confirm-stage"><canvas id="creator-confirm-canvas" width="80" height="64"></canvas></div>
+      <div id="creator-username-wrap" class="username-field"><label for="creator-username">Kullanıcı adı</label><input id="creator-username" class="username-input" maxlength="16" autocomplete="off" placeholder="Boşsa rastgele Maceracı adı verilir"><div class="tiny">Hesap başına yalnızca bir kez seçilebilir. Boş bırakırsan Market'ten daha sonra seçebilirsin.</div></div>
+      <div id="creator-class-wrap"><div class="tiny">Sınıfını seç · yalnızca prestijde değiştirilebilir</div><div id="creator-classes" class="class-grid"></div></div>
+      <div class="creator-identity-actions">
+        <button onclick="backToCreatorAppearance()">Geri</button>
+        <button class="primary" onclick="finishCharacterCreation()">Macera Başlasın</button>
+      </div>
     </div>
   </div>
 
@@ -506,7 +517,7 @@
   }
   initCDN();
 
-  let characterManifest=null,characterAssets=[],creatorRenderer=null,battleRenderer=null,inventoryRenderer=null,creatorCategory="skin",creatorDraft=null,creatorClassDraft=null,creatorForcedOpen=false,pendingPrestigeClass=null,detailItemId=null;
+  let characterManifest=null,characterAssets=[],creatorRenderer=null,creatorConfirmRenderer=null,battleRenderer=null,inventoryRenderer=null,creatorCategory="skin",creatorDraft=null,creatorClassDraft=null,creatorStep="appearance",creatorForcedOpen=false,pendingPrestigeClass=null,detailItemId=null;
   const characterImageCache=new Map();
 
   function getCharacterImage(path){
@@ -514,7 +525,7 @@
     if(!characterImageCache.has(path)){
       const image=new Image();image.decoding="async";
       image._ready=new Promise(resolve=>{image.addEventListener("load",()=>resolve(true),{once:true});image.addEventListener("error",()=>resolve(false),{once:true})});
-      image.addEventListener("load",()=>{creatorRenderer?.draw();battleRenderer?.draw();inventoryRenderer?.draw()});
+      image.addEventListener("load",()=>{creatorRenderer?.draw();creatorConfirmRenderer?.draw();battleRenderer?.draw();inventoryRenderer?.draw()});
       image.src=CDN_URL+path;
       characterImageCache.set(path,image);
     }
@@ -611,7 +622,7 @@
     await preloadCharacterAssets((done,total)=>{const percent=Math.round(done/total*100);$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`});
     $("intro-progress-text").textContent="Bölgeler hazırlanıyor...";await preloadRegionScenes();
     $("intro-progress-text").textContent="Hazır";$("intro").style.display="none";
-    if(state.gender){isCombatActive=activeTabId==="main";applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
+    if(state.gender&&state.playerClass){isCombatActive=activeTabId==="main";applyCharacterSprite("idle");updateCombatStats();playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}else isCombatActive=false;
     updateUI();
   }
   window.startGameIntro=startGameIntro;
@@ -1698,8 +1709,9 @@
   }
 
   function initCharacterSystem(){
-    creatorRenderer=new LayeredCharacterRenderer($("creator-canvas"));battleRenderer=new LayeredCharacterRenderer($("battle-character"));inventoryRenderer=new LayeredCharacterRenderer($("inventory-character"));
+    creatorRenderer=new LayeredCharacterRenderer($("creator-canvas"));creatorConfirmRenderer=new LayeredCharacterRenderer($("creator-confirm-canvas"));battleRenderer=new LayeredCharacterRenderer($("battle-character"));inventoryRenderer=new LayeredCharacterRenderer($("inventory-character"));
     creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorClassDraft=state.playerClass;creatorRenderer.setCharacter(creatorDraft);creatorRenderer.setAnimation("idle");
+    creatorConfirmRenderer.setCharacter(creatorDraft);creatorConfirmRenderer.setAnimation("idle");
     if(state.gender){state.character=normalizeCharacter(state.character,state.gender);battleRenderer.setCharacter(state.character);battleRenderer.setAnimation("idle");inventoryRenderer.setCharacter(state.character);inventoryRenderer.setAnimation("idle")}
     renderCreatorControls();
   }
@@ -1712,12 +1724,18 @@
   function creatorSelectedId(){return creatorCategory==="special"?creatorDraft.specialSkinId:creatorDraft[creatorCategory+"Id"]}
   function renderCreatorControls(){
     if(!creatorDraft)return;
+    const isEditing=!!state.playerClass,isIdentity=creatorStep==="identity"&&!isEditing;
+    $("creator-appearance-step").hidden=isIdentity;$("creator-identity-step").hidden=!isIdentity;
+    $("creator-title").textContent=isIdentity?"Kaderini Mühürle":isEditing?"Suretini Yenile":"Kanın Sahibine Biçim Ver";
+    $("creator-subtitle").textContent=isIdentity?"Adını ve Vadi'deki yolunu seç.":isEditing?"Savaşçının görünümünü yeniden biçimlendir.":"Kadim Vadi seni bu suretle hatırlayacak.";
+    $("creator-step-badge").textContent=isEditing?"Görünüm Düzenleme":isIdentity?"Kimlik ve Sınıf · 2/2":"Görünüm · 1/2";
+    $("creator-next-button").textContent=isEditing?"Görünümü Kaydet":"Devam";
     $("gender-female").classList.toggle("active",creatorDraft.gender==="female");$("gender-male").classList.toggle("active",creatorDraft.gender==="male");
     document.querySelectorAll(".creator-tab").forEach(el=>el.classList.toggle("active",el.dataset.category===creatorCategory));
     const options=creatorOptions(),selected=creatorSelectedId(),index=Math.max(0,options.findIndex(asset=>(asset?.id||null)===selected)),asset=options[index];
     $("creator-choice-name").textContent=asset?asset.displayName.replace(/^(Female|Male)\s+/i,""):(creatorCategory==="special"?"Normal Ten":"Yok");$("creator-choice-count").textContent=`${index+1} / ${options.length}`;
-    creatorRenderer?.setCharacter(creatorDraft);
-    renderClassChoices("creator-classes",creatorClassDraft,!state.playerClass);$("creator-class-wrap").style.display=state.playerClass?"none":"block";$("creator-username-wrap").style.display=state.playerClass?"none":"block";
+    creatorRenderer?.setCharacter(creatorDraft);creatorConfirmRenderer?.setCharacter(creatorDraft);
+    renderClassChoices("creator-classes",creatorClassDraft,!state.playerClass);
   }
   function renderClassChoices(target,selected,enabled=true){const el=$(target);if(!el)return;el.innerHTML=Object.entries(CLASS_DEFS).map(([id,c])=>`<button data-class="${id}" class="class-card ${selected===id?"active":""}" onclick="${target==='prestige-classes'?`selectPrestigeClass('${id}')`:`setCreatorClass('${id}')`}" ${enabled?"":"disabled"}><b>${c.name}</b></button>`).join("")}
   function setCreatorClass(id){if(state.playerClass||!CLASS_DEFS[id])return;creatorClassDraft=id;playSound("select",.45);renderCreatorControls()}
@@ -1730,12 +1748,30 @@
   function randomizeCreator(){
     const gender=creatorDraft?.gender||"female",pick=list=>list[Math.floor(Math.random()*list.length)]||null,allowed=slot=>clothingAssets(gender,slot).filter(asset=>!isMarketExclusiveCosmetic(asset.id)||state.ownedCosmetics.includes(asset.id)),unlockedSpecial=assetsFor(gender,"skin","special").filter(isSpecialSkinUnlocked),useOutfit=Math.random()<.22;creatorDraft={...defaultCharacter(gender),gender,skinId:pick(assetsFor(gender,"skin"))?.id||null,specialSkinId:unlockedSpecial.length&&Math.random()<.18?pick(unlockedSpecial)?.id||null:null,hairId:pick(assetsFor(gender,"hair"))?.id||null,basewearId:pick(allowed("basewear"))?.id||null,topId:pick(allowed("top"))?.id||null,bottomId:pick(allowed("bottom"))?.id||null,socksId:pick(allowed("socks"))?.id||null,shoesId:pick(allowed("shoes"))?.id||null,outfitId:useOutfit?pick(allowed("outfit"))?.id||null:null};playSound("select",.6);renderCreatorControls();
   }
-  function openCharacterCreator(){closeModal("settings");isCombatActive=false;creatorForcedOpen=true;creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorClassDraft=state.playerClass;creatorCategory="skin";renderCreatorControls();updateUI(false)}
-  async function finishCharacterCreation(){
-    if(!creatorDraft)return;if(!state.playerClass&&!CLASS_DEFS[creatorClassDraft]){showToast("Önce sınıfını seç.");return}const isNew=!state.gender||!state.playerClass,desiredUsername=isNew?$("creator-username").value.trim():"";if(desiredUsername){try{validateLocalUsername(desiredUsername)}catch(error){showToast(error.message);return}}state.playerClass=state.playerClass||creatorClassDraft;if(state.equippedWeapon.isUnique&&uniqueWeaponClass(state.equippedWeapon.idx)!==state.playerClass)state.equippedWeapon={isUnique:false,t:0,l:0,idx:0};state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);const granted=[state.character.hairId,state.character.topId,state.character.bottomId,state.character.outfitId,state.character.socksId,state.character.shoesId].filter(id=>id&&!isMarketExclusiveCosmetic(id));state.ownedCosmetics=[...new Set([...state.ownedCosmetics,...granted])];creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
-    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();if(desiredUsername){try{await changeUsername(desiredUsername)}catch(error){showToast(error?.message||"Kullanıcı adı kaydedilemedi; Market'ten tekrar deneyebilirsin.")}}updateUI();showToast(isNew?`Karakterin hazır · ${cloudSync.player?.username||localPlayer().username}`:"Karakter görünümü güncellendi.");
+  function openCharacterCreator(){closeModal("settings");isCombatActive=false;creatorForcedOpen=true;creatorStep="appearance";creatorDraft=normalizeCharacter(state.character,state.gender||"female");creatorClassDraft=state.playerClass;creatorCategory="skin";renderCreatorControls();updateUI(false);$("creation").scrollTop=0}
+  function continueCharacterCreation(){
+    if(!creatorDraft)return;
+    if(state.playerClass){finishCharacterCreation();return}
+    creatorStep="identity";isCombatActive=false;playSound("select",.55);renderCreatorControls();$("creation").scrollTop=0;
   }
-  Object.assign(window,{setCreatorGender,setCreatorClass,setCreatorCategory,cycleCreator,randomizeCreator,openCharacterCreator,openInventoryWardrobe,closeInventoryWardrobe,equipOwnedCosmetic,finishCharacterCreation});
+  function backToCreatorAppearance(){if(state.playerClass)return;creatorStep="appearance";playSound("tab",.35);renderCreatorControls();$("creation").scrollTop=0}
+  async function finishCharacterCreation(){
+    if(!creatorDraft)return;
+    const isNew=!state.gender||!state.playerClass;
+    if(isNew&&creatorStep!=="identity"){continueCharacterCreation();return}
+    if(!state.playerClass&&!CLASS_DEFS[creatorClassDraft]){showToast("Önce sınıfını seç.");return}
+    const desiredUsername=isNew?$("creator-username").value.trim():"";
+    if(desiredUsername){try{validateLocalUsername(desiredUsername)}catch(error){showToast(error.message);return}}
+    state.playerClass=state.playerClass||creatorClassDraft;
+    if(state.equippedWeapon.isUnique&&uniqueWeaponClass(state.equippedWeapon.idx)!==state.playerClass)state.equippedWeapon={isUnique:false,t:0,l:0,idx:0};
+    state.gender=creatorDraft.gender;state.character=normalizeCharacter(creatorDraft,creatorDraft.gender);
+    const granted=[state.character.hairId,state.character.topId,state.character.bottomId,state.character.outfitId,state.character.socksId,state.character.shoesId].filter(id=>id&&!isMarketExclusiveCosmetic(id));state.ownedCosmetics=[...new Set([...state.ownedCosmetics,...granted])];
+    creatorStep="appearance";creatorForcedOpen=false;isCombatActive=activeTabId==="main";battleRenderer.setCharacter(state.character);applyCharacterSprite("idle");
+    updateCombatStats();if(isNew){playerHp=playerMaxHp;playerShield=playerMaxShield;spawnEnemy()}playSound("select",.8);await saveState();
+    if(desiredUsername){try{await changeUsername(desiredUsername)}catch(error){showToast(error?.message||"Kullanıcı adı kaydedilemedi; Market'ten tekrar deneyebilirsin.")}}
+    updateUI();showToast(isNew?`Karakterin hazır · ${cloudSync.player?.username||localPlayer().username}`:"Karakter görünümü güncellendi.");
+  }
+  Object.assign(window,{setCreatorGender,setCreatorClass,setCreatorCategory,cycleCreator,randomizeCreator,continueCharacterCreation,backToCreatorAppearance,openCharacterCreator,openInventoryWardrobe,closeInventoryWardrobe,equipOwnedCosmetic,finishCharacterCreation});
 
   $("btn-farm").onclick=()=>{damageEnemy();updateUI(false)};
   $("btn-quest").onclick=questAction;
