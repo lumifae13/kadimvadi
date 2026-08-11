@@ -522,13 +522,17 @@
   const ASSET_TEST_MODE=new URLSearchParams(location.search).has("asset-test");
   function diagnosticImage(url){return new Promise(resolve=>{const image=new Image(),done=ok=>resolve(ok);image.onload=()=>done(true);image.onerror=()=>done(false);image.src=url;setTimeout(()=>done(false),5000)})}
   function diagnosticAudio(url){return new Promise(resolve=>{const audio=new Audio();let settled=false;const done=ok=>{if(settled)return;settled=true;audio.src="";resolve(ok)};audio.preload="auto";audio.addEventListener("canplaythrough",()=>done(true),{once:true});audio.addEventListener("error",()=>done(false),{once:true});audio.src=url;audio.load();setTimeout(()=>done(false),5000)})}
+  function blobDataUrl(blob){return new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>resolve("");reader.readAsDataURL(blob)})}
   function showAssetDiagnostic(lines,ok){let panel=$("asset-diagnostic");if(!panel){panel=document.createElement("div");panel.id="asset-diagnostic";panel.style.cssText="position:fixed;left:8px;right:8px;top:8px;z-index:99999;padding:9px;border:2px solid #ffd34d;border-radius:7px;background:#080006f2;color:#fff;font:11px/1.45 monospace;white-space:pre-wrap;box-shadow:0 3px 18px #000";document.body.appendChild(panel)}panel.style.borderColor=ok?"#56d879":"#ff506f";panel.textContent=lines.join("\n")}
   async function runAssetDiagnostics(){
     const imageUrl=ASSET_URL+"rZ2HD2E.png",audioUrl=LOCAL_AUDIO_URL+"kv-bg.mp3";
-    const imageOk=await diagnosticImage(imageUrl);let fetchStatus="HATA";
-    try{const response=await fetch(imageUrl,{cache:"no-store"});fetchStatus=`${response.status} ${response.headers.get("content-type")||"?"}`}catch(error){fetchStatus=error?.name||"HATA"}
-    const audioOk=await diagnosticAudio(audioUrl),ok=imageOk&&fetchStatus.startsWith("200")&&audioOk;
-    if(ASSET_TEST_MODE||!ok)showAssetDiagnostic([`${GAME_VERSION} · ${location.origin}`,`GÖRSEL: ${imageOk?"OK":"BLOKLU"}`,`FETCH: ${fetchStatus}`,`SES: ${audioOk?"OK":"BLOKLU"}`,`SDK: ${typeof PhoneSDK!=="undefined"?"OK":"YOK"}`],ok);
+    const imageOk=await diagnosticImage(imageUrl);let fetchStatus="HATA",blobImageOk=false,dataImageOk=false,blobAudioOk=false,csp="YOK";
+    try{const response=await fetch(imageUrl,{cache:"no-store"});fetchStatus=`${response.status} ${response.headers.get("content-type")||"?"}`;if(response.ok){const blob=await response.blob(),blobUrl=URL.createObjectURL(blob),dataUrl=await blobDataUrl(blob);blobImageOk=await diagnosticImage(blobUrl);dataImageOk=!!dataUrl&&await diagnosticImage(dataUrl);URL.revokeObjectURL(blobUrl)}}catch(error){fetchStatus=error?.name||"HATA"}
+    const audioOk=await diagnosticAudio(audioUrl);
+    try{const response=await fetch(audioUrl,{cache:"no-store"});if(response.ok){const blobUrl=URL.createObjectURL(await response.blob());blobAudioOk=await diagnosticAudio(blobUrl);URL.revokeObjectURL(blobUrl)}}catch{}
+    try{const response=await fetch(location.href,{cache:"no-store"});csp=(response.headers.get("content-security-policy")||"YOK").slice(0,140)}catch{}
+    const ok=imageOk&&fetchStatus.startsWith("200")&&audioOk;
+    if(ASSET_TEST_MODE||!ok)showAssetDiagnostic([`${GAME_VERSION} · ${location.origin}`,`GÖRSEL: ${imageOk?"OK":"BLOKLU"}`,`FETCH: ${fetchStatus}`,`BLOB GÖRSEL: ${blobImageOk?"OK":"BLOKLU"}`,`DATA GÖRSEL: ${dataImageOk?"OK":"BLOKLU"}`,`SES: ${audioOk?"OK":"BLOKLU"}`,`BLOB SES: ${blobAudioOk?"OK":"BLOKLU"}`,`SDK: ${typeof PhoneSDK!=="undefined"?"OK":"YOK"}`,`CSP: ${csp}`],ok);
     return ok;
   }
 
