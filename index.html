@@ -153,6 +153,7 @@
     .creator-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;width:100%;margin-top:10px}.creator-tab{min-width:0;min-height:29px;padding:0 3px;font-size:9px}.creator-tab.active{border-color:var(--mor2);background:linear-gradient(var(--mor),var(--mor3));color:#fff}
     .creator-picker{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;width:100%;margin:8px 0}.creator-picker button{padding:0;font-size:20px}.creator-choice{min-width:0;height:44px;border:1px solid #ffffff18;border-radius:7px;background:#0008;display:flex;flex-direction:column;align-items:center;justify-content:center}.creator-choice b{max-width:100%;padding:0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.creator-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px;width:100%}.creator-confirm-stage{width:178px;height:144px;margin:12px auto 6px;border:1px solid #5c4711;border-radius:10px;background:radial-gradient(circle,#260016 0,#080004 69%);box-shadow:inset 0 0 22px #000,0 0 11px #58008244;display:grid;place-items:center;position:relative;overflow:hidden}.creator-confirm-stage:after{content:"";position:absolute;left:38px;right:38px;bottom:16px;height:8px;border-radius:50%;background:#000a;filter:blur(3px)}#creator-confirm-canvas{width:176px;height:141px;image-rendering:pixelated;position:relative;z-index:2}.creator-identity{width:100%;max-width:284px}.creator-identity .username-field{margin-top:7px}.creator-identity .class-grid{margin:7px 0 9px}.creator-identity-actions{display:grid;grid-template-columns:88px 1fr;gap:7px;width:100%;margin-top:5px}
     #toast{position:absolute;top:220px;left:50%;transform:translateX(-50%);z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;background:#9e0024f2;border:1px solid #ff3366;border-radius:18px;padding:8px 14px;color:#fff;font-weight:900;text-align:center;max-width:90%}
+    .asset-loader-spinner{width:10px;height:10px;flex:0 0 10px;border:2px solid #ffffff35;border-top-color:#f1d26a;border-radius:50%;animation:assetLoaderSpin .65s linear infinite}.asset-loader-spinner.ready{border-color:#69d67e;animation:none;position:relative}.asset-loader-spinner.ready:after{content:"";position:absolute;left:2px;top:0;width:3px;height:5px;border:solid #69d67e;border-width:0 1px 1px 0;transform:rotate(45deg)}@keyframes assetLoaderSpin{to{transform:rotate(360deg)}}
     .ach{display:flex;align-items:center;gap:10px;border:1px solid #333;border-radius:6px;background:#0007;padding:8px}.ach.unlocked{border-color:var(--gold)}.ach img,.ach .achievement-atlas{width:32px;height:32px;filter:grayscale(1);opacity:.3;flex:0 0 auto}.ach.unlocked img,.ach.unlocked .achievement-atlas{filter:none;opacity:1}.achievement-class{display:inline-block;margin-left:4px;padding:1px 4px;border:1px solid #765918;border-radius:3px;color:#f1d26a;font-size:7px;text-transform:uppercase}
     .tiny{font-size:10px;line-height:1.45;color:var(--muted)} .center{text-align:center}
     input[type="range"]{width:100%}
@@ -286,7 +287,7 @@
     <div class="panel gold modal" style="position:relative">
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('leaderboard')"></div>
       <h3 class="center" style="margin:0;color:var(--gold)">Vadi Sıralaması</h3>
-      <div id="leaderboard-period" class="tiny center" style="margin:4px 0 8px">Haftalık liste · sunucuda günde bir kez yenilenir · beta, ödülsüz</div>
+      <div id="leaderboard-period" class="tiny center" style="margin:4px 0 8px">Haftalık sıralama · sunucuda günde bir kez yenilenir</div>
       <button id="leaderboard-refresh" onclick="renderLeaderboard(true)" style="min-height:30px">Yenile</button>
       <div id="leaderboard-list" class="leaderboard-list"><div class="leaderboard-empty">Sıralama yükleniyor…</div></div>
     </div>
@@ -494,7 +495,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v65-alpha";
+  const GAME_VERSION = "v66-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -704,8 +705,10 @@
   sfx.bg.loop = true;
 
   const assetStagePromises=new Map();let assetLoaderDepth=0;
-  function assetLoader(){let el=$("asset-stage-loader");if(el)return el;el=document.createElement("div");el.id="asset-stage-loader";el.style.cssText="display:none;position:absolute;left:50%;bottom:calc(var(--nav-height) + var(--safe-bottom) + 7px);transform:translateX(-50%);z-index:320;padding:6px 10px;border:1px solid #8d3154;border-radius:14px;background:#100007ed;color:#fff;font:900 9px Arial;white-space:nowrap;box-shadow:0 3px 12px #000";$("app").appendChild(el);return el}
-  async function withAssetLoader(label,job){const el=assetLoader(),ticket=++assetLoaderDepth;let shown=false;const timer=setTimeout(()=>{shown=true;el.textContent=`${label} · yükleniyor`;el.style.display="block"},120);try{return await job}finally{clearTimeout(timer);if(ticket===assetLoaderDepth){if(shown)el.textContent="Hazır";setTimeout(()=>{if(ticket===assetLoaderDepth)el.style.display="none"},shown?220:0)}}}
+  function assetLoader(){let el=$("asset-stage-loader");if(el)return el;el=document.createElement("div");el.id="asset-stage-loader";el.style.cssText="display:none;align-items:center;gap:6px;position:absolute;left:50%;bottom:calc(var(--nav-height) + var(--safe-bottom) + 7px);transform:translateX(-50%);z-index:320;padding:6px 10px;border:1px solid #8d3154;border-radius:14px;background:#100007ed;color:#fff;font:900 9px Arial;white-space:nowrap;box-shadow:0 3px 12px #000";el.innerHTML='<i class="asset-loader-spinner"></i><span></span>';$("game").appendChild(el);return el}
+  function setAssetLoaderState(el,label,ready=false){const spinner=el.querySelector("i"),text=el.querySelector("span");spinner.className=`asset-loader-spinner${ready?" ready":""}`;text.textContent=label}
+  async function withAssetLoader(label,job){const el=assetLoader(),ticket=++assetLoaderDepth;let shown=false,failed=false;const timer=setTimeout(()=>{shown=true;setAssetLoaderState(el,`${label} hazırlanıyor`);el.style.display="flex"},120);try{return await job}catch(error){failed=true;if(!shown){shown=true;setAssetLoaderState(el,"Eksikler tamamlanıyor");el.style.display="flex"}throw error}finally{clearTimeout(timer);if(ticket===assetLoaderDepth){if(shown)setAssetLoaderState(el,failed?"Eksikler tamamlanıyor":"Hazır",!failed);setTimeout(()=>{if(ticket===assetLoaderDepth)el.style.display="none"},shown?(failed?420:180):0)}}}
+  function retryAssetStage(id,label){setTimeout(()=>withAssetLoader(label,ensureAssetStage(id)).catch(()=>{}),260)}
   function ensureAssetStage(id){
     if(assetStagePromises.has(id))return assetStagePromises.get(id);
     const pending=(async()=>{
@@ -1180,7 +1183,7 @@
   function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
   async function renderLeaderboard(force=false){
     const list=$("leaderboard-list"),button=$("leaderboard-refresh");if(!list)return;if(!force&&list.dataset.loaded==="1")return;button.disabled=true;list.innerHTML='<div class="leaderboard-empty">Sıralama yükleniyor…</div>';
-    try{if(!isPhone)throw new Error("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");const data=await cloudApi(`leaderboard?limit=25${force?`&t=${Date.now()}`:""}`);const entries=Array.isArray(data.entries)?data.entries:[],period=$("leaderboard-period");if(period)period.textContent=`${data.periodKey||"Haftalık liste"} · ${data.snapshotDay||"bugün"} sunucu snapshot'ı · beta, ödülsüz`;list.dataset.loaded="1";list.innerHTML=entries.length?entries.map((entry,index)=>`<div class="leaderboard-row ${entry.name===(cloudSync.player?.username||"")?"me":""}"><span class="leaderboard-rank">${entry.rank}</span><canvas id="lb-portrait-${index}" class="leaderboard-portrait" width="80" height="64"></canvas><div><div class="leaderboard-name">${escapeHtml(entry.name)}</div><div class="tiny">${escapeHtml(CLASS_DEFS[entry.classId]?.name||"Maceracı")} · Sv.${Number(entry.level)||1}${entry.prestige?` · ${entry.prestige} Prestij`:""}</div></div><div class="leaderboard-score">${money(entry.score).toLocaleString("tr-TR")}<small>${money(entry.kills)} av</small></div></div>`).join(""):'<div class="leaderboard-empty">Henüz sıralamaya giren bir maceracı yok.</div>';entries.forEach((entry,index)=>drawStaticCharacterPortrait($(`lb-portrait-${index}`),entry.portrait))}
+    try{if(!isPhone)throw new Error("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");const data=await cloudApi(`leaderboard?limit=25${force?`&t=${Date.now()}`:""}`);const entries=Array.isArray(data.entries)?data.entries:[],period=$("leaderboard-period");if(period)period.textContent=`Haftalık sıralama · ${data.snapshotDay||"bugün"} tarihinde yenilendi`;list.dataset.loaded="1";list.innerHTML=entries.length?entries.map((entry,index)=>`<div class="leaderboard-row ${entry.name===(cloudSync.player?.username||"")?"me":""}"><span class="leaderboard-rank">${entry.rank}</span><canvas id="lb-portrait-${index}" class="leaderboard-portrait" width="80" height="64"></canvas><div><div class="leaderboard-name">${escapeHtml(entry.name)}</div><div class="tiny">${escapeHtml(CLASS_DEFS[entry.classId]?.name||"Maceracı")} · Sv.${Number(entry.level)||1}${entry.prestige?` · ${entry.prestige} Prestij`:""}</div></div><div class="leaderboard-score">${money(entry.score).toLocaleString("tr-TR")}<small>${money(entry.kills)} av</small></div></div>`).join(""):'<div class="leaderboard-empty">Henüz sıralamaya giren bir maceracı yok.</div>';entries.forEach((entry,index)=>drawStaticCharacterPortrait($(`lb-portrait-${index}`),entry.portrait))}
     catch(error){list.innerHTML=`<div class="leaderboard-empty">${escapeHtml(error?.message||"Sıralama yüklenemedi.")}</div>`}finally{button.disabled=false}
   }
   function openLeaderboard(){if(!isPhone){showToast("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");return}openModal("leaderboard");renderLeaderboard(true)}
@@ -1791,7 +1794,7 @@
     activeTabId=id;
     isCombatActive=false;
     document.body.classList.toggle("hide-battle",id!=="main");
-    try{await withAssetLoader(labels[id]||"Bölüm",ensureAssetStage(id))}catch{showToast("Bazı görseller alınamadı; yeniden deneyebilirsin.")}
+    try{await withAssetLoader(labels[id]||"Bölüm",ensureAssetStage(id))}catch{retryAssetStage(id,labels[id]||"Bölüm")}
     if(token!==tabSwitchToken)return;
     updateUI(false);isCombatActive=id==="main"&&!!state.gender&&introStarted;
     if(id==="main"){
