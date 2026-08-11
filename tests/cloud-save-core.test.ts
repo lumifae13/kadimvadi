@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ApiError, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, sanitizePortrait, summarizeState, utcDayKey } from "../src/cloud-save-core";
+import { ApiError, isSaveRegression, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, sanitizePortrait, summarizeState, utcDayKey } from "../src/cloud-save-core";
 
 describe("cloud save validation", () => {
   it("derives a stable leaderboard summary from game state", () => {
@@ -28,6 +28,19 @@ describe("cloud save validation", () => {
     expect(normalizeUsername("  Kızıl   Şövalye ")).toEqual({ username: "Kızıl Şövalye", key: "kızıl şövalye" });
     expect(() => normalizeUsername("Maceracı12345678")).toThrowError(/kullanılamaz/i);
     expect(() => normalizeUsername("ab")).toThrowError(/3-16/i);
+  });
+
+  it("normalizes username casing to one unique key", () => {
+    expect(normalizeUsername("Lenny").key).toBe(normalizeUsername("LENNY").key);
+  });
+
+  it("blocks accidental progress rollback but allows prestige level resets", () => {
+    const current = { playerClass: "mage" as const, level: 20, prestige: 2, totalKills: 400, uniqueCount: 3 };
+    expect(isSaveRegression(current, { ...current, level: 19 })).toBe(true);
+    expect(isSaveRegression(current, { ...current, totalKills: 399 })).toBe(true);
+    expect(isSaveRegression(current, { ...current, playerClass: "warrior" })).toBe(true);
+    expect(isSaveRegression({ playerClass: "mage", level: 1, prestige: 0, totalKills: 0, uniqueCount: 0 }, { playerClass: "warrior", level: 1, prestige: 0, totalKills: 0, uniqueCount: 0 })).toBe(false);
+    expect(isSaveRegression(current, { playerClass: "warrior", level: 1, prestige: 3, totalKills: 400, uniqueCount: 3 })).toBe(false);
   });
 
   it("keeps only bounded character portrait fields", () => {

@@ -10,6 +10,19 @@ export type SaveSummary = {
   portrait: Record<string, string | null>;
 };
 
+export type SaveProgress = Pick<SaveSummary, "playerClass" | "level" | "prestige" | "totalKills" | "uniqueCount">;
+
+export function isSaveRegression(current: SaveProgress, next: SaveProgress): boolean {
+  if (next.prestige < current.prestige) return true;
+  if (next.totalKills < current.totalKills || next.uniqueCount < current.uniqueCount) return true;
+  if (next.prestige === current.prestige) {
+    if (next.level < current.level) return true;
+    const pristineClassChoice = current.prestige === 0 && current.level === 1 && current.totalKills === 0 && current.uniqueCount === 0;
+    if (next.playerClass !== current.playerClass && !pristineClassChoice) return true;
+  }
+  return false;
+}
+
 export type SavePayload = {
   expectedRevision: number;
   saveVersion: string;
