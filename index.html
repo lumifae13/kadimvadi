@@ -14,7 +14,7 @@
       --mor:#580082; --mor2:#7a00b3; --mor3:#2c0042;
       --gold:#b38b22; --gold2:#d4af37;
       --green:#33cc66; --blue:#3399ff; --red:#ff4d66;
-      --safe-bottom:38px; --nav-height:60px;
+      --safe-bottom:38px; --nav-height:60px; --battle-height:174px;
     }
     *{box-sizing:border-box}
     html,body{width:100%;height:100%;margin:0}
@@ -41,7 +41,7 @@
     .icon-sm{width:18px;height:18px}.icon-lg{width:34px;height:34px}
     #game{position:relative;width:100%;height:100%;overflow:hidden;padding-bottom:var(--safe-bottom)}
     .battle{
-      position:absolute;left:0;top:0;width:100%;height:154px;overflow:hidden;
+      position:absolute;left:0;top:0;width:100%;height:var(--battle-height);overflow:hidden;
       background:#111 center bottom/cover no-repeat; image-rendering:pixelated;
       border-bottom:2px solid var(--bordo3); box-shadow:0 4px 12px #000b; z-index:5;
       transition:opacity .25s,background-image .4s;
@@ -95,7 +95,7 @@
     .sheet-fx{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:43;image-rendering:pixelated}
     .sheet-projectile{position:absolute;background-repeat:no-repeat;pointer-events:none;z-index:40;image-rendering:pixelated;transition:left .3s linear}
     .player-bars{position:absolute;left:-8px;bottom:-13px;width:74px;display:grid;gap:2px}
-    #combat-status-icons{position:absolute;left:0;bottom:-31px;width:82px;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;z-index:25;pointer-events:none}.combat-status-icon{width:13px;height:13px;border:1px solid #584354;border-radius:3px;background-color:#080208;background-repeat:no-repeat;image-rendering:pixelated;box-shadow:0 1px 3px #000}.combat-status-icon.debuff{border-color:#b2384f;filter:drop-shadow(0 0 3px #d52f50)}
+    #combat-status-icons{position:absolute;left:10px;top:48px;width:150px;min-height:15px;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:2px;z-index:35;pointer-events:none}.combat-status-icon{width:13px;height:13px;border:1px solid #584354;border-radius:3px;background-color:#080208;background-repeat:no-repeat;image-rendering:pixelated;box-shadow:0 1px 3px #000}.combat-status-icon.debuff{border-color:#b2384f;filter:drop-shadow(0 0 3px #d52f50)}
     .mini-row{display:flex;gap:2px;align-items:center}.mini-row img{width:8px;height:8px;object-fit:contain;image-rendering:pixelated}
     .mini-bg{flex:1;height:6px;border:1px solid #594450;background:#050207;border-radius:3px;overflow:hidden}
     .mini-fill{height:100%;width:100%;transition:width .15s}
@@ -107,11 +107,11 @@
     .damage{position:absolute;top:40px;font-size:16px;font-weight:900;z-index:60;pointer-events:none;text-shadow:0 2px 4px #000;animation:float .8s forwards}
     .damage.hp{color:#ff4967}.damage.shield{color:#69c9ff;font-size:14px}
     @keyframes float{to{transform:translateY(-40px) scale(1.15);opacity:0}}
-    #stats{position:absolute;left:0;top:160px;width:100%;height:60px;padding:0 10px;z-index:10;transition:top .25s}
+    #stats{position:absolute;left:0;top:calc(var(--battle-height) + 6px);width:100%;height:60px;padding:0 10px;z-index:10;transition:top .25s}
     body.hide-battle #stats{top:8px}
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
     .stat{height:54px;border:1px solid #ffffff0d;border-radius:7px;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800}
-    #content{position:absolute;top:226px;left:0;right:0;bottom:calc(var(--safe-bottom) + var(--nav-height) + 4px);overflow-y:auto;overflow-x:hidden;padding:0 8px 20px;scrollbar-width:none;transition:top .25s}
+    #content{position:absolute;top:calc(var(--battle-height) + 72px);left:0;right:0;bottom:calc(var(--safe-bottom) + var(--nav-height) + 4px);overflow-y:auto;overflow-x:hidden;padding:0 8px 20px;scrollbar-width:none;transition:top .25s}
     body.hide-battle #content{top:74px}
     .tab{display:none}.tab.active{display:block;animation:fade .15s}@keyframes fade{from{opacity:0}to{opacity:1}}
     .panel{background:#0c0004d9;border:1px solid var(--bordo3);border-radius:7px;padding:10px;margin-bottom:12px;box-shadow:inset 0 0 10px #000b}
@@ -356,8 +356,8 @@
         <div class="mini-row"><img data-src="hud-health-orb.png"><div class="mini-bg"><div id="player-hp-bar" class="mini-fill"></div></div></div>
         <div class="mini-row"><img data-src="7uCbrSq.png"><div class="mini-bg"><div id="player-shield-bar" class="mini-fill"></div></div></div>
       </div>
-      <div id="combat-status-icons"></div>
     </div>
+    <div id="combat-status-icons"></div>
     <div id="battle-pet"></div>
     <div id="enemy-sprite">
       <div id="enemy-hp-wrap"><div id="enemy-hp-bar"></div></div>
@@ -494,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v71-alpha";
+  const GAME_VERSION = "v72-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
