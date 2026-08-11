@@ -7,4 +7,6 @@ dev.*.log
 !.env.example
 tmp-inspect/
 dist/
+ucp-package/
+kadim-vadi-ucp*.zip
 worker-configuration.d.ts

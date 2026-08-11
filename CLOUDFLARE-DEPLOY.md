@@ -31,11 +31,11 @@ Preview ortamı da kullanılacaksa secret'ı hem Production hem Preview için ek
 Downtown uygulama kaydında aşağıdaki origin'leri harici API domainleri listesine ekle:
 
 - `https://phone-gw.downtownrpg.com` — Downtown SDK ve kimlik doğrulaması.
-- `https://kadim-vadi.pages.dev` — arşivlenmiş telefon paketi içinden yüklenen oyun görselleri ve sesleri.
+- `https://kadim-vadi.pages.dev` — telefon paketinden yapılan D1/API çağrıları ve uzaktan yüklenen oyun sesleri.
 
-Telefon önizlemesi Pages adresini doğrudan açtığı için assetler aynı origin'den görünür. Gerçek oyun telefonu ise uygulamanın arşivlenmiş kopyasını Downtown origin'inden çalıştırır; bu yüzden `kadim-vadi.pages.dev` gerçek telefonda harici domain sayılır. Bu origin bildirilmezse HTML ve metinler görünürken karakter, düşman, ikon, arka plan ve ses istekleri telefon tarafından topluca engellenir.
+Gerçek oyun telefonu dış görsel isteklerini güvenilir biçimde göstermediği için PNG/GIF/JSON assetleri UCP paketine dahil edilir. Sesler paket sınırını aşmamak için `kadim-vadi.pages.dev` üzerinden yüklenir. Bu origin ayrıca bulut kayıt ve leaderboard API'si için gereklidir. GitHub, jsDelivr veya R2 için ek domain izni gerekmez.
 
-Görseller ve sesler uygulamanın kendi `https://kadim-vadi.pages.dev` origin'inden statik dosya olarak sunulur; bu nedenle GitHub, jsDelivr veya R2 için ek domain izni gerekmez. D1 yalnızca oyuncu kayıtları ve leaderboard verisi için kalır.
+UCP'ye yüklenecek paketi üretmek için `npm run build:ucp` çalıştır. `ucp-package` klasörünün **içeriğini** ZIP'le; `index.html` ZIP kökünde olmalıdır. Derleme 8 MB sınırını aşarsa hata verir. Normal Pages dağıtımı için `npm run build` kullanılmaya devam eder.
 
 ## D1 migration
 

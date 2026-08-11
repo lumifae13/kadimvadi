@@ -28,7 +28,13 @@ type RenameIntentRow = { intent_id: string; username: string; username_key: stri
 type CosmeticRow = { cosmetic_id: string };
 type LeaderboardRefreshRow = { snapshot_day: string; generated_at: number };
 
-const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff" };
+const CORS_HEADERS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "access-control-allow-headers": "Authorization, Content-Type",
+  "access-control-max-age": "86400",
+};
+const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff", ...CORS_HEADERS };
 const MAX_REQUEST_BYTES = 220_000;
 const RENAME_INTENT_LIFETIME = 10 * 60_000;
 
@@ -420,6 +426,7 @@ async function leaderboard(context: ApiContext): Promise<Response> {
 
 export const onRequest: PagesFunction<Bindings> = async context => {
   try {
+    if (context.request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS });
     const path = routePath(context);
     if (path === "health" && context.request.method === "GET") {
       await context.env.DB.prepare("SELECT 1").first();
