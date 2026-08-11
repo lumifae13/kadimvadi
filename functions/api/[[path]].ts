@@ -1,4 +1,4 @@
-import { ApiError, normalizeUsername, parseSavePayload } from "../../src/cloud-save-core";
+import { ApiError, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, utcDayKey } from "../../src/cloud-save-core";
 
 type Bindings = Env & { DOWNTOWN_SERVICE_KEY?: string };
 type ApiContext = Parameters<PagesFunction<Bindings>>[0];
@@ -25,14 +25,11 @@ type LeaderboardRow = {
   portrait_json: string;
 };
 type RenameIntentRow = { intent_id: string; username: string; username_key: string; price: number; expected_name_changes: number; expires_at: number; used_at: number | null };
+type CosmeticRow = { cosmetic_id: string };
+type LeaderboardRefreshRow = { snapshot_day: string; generated_at: number };
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "x-content-type-options": "nosniff" };
 const MAX_REQUEST_BYTES = 220_000;
-const USERNAME_CHANGE_PRICE = 750;
-// Downtown's in-phone bank API currently returns no server-verifiable receipt.
-// Keep paid renames closed until the OAuth payment callback can be verified here.
-const PAID_RENAME_ENABLED = false;
-const USERNAME_CHANGE_COOLDOWN = 24 * 60 * 60_000;
 const RENAME_INTENT_LIFETIME = 10 * 60_000;
 
 function json(data: unknown, status = 200, cacheControl = "no-store"): Response {
@@ -89,7 +86,7 @@ function publicProfile(row: Pick<SessionRow, "public_id" | "username" | "is_gene
     generated: row.is_generated === 1,
     canChooseFreeName: row.is_generated === 1 && row.name_changes === 0,
     nameChanges: row.name_changes,
-    nextRenameAt: row.last_name_change_at ? row.last_name_change_at + USERNAME_CHANGE_COOLDOWN : null,
+    nextRenameAt: null,
   };
 }
 
@@ -179,12 +176,34 @@ async function createSession(context: ApiContext): Promise<Response> {
   return json({ sessionToken, expiresAt: identity.expiresAt, player: publicProfile(player) }, 201);
 }
 
+async function cosmeticEntitlements(env: Bindings, characterId: number): Promise<string[]> {
+  const { results } = await env.DB.prepare(`
+    SELECT cosmetic_id FROM player_cosmetics WHERE character_id = ? ORDER BY acquired_at ASC, cosmetic_id ASC
+  `).bind(characterId).all<CosmeticRow>();
+  return results.map(row => row.cosmetic_id);
+}
+
+async function storeCosmeticEntitlements(env: Bindings, characterId: number, ids: string[], now = Date.now()): Promise<void> {
+  if (!ids.length) return;
+  await env.DB.prepare(`
+    INSERT OR IGNORE INTO player_cosmetics (character_id, cosmetic_id, acquired_at)
+    SELECT ?, value, ? FROM json_each(?) WHERE type = 'text'
+  `).bind(characterId, now, JSON.stringify(ids)).run();
+}
+
+function mergeCosmeticEntitlements(save: unknown, ids: string[]): unknown {
+  if (!save || typeof save !== "object" || Array.isArray(save) || !ids.length) return save;
+  const state = save as Record<string, unknown>;
+  return { ...state, ownedCosmetics: [...new Set([...sanitizeCosmeticIds(state.ownedCosmetics), ...ids])] };
+}
+
 async function getSave(context: ApiContext, session: SessionRow): Promise<Response> {
   const row = await context.env.DB.prepare("SELECT revision, save_version, state_json, updated_at FROM player_saves WHERE character_id = ?")
     .bind(session.character_id).first<SaveRow>();
-  if (!row) return json({ save: null, revision: 0 });
+  const cosmetics = await cosmeticEntitlements(context.env, session.character_id);
+  if (!row) return json({ save: null, revision: 0, cosmetics });
   try {
-    return json({ save: JSON.parse(row.state_json), revision: row.revision, saveVersion: row.save_version, updatedAt: row.updated_at });
+    return json({ save: mergeCosmeticEntitlements(JSON.parse(row.state_json), cosmetics), cosmetics, revision: row.revision, saveVersion: row.save_version, updatedAt: row.updated_at });
   } catch {
     console.error(JSON.stringify({ message: "corrupt cloud save", characterId: session.character_id }));
     throw new ApiError(500, "CORRUPT_SAVE", "Bulut kaydı okunamadı.");
@@ -216,13 +235,18 @@ async function putSave(context: ApiContext, session: SessionRow): Promise<Respon
     return json({ error: "SAVE_CONFLICT", revision: current?.revision || 0, updatedAt: current?.updated_at || null }, 409);
   }
   const revision = payload.expectedRevision + 1;
+  if (payload.cosmeticIds.length) {
+    context.waitUntil(storeCosmeticEntitlements(context.env, session.character_id, payload.cosmeticIds, now).catch(error => {
+      console.error(JSON.stringify({ message: "cosmetic entitlement sync failed", characterId: session.character_id, error: String(error) }));
+    }));
+  }
   return json({ saved: true, revision, updatedAt: now, score: summary.powerScore });
 }
 
 async function profile(context: ApiContext): Promise<Response> {
   const session = await requireSession(context.request, context.env);
   if (context.request.method !== "GET") return json({ error: "METHOD_NOT_ALLOWED" }, 405);
-  return json({ player: publicProfile(session), renamePrice: USERNAME_CHANGE_PRICE });
+  return json({ player: publicProfile(session), renamePrice: null });
 }
 
 async function createRenameIntent(context: ApiContext): Promise<Response> {
@@ -233,12 +257,8 @@ async function createRenameIntent(context: ApiContext): Promise<Response> {
   const { username, key } = normalizeUsername(requested);
   if (key === session.username.toLocaleLowerCase("tr-TR")) throw new ApiError(400, "USERNAME_UNCHANGED", "Bu zaten mevcut kullanıcı adın.");
   const now = Date.now();
-  const free = session.is_generated === 1 && session.name_changes === 0;
-  if (!free && !PAID_RENAME_ENABLED) {
-    throw new ApiError(503, "PAID_RENAME_UNAVAILABLE", "Ücretli kullanıcı adı değişimi güvenli ödeme doğrulaması tamamlanana kadar kapalı.");
-  }
-  if (!free && session.last_name_change_at && now < session.last_name_change_at + USERNAME_CHANGE_COOLDOWN) {
-    throw new ApiError(429, "RENAME_COOLDOWN", "Kullanıcı adını günde bir kez değiştirebilirsin.");
+  if (session.is_generated !== 1 || session.name_changes !== 0) {
+    throw new ApiError(409, "USERNAME_ALREADY_CHOSEN", "Kullanıcı adı yalnızca bir kez seçilebilir.");
   }
   const occupied = await context.env.DB.prepare(`
     SELECT 1 AS found FROM players WHERE username_key = ?
@@ -256,13 +276,13 @@ async function createRenameIntent(context: ApiContext): Promise<Response> {
         INSERT INTO username_change_intents
           (intent_id, character_id, username, username_key, price, expected_name_changes, expires_at, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `).bind(intentId, session.character_id, username, key, free ? 0 : USERNAME_CHANGE_PRICE, session.name_changes, expiresAt, now),
+      `).bind(intentId, session.character_id, username, key, 0, session.name_changes, expiresAt, now),
     ]);
   } catch (error) {
     if (String(error).toLowerCase().includes("unique")) throw new ApiError(409, "USERNAME_TAKEN", "Bu kullanıcı adı az önce rezerve edildi.");
     throw error;
   }
-  return json({ intentId, username, price: free ? 0 : USERNAME_CHANGE_PRICE, expiresAt }, 201);
+  return json({ intentId, username, price: 0, expiresAt }, 201);
 }
 
 async function commitRenameIntent(context: ApiContext): Promise<Response> {
@@ -277,9 +297,7 @@ async function commitRenameIntent(context: ApiContext): Promise<Response> {
     FROM username_change_intents WHERE intent_id = ? AND character_id = ?
   `).bind(intentId, session.character_id).first<RenameIntentRow>();
   if (!intent || (!intent.used_at && intent.expires_at <= now)) throw new ApiError(410, "RENAME_INTENT_EXPIRED", "İsim değiştirme isteğinin süresi dolmuş.");
-  if (intent.price > 0 && !PAID_RENAME_ENABLED) {
-    throw new ApiError(503, "PAID_RENAME_UNAVAILABLE", "Ücretli kullanıcı adı değişimi güvenli ödeme doğrulaması tamamlanana kadar kapalı.");
-  }
+  if (intent.price > 0) throw new ApiError(410, "RENAME_INTENT_EXPIRED", "Bu eski kullanıcı adı isteği artık kullanılamaz.");
   if (intent.used_at) {
     const current = await context.env.DB.prepare(`
       SELECT public_id, username, is_generated, name_changes, last_name_change_at FROM players WHERE character_id = ?
@@ -292,11 +310,18 @@ async function commitRenameIntent(context: ApiContext): Promise<Response> {
       context.env.DB.prepare(`
         UPDATE players SET username = ?, username_key = ?, is_generated = 0,
           name_changes = name_changes + 1, last_name_change_at = ?, last_seen_at = ?
-        WHERE character_id = ? AND name_changes = ?
+        WHERE character_id = ? AND is_generated = 1 AND name_changes = ?
       `).bind(intent.username, intent.username_key, now, now, session.character_id, intent.expected_name_changes),
-      context.env.DB.prepare("UPDATE username_change_intents SET used_at = ? WHERE intent_id = ? AND used_at IS NULL").bind(now, intent.intent_id),
+      context.env.DB.prepare(`
+        UPDATE username_change_intents SET used_at = ?
+        WHERE intent_id = ? AND used_at IS NULL AND EXISTS (
+          SELECT 1 FROM players WHERE character_id = ? AND username_key = ? AND is_generated = 0
+        )
+      `).bind(now, intent.intent_id, session.character_id, intent.username_key),
     ]);
-    if (results[0].meta.changes !== 1) throw new ApiError(409, "PROFILE_CONFLICT", "Profil başka bir oturumda değiştirildi.");
+    if (results[0].meta.changes !== 1 && results[1].meta.changes !== 1) {
+      throw new ApiError(409, "PROFILE_CONFLICT", "Profil başka bir oturumda değiştirildi.");
+    }
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (String(error).toLowerCase().includes("unique")) throw new ApiError(409, "USERNAME_TAKEN", "Bu kullanıcı adı artık kullanılıyor.");
@@ -315,6 +340,17 @@ async function deleteSave(context: ApiContext, session: SessionRow): Promise<Res
   return json({ deleted: true, revision: 0 });
 }
 
+async function cosmeticsRoute(context: ApiContext): Promise<Response> {
+  const session = await requireSession(context.request, context.env);
+  if (context.request.method === "GET") return json({ ids: await cosmeticEntitlements(context.env, session.character_id) });
+  if (context.request.method !== "POST") return json({ error: "METHOD_NOT_ALLOWED" }, 405);
+  const body = await readJson(context.request);
+  const ids = sanitizeCosmeticIds(body && typeof body === "object" ? (body as Record<string, unknown>).ids : null);
+  if (!ids.length) throw new ApiError(400, "INVALID_COSMETICS", "Kaydedilecek geçerli kozmetik bulunamadı.");
+  await storeCosmeticEntitlements(context.env, session.character_id, ids);
+  return json({ saved: true, ids: await cosmeticEntitlements(context.env, session.character_id) });
+}
+
 async function saveRoute(context: ApiContext): Promise<Response> {
   const session = await requireSession(context.request, context.env);
   if (context.request.method === "GET") return getSave(context, session);
@@ -323,17 +359,45 @@ async function saveRoute(context: ApiContext): Promise<Response> {
   return json({ error: "METHOD_NOT_ALLOWED" }, 405);
 }
 
+async function refreshWeeklyLeaderboard(env: Bindings, periodKey: string, snapshotDay: string, now: number): Promise<number> {
+  const current = await env.DB.prepare(`
+    SELECT snapshot_day, generated_at FROM leaderboard_refreshes WHERE period_key = ?
+  `).bind(periodKey).first<LeaderboardRefreshRow>();
+  if (current?.snapshot_day === snapshotDay) return current.generated_at;
+
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM leaderboard_snapshots WHERE period_key = ?").bind(periodKey),
+    env.DB.prepare(`
+      INSERT INTO leaderboard_snapshots
+        (period_key, character_id, public_id, username, player_class, level, prestige, total_kills, unique_count, power_score, portrait_json)
+      SELECT ?, s.character_id, p.public_id, p.username, s.player_class, s.level, s.prestige,
+        s.total_kills, s.unique_count, s.power_score, s.portrait_json
+      FROM player_saves s JOIN players p ON p.character_id = s.character_id
+    `).bind(periodKey),
+    env.DB.prepare(`
+      INSERT INTO leaderboard_refreshes (period_key, snapshot_day, generated_at) VALUES (?, ?, ?)
+      ON CONFLICT(period_key) DO UPDATE SET snapshot_day = excluded.snapshot_day, generated_at = excluded.generated_at
+    `).bind(periodKey, snapshotDay, now),
+  ]);
+  return now;
+}
+
 async function leaderboard(context: ApiContext): Promise<Response> {
   if (context.request.method !== "GET") return json({ error: "METHOD_NOT_ALLOWED" }, 405);
   await requireSession(context.request, context.env);
+  const now = Date.now();
+  const date = new Date(now);
+  const periodKey = isoWeekKeyUtc(date);
+  const snapshotDay = utcDayKey(date);
+  const generatedAt = await refreshWeeklyLeaderboard(context.env, periodKey, snapshotDay, now);
   const requested = Number(new URL(context.request.url).searchParams.get("limit") || 25);
   const limit = Math.min(50, Math.max(5, Number.isFinite(requested) ? Math.floor(requested) : 25));
   const { results } = await context.env.DB.prepare(`
-    SELECT p.public_id, p.username, s.player_class, s.level, s.prestige, s.total_kills, s.unique_count, s.power_score, s.portrait_json
-    FROM player_saves s JOIN players p ON p.character_id = s.character_id
-    ORDER BY s.power_score DESC, s.level DESC, s.total_kills DESC, s.updated_at ASC
+    SELECT public_id, username, player_class, level, prestige, total_kills, unique_count, power_score, portrait_json
+    FROM leaderboard_snapshots WHERE period_key = ?
+    ORDER BY power_score DESC, level DESC, total_kills DESC, character_id ASC
     LIMIT ?
-  `).bind(limit).all<LeaderboardRow>();
+  `).bind(periodKey, limit).all<LeaderboardRow>();
   return json({
     entries: results.map((row, index) => ({
       rank: index + 1,
@@ -346,7 +410,10 @@ async function leaderboard(context: ApiContext): Promise<Response> {
       score: row.power_score,
       portrait: (() => { try { return JSON.parse(row.portrait_json); } catch { return {}; } })(),
     })),
-    generatedAt: Date.now(),
+    periodKey,
+    snapshotDay,
+    generatedAt,
+    refreshPolicy: "daily-server-snapshot",
     competitive: false,
   });
 }
@@ -363,6 +430,7 @@ export const onRequest: PagesFunction<Bindings> = async context => {
     if (path === "profile") return await profile(context);
     if (path === "profile/rename-intent") return await createRenameIntent(context);
     if (path === "profile/rename-commit") return await commitRenameIntent(context);
+    if (path === "cosmetics") return await cosmeticsRoute(context);
     if (path === "leaderboard") return await leaderboard(context);
     return json({ error: "NOT_FOUND" }, 404);
   } catch (error) {

@@ -26,6 +26,14 @@ Downtown UCP uygulama detaylarından servis anahtarını al. Anahtarı kaynak ko
 
 Preview ortamı da kullanılacaksa secret'ı hem Production hem Preview için ekle.
 
+## Harici API domainleri
+
+Downtown uygulama kaydında yalnızca aşağıdaki origin'i izinli listeye ekle:
+
+- `https://phone-gw.downtownrpg.com` — Downtown SDK ve kimlik doğrulaması.
+
+Görseller ve sesler uygulamanın kendi `https://kadim-vadi.pages.dev` origin'inden statik dosya olarak sunulur; bu nedenle GitHub, jsDelivr veya R2 için ek domain izni gerekmez. D1 yalnızca oyuncu kayıtları ve leaderboard verisi için kalır.
+
 ## D1 migration
 
 Yerel test:
@@ -62,7 +70,9 @@ GitHub bağlantılı Pages kurulumu kullanılacaksa build komutu `npm run check`
 - Yalnız Downtown telefonunda doğrulanmış oturumlar profil, bulut kayıt ve leaderboard uçlarına erişebilir. Normal tarayıcı oyunu yalnız `localStorage` üzerinde çalışır; D1'e oyuncu yazmaz, sıralamayı okuyamaz ve sıralamaya girmez.
 - Uygulama oturum token'ları D1'de yalnız SHA-256 özetiyle ve en fazla 15 dakika tutulur.
 - Bulut kaydı 200 KB ile sınırlıdır ve revision kontrolü aynı kaydın iki cihazda sessizce ezilmesini engeller. Çakışmada oyuncu Ayarlar'dan bulut kaydını veya bu cihazdaki kaydı açıkça seçer.
-- Kullanıcı adı 3-16 karakterdir, benzersizdir ve isim değiştirme isteği ödeme öncesi 10 dakika rezerve edilir.
+- Kullanıcı adı 3-16 karakterdir, benzersizdir ve hesap başına yalnızca bir kez seçilebilir; oluşturma ekranında boş bırakılırsa Market profilinden daha sonra ücretsiz seçilebilir.
+- Vadi Sıralaması haftalık dönemler halinde tutulur ve D1 tarafından UTC gün başına en fazla bir kez snapshot olarak yenilenir.
+- Satın alınan kozmetik kimlikleri oyun kaydından ayrı `player_cosmetics` tablosunda hesaba bağlı tutulur.
 - Telefon içi `bank.charge` sunucuda doğrulanabilir makbuz sunmadığı için ücretli isim değişimi hem arayüzde hem API'de kapalıdır. Downtown OAuth ödeme istemcisi ve imzalı callback yapılandırıldığında yeniden açılmalıdır; yalnız istemci başarısına güvenilmemelidir.
 - Her Downtown karakteri için en fazla beş etkin uygulama oturumu tutulur; böylece telefon/cihaz geçişi çalışırken oturum tablosu sınırsız büyümez.
 - Leaderboard şimdilik ödülsüz betadır; oyun ilerlemesi istemci tarafından üretildiği için ödüllü rekabet öncesinde sunucu tarafı savaş doğrulaması gerekir.

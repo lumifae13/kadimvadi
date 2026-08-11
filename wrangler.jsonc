@@ -14,11 +14,5 @@
       "database_id": "4e30465f-47ae-42c2-b769-499ad92063ec",
       "migrations_dir": "migrations"
     }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "GAME_ASSETS",
-      "bucket_name": "kadim-vadi-assets"
-    }
   ]
 }

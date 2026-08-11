@@ -1,6 +1,16 @@
 /*
-  Cache-Control: public, max-age=0, must-revalidate
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
   Permissions-Policy: camera=(), geolocation=(), microphone=()
   Access-Control-Allow-Origin: *
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/game-assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: cross-origin
+  Timing-Allow-Origin: *

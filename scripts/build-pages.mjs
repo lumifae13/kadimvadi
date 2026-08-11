@@ -22,5 +22,6 @@ for (const file of await readdir(root)) {
 
 await cp(join(root, "assets"), join(output, "assets"), { recursive: true });
 await cp(join(root, "character-v54"), join(output, "character-v54"), { recursive: true });
+await cp(join(root, "game-assets"), join(output, "game-assets"), { recursive: true });
 
 console.log("Cloudflare Pages çıktısı hazır: dist/");

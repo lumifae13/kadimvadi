@@ -16,6 +16,7 @@ export type SavePayload = {
   state: Record<string, unknown>;
   serializedState: string;
   summary: SaveSummary;
+  cosmeticIds: string[];
 };
 
 export class ApiError extends Error {
@@ -36,6 +37,27 @@ export function boundedInteger(value: unknown, fallback: number, min: number, ma
 
 function utf8Bytes(value: string): number {
   return new TextEncoder().encode(value).byteLength;
+}
+
+const COSMETIC_ID_PATTERN = /^[A-Za-z0-9._-]{1,160}$/;
+
+export function sanitizeCosmeticIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.filter((item): item is string => typeof item === "string" && COSMETIC_ID_PATTERN.test(item)))].slice(0, 512);
+}
+
+export function utcDayKey(date = new Date()): string {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
+export function isoWeekKeyUtc(date = new Date()): string {
+  const target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const weekday = target.getUTCDay() || 7;
+  target.setUTCDate(target.getUTCDate() + 4 - weekday);
+  const isoYear = target.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(isoYear, 0, 1));
+  const week = Math.ceil(((target.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  return `${isoYear}-W${String(week).padStart(2, "0")}`;
 }
 
 export function summarizeState(state: Record<string, unknown>): SaveSummary {
@@ -102,5 +124,6 @@ export function parseSavePayload(value: unknown): SavePayload {
     state: value.state,
     serializedState,
     summary: summarizeState(value.state),
+    cosmeticIds: sanitizeCosmeticIds(value.state.ownedCosmetics),
   };
 }
