@@ -33,11 +33,11 @@ if (!ffmpegPath) throw new Error("ffmpeg-static çalıştırılabilir dosyası b
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 
-function encode(input, destination) {
+function encode(input, destination, bitrate) {
   return new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(ffmpegPath, [
       "-hide_banner", "-loglevel", "error", "-y", "-i", input,
-      "-vn", "-ac", "1", "-ar", "44100", "-codec:a", "libmp3lame", "-b:a", "48k", destination,
+      "-vn", "-ac", "1", "-ar", "44100", "-codec:a", "libmp3lame", "-b:a", bitrate, destination,
     ], { stdio: "inherit" });
     child.on("error", rejectPromise);
     child.on("exit", code => code === 0 ? resolvePromise() : rejectPromise(new Error(`FFmpeg ${code} koduyla kapandı: ${basename(input)}`)));
@@ -46,7 +46,7 @@ function encode(input, destination) {
 
 for (const file of files) {
   const target = `${file.replace(/\.(?:mp3|wav)$/i, "")}.mp3`;
-  await encode(join(source, file), join(output, target));
+  await encode(join(source, file), join(output, target), "48k");
 }
 
-console.log(`${files.length} telefon sesi 48 kbps MP3 olarak hazırlandı.`);
+console.log(`${files.length} telefon sesi paket boyutuna uygun MP3 olarak hazırlandı.`);

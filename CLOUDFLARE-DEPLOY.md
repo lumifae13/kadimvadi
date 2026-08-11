@@ -33,7 +33,7 @@ Downtown uygulama kaydında aşağıdaki origin'leri harici API domainleri liste
 - `https://phone-gw.downtownrpg.com` — Downtown SDK ve kimlik doğrulaması.
 - `https://kadim-vadi.pages.dev` — telefon paketinden yapılan D1/API çağrıları.
 
-Gerçek oyun telefonu dış asset isteklerini güvenilir biçimde göstermediği için PNG/GIF/JSON assetleri ile telefon için 48 kbps MP3'e sıkıştırılmış bütün kullanılan sesler UCP paketine dahil edilir. `kadim-vadi.pages.dev` yalnız bulut kayıt ve leaderboard API'si için gereklidir. GitHub, jsDelivr veya R2 için ek domain izni gerekmez.
+Gerçek oyun telefonu dış asset isteklerini güvenilir biçimde göstermediği için PNG/GIF/JSON assetleri ile telefon için paket boyutuna uygun MP3'e sıkıştırılmış bütün kullanılan sesler UCP paketine dahil edilir. `kadim-vadi.pages.dev` yalnız bulut kayıt ve leaderboard API'si için gereklidir. GitHub, jsDelivr veya R2 için ek domain izni gerekmez.
 
 UCP'ye yüklenecek paketi üretmek için `npm run build:ucp` çalıştır. `ucp-package` klasörünün **içeriğini** ZIP'le; `index.html` ZIP kökünde olmalıdır. Derleme 8 MB sınırını aşarsa hata verir. Normal Pages dağıtımı için `npm run build` kullanılmaya devam eder.
 

@@ -52,9 +52,28 @@ if (!ffmpegPath) throw new Error("ffmpeg-static çalıştırılabilir dosyası b
 await runFfmpeg([
   "-hide_banner", "-loglevel", "error", "-y",
   "-i", join(v62Root, "5uCOUOu.png"),
-  "-vf", "scale=704:384:flags=neighbor", "-frames:v", "1",
+  "-vf", "scale=352:192:flags=neighbor", "-frames:v", "1",
   join(output, "game-assets", "v62", "5uCOUOu.png"),
 ]);
+
+const paletteOptimizedAssets = [
+  "raven-fantasy-icons-32.png",
+  "region-plant-poison.png",
+  "region-slime-green.png",
+  "region-slime-orange.png",
+  "region-plant-jump.png",
+  "region-blue-wizard.png",
+  "region-cave-front.png",
+  "region-cave-near.png",
+];
+for (const file of paletteOptimizedAssets) {
+  await runFfmpeg([
+    "-hide_banner", "-loglevel", "error", "-y",
+    "-i", join(v62Root, file),
+    "-vf", "split[s0][s1];[s0]palettegen=max_colors=256:reserve_transparent=1[p];[s1][p]paletteuse=dither=none",
+    join(output, "game-assets", "v62", file),
+  ]);
+}
 
 async function directoryBytes(directory) {
   let total = 0;
