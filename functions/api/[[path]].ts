@@ -63,7 +63,13 @@ function bearerToken(request: Request): string {
   const authorization = request.headers.get("authorization") || "";
   const match = authorization.match(/^Bearer\s+(.{20,4096})$/i);
   if (!match) throw new ApiError(401, "AUTH_REQUIRED", "Kimlik doğrulaması gerekli.");
-  return match[1];
+  return match[1].trim();
+}
+
+function downtownErrorCode(payload: unknown): string | null {
+  if (payload === null || typeof payload !== "object") return null;
+  const value = String((payload as Record<string, unknown>).code || (payload as Record<string, unknown>).error || "").toUpperCase();
+  return /^[A-Z0-9_]{2,48}$/.test(value) ? value : null;
 }
 
 async function sha256(value: string): Promise<string> {
@@ -98,29 +104,43 @@ function publicProfile(row: Pick<SessionRow, "public_id" | "username" | "is_gene
 
 async function verifyDowntownIdentity(request: Request, env: Bindings): Promise<{ characterId: number; expiresAt: number }> {
   const token = bearerToken(request);
-  if (!env.DOWNTOWN_SERVICE_KEY) throw new ApiError(503, "IDENTITY_NOT_CONFIGURED", "Kimlik servisi henüz yapılandırılmadı.");
+  const serviceKey = env.DOWNTOWN_SERVICE_KEY?.trim();
+  if (!serviceKey) throw new ApiError(503, "IDENTITY_NOT_CONFIGURED", "Kimlik servisi henüz yapılandırılmadı.");
   let response: Response;
   try {
     response = await fetch(env.DOWNTOWN_VERIFY_URL, {
       method: "POST",
-      headers: { authorization: `Bearer ${env.DOWNTOWN_SERVICE_KEY}`, "content-type": "application/json" },
+      headers: { authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
       body: JSON.stringify({ token }),
     });
   } catch {
     throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
   }
-  if (response.status === 401 || response.status === 403) throw new ApiError(401, "INVALID_IDENTITY", "Downtown kimliği doğrulanamadı.");
-  if (!response.ok) throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
   let payload: unknown;
   try {
     payload = await response.json();
   } catch {
-    throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisi geçersiz yanıt verdi.");
+    payload = null;
+  }
+  const upstreamCode = downtownErrorCode(payload);
+  if (response.status === 401 || response.status === 403) {
+    console.error(JSON.stringify({ message: "downtown service authentication rejected", status: response.status, upstreamCode }));
+    throw new ApiError(503, "IDENTITY_SERVICE_AUTH", "Downtown servis anahtarı reddedildi; Cloudflare gizli anahtarı yenilenmeli.");
+  }
+  if (!response.ok) {
+    console.error(JSON.stringify({ message: "downtown identity service unavailable", status: response.status, upstreamCode }));
+    throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisine ulaşılamadı.");
   }
   if (payload === null || typeof payload !== "object") throw new ApiError(502, "IDENTITY_UNAVAILABLE", "Kimlik servisi geçersiz yanıt verdi.");
   const result = payload as Record<string, unknown>;
   const characterId = Number(result.characterId);
-  if (result.valid !== true || !Number.isSafeInteger(characterId) || characterId <= 0) throw new ApiError(401, "INVALID_IDENTITY", "Downtown kimliği doğrulanamadı.");
+  if (result.valid !== true || !Number.isSafeInteger(characterId) || characterId <= 0) {
+    const reason = downtownErrorCode(result);
+    console.warn(JSON.stringify({ message: "downtown identity token rejected", reason }));
+    if (reason === "EXPIRED") throw new ApiError(401, "IDENTITY_EXPIRED", "Downtown kimlik token'ı sona ermiş; yeniden deneniyor.");
+    if (reason === "WRONG_APP") throw new ApiError(401, "INVALID_IDENTITY_WRONG_APP", "Telefon token'ı ile servis anahtarı farklı Downtown uygulamalarına ait.");
+    throw new ApiError(401, reason ? `INVALID_IDENTITY_${reason}` : "INVALID_IDENTITY", `Downtown kimlik token'ı reddedildi${reason ? ` (${reason})` : ""}.`);
+  }
   const rawExpiry = Number(result.expiresAt);
   const tokenExpiry = Number.isFinite(rawExpiry) ? (rawExpiry < 1_000_000_000_000 ? rawExpiry * 1000 : rawExpiry) : Date.now() + 15 * 60_000;
   const expiresAt = Math.min(tokenExpiry, Date.now() + 15 * 60_000);
