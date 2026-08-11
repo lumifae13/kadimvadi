@@ -28,9 +28,12 @@ Preview ortamı da kullanılacaksa secret'ı hem Production hem Preview için ek
 
 ## Harici API domainleri
 
-Downtown uygulama kaydında yalnızca aşağıdaki origin'i izinli listeye ekle:
+Downtown uygulama kaydında aşağıdaki origin'leri harici API domainleri listesine ekle:
 
 - `https://phone-gw.downtownrpg.com` — Downtown SDK ve kimlik doğrulaması.
+- `https://kadim-vadi.pages.dev` — arşivlenmiş telefon paketi içinden yüklenen oyun görselleri ve sesleri.
+
+Telefon önizlemesi Pages adresini doğrudan açtığı için assetler aynı origin'den görünür. Gerçek oyun telefonu ise uygulamanın arşivlenmiş kopyasını Downtown origin'inden çalıştırır; bu yüzden `kadim-vadi.pages.dev` gerçek telefonda harici domain sayılır. Bu origin bildirilmezse HTML ve metinler görünürken karakter, düşman, ikon, arka plan ve ses istekleri telefon tarafından topluca engellenir.
 
 Görseller ve sesler uygulamanın kendi `https://kadim-vadi.pages.dev` origin'inden statik dosya olarak sunulur; bu nedenle GitHub, jsDelivr veya R2 için ek domain izni gerekmez. D1 yalnızca oyuncu kayıtları ve leaderboard verisi için kalır.
 
