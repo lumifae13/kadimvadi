@@ -488,10 +488,9 @@
   "use strict";
 
   const ASSET_URL = "./game-assets/v62/";
-  const REMOTE_ASSET_URL = "https://kadim-vadi.pages.dev/game-assets/v62/";
   const CLOUD_API_URL = "https://kadim-vadi.pages.dev/api/";
   const CDN_URL = ASSET_URL;
-  const LOCAL_AUDIO_URL = REMOTE_ASSET_URL;
+  const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
   const GAME_VERSION = "v61-alpha";
@@ -604,16 +603,16 @@
 
   const sfx = {
     bg:new Audio(LOCAL_AUDIO_URL+"kv-bg.mp3"),
-    p_atk:new Audio(LOCAL_AUDIO_URL+"kv-player-attack.wav"), e_atk:new Audio(LOCAL_AUDIO_URL+"kv-enemy-attack.wav"),
-    loot:new Audio(LOCAL_AUDIO_URL+"gem.wav"), lvlup:new Audio(LOCAL_AUDIO_URL+"kv-level-up.wav"),
-    equip:new Audio(LOCAL_AUDIO_URL+"kv-equip.wav"), buy:new Audio(LOCAL_AUDIO_URL+"kv-buy.wav"),
-    mapchange:new Audio(LOCAL_AUDIO_URL+"kv-map-change.wav"), chest:new Audio(LOCAL_AUDIO_URL+"kv-chest.wav"),
-    e_death:new Audio(LOCAL_AUDIO_URL+"kv-enemy-death.wav"), p_death:new Audio(LOCAL_AUDIO_URL+"kv-player-death.wav"),
-    tab:new Audio(LOCAL_AUDIO_URL+"kv-tab.wav"), select:new Audio(LOCAL_AUDIO_URL+"kv-select.wav"),
-    ritual:new Audio(LOCAL_AUDIO_URL+"kv-ritual.wav"), quest_start:new Audio(LOCAL_AUDIO_URL+"kv-quest-start.wav"),
-    rune:new Audio(LOCAL_AUDIO_URL+"kv-rune.wav"), altar_upg:new Audio(LOCAL_AUDIO_URL+"kv-altar-upgrade.wav"),
-    weapon_upg:new Audio(LOCAL_AUDIO_URL+"kv-weapon-upgrade.wav"), robe_upg:new Audio(LOCAL_AUDIO_URL+"kv-robe-upgrade.wav"),
-    boss:new Audio(LOCAL_AUDIO_URL+"boss-warning.wav")
+    p_atk:new Audio(LOCAL_AUDIO_URL+"kv-player-attack.mp3"), e_atk:new Audio(LOCAL_AUDIO_URL+"kv-enemy-attack.mp3"),
+    loot:new Audio(LOCAL_AUDIO_URL+"gem.mp3"), lvlup:new Audio(LOCAL_AUDIO_URL+"kv-level-up.mp3"),
+    equip:new Audio(LOCAL_AUDIO_URL+"kv-equip.mp3"), buy:new Audio(LOCAL_AUDIO_URL+"kv-buy.mp3"),
+    mapchange:new Audio(LOCAL_AUDIO_URL+"kv-map-change.mp3"), chest:new Audio(LOCAL_AUDIO_URL+"kv-chest.mp3"),
+    e_death:new Audio(LOCAL_AUDIO_URL+"kv-enemy-death.mp3"), p_death:new Audio(LOCAL_AUDIO_URL+"kv-player-death.mp3"),
+    tab:new Audio(LOCAL_AUDIO_URL+"kv-tab.mp3"), select:new Audio(LOCAL_AUDIO_URL+"kv-select.mp3"),
+    ritual:new Audio(LOCAL_AUDIO_URL+"kv-ritual.mp3"), quest_start:new Audio(LOCAL_AUDIO_URL+"kv-quest-start.mp3"),
+    rune:new Audio(LOCAL_AUDIO_URL+"kv-rune.mp3"), altar_upg:new Audio(LOCAL_AUDIO_URL+"kv-altar-upgrade.mp3"),
+    weapon_upg:new Audio(LOCAL_AUDIO_URL+"kv-weapon-upgrade.mp3"), robe_upg:new Audio(LOCAL_AUDIO_URL+"kv-robe-upgrade.mp3"),
+    boss:new Audio(LOCAL_AUDIO_URL+"boss-warning.mp3")
   };
   sfx.bg.loop = true;
 

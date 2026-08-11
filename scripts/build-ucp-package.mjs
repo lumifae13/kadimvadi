@@ -1,10 +1,11 @@
 import { cp, mkdir, readdir, rm, stat } from "node:fs/promises";
-import { basename, join, relative, resolve } from "node:path";
+import { basename, join, relative, resolve, sep } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const output = resolve(root, "ucp-package");
 const outputRelative = relative(root, output);
 const excludedAudio = /\.(?:mp3|ogg|wav)$/i;
+const packagedAudioDirectory = `${sep}phone-audio${sep}`;
 
 if (basename(output) !== "ucp-package" || outputRelative.startsWith("..") || outputRelative === "") {
   throw new Error("Güvensiz UCP çıktı yolu reddedildi.");
@@ -21,7 +22,7 @@ for (const file of await readdir(root)) {
 await cp(join(root, "assets"), join(output, "assets"), { recursive: true });
 await cp(join(root, "game-assets", "v62"), join(output, "game-assets", "v62"), {
   recursive: true,
-  filter: source => !excludedAudio.test(source),
+  filter: source => source.includes(packagedAudioDirectory) || !excludedAudio.test(source),
 });
 
 async function directoryBytes(directory) {
@@ -35,4 +36,4 @@ async function directoryBytes(directory) {
 
 const bytes = await directoryBytes(output);
 if (bytes > 8 * 1024 * 1024) throw new Error(`UCP paketi 8 MB sınırını aşıyor: ${bytes} bayt.`);
-console.log(`UCP paketi hazır: ${(bytes / 1024 / 1024).toFixed(2)} MB (sesler Pages üzerinden yüklenir).`);
+console.log(`UCP paketi hazır: ${(bytes / 1024 / 1024).toFixed(2)} MB (görseller ve kullanılan sesler dahil).`);

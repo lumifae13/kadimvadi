@@ -9,4 +9,5 @@ tmp-inspect/
 dist/
 ucp-package/
 kadim-vadi-ucp*.zip
+game-assets/v62/phone-audio/
 worker-configuration.d.ts
