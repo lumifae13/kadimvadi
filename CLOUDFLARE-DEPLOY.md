@@ -9,7 +9,7 @@ Proje Cloudflare Pages Functions ve D1 kullanır. Oyun dosyaları Pages üzerind
 - D1 kimliği: `4e30465f-47ae-42c2-b769-499ad92063ec`
 - Üretim domaini: `https://kadim-vadi.pages.dev`
 - API sağlık kontrolü: `/api/health`
-- Oyun sürümü: `v61-alpha`
+- Oyun sürümü: `v63-alpha`
 
 ## Downtown tarafı
 
@@ -66,6 +66,8 @@ npm run cf:deploy
 ```
 
 GitHub bağlantılı Pages kurulumu kullanılacaksa build komutu `npm run check`, çıktı klasörü `dist` olmalıdır. D1 binding adı `DB` olarak kalmalıdır. Kaynak kod, migration ve test dosyaları `dist` dışında tutulduğu için web üzerinden yayınlanmaz.
+
+Telefon paketini doğrulamak için geçici olarak `https://kadim-vadi.pages.dev/?asset-test=1` Bundle URL'siyle **Telefonumda Dene** kullanılabilir. Başla düğmesinden sonra ekranda `v63-alpha`, görsel, fetch, ses ve SDK sonuçları görünür. Yayındaki uygulamalar başvuru anında arşivlendiği için canlı hostu güncellemek tek başına kurulu uygulamayı yenilemez; yeni sürüm için UCP'den güncelleme başvurusu gerekir.
 
 ## Güvenlik notları
 

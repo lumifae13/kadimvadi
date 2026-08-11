@@ -494,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v61-alpha";
+  const GAME_VERSION = "v63-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -518,6 +518,19 @@
     document.querySelectorAll("[data-bg]").forEach(el => el.style.backgroundImage = `url("${CDN_URL}${el.dataset.bg}")`);
   }
   initCDN();
+
+  const ASSET_TEST_MODE=new URLSearchParams(location.search).has("asset-test");
+  function diagnosticImage(url){return new Promise(resolve=>{const image=new Image(),done=ok=>resolve(ok);image.onload=()=>done(true);image.onerror=()=>done(false);image.src=url;setTimeout(()=>done(false),5000)})}
+  function diagnosticAudio(url){return new Promise(resolve=>{const audio=new Audio();let settled=false;const done=ok=>{if(settled)return;settled=true;audio.src="";resolve(ok)};audio.preload="auto";audio.addEventListener("canplaythrough",()=>done(true),{once:true});audio.addEventListener("error",()=>done(false),{once:true});audio.src=url;audio.load();setTimeout(()=>done(false),5000)})}
+  function showAssetDiagnostic(lines,ok){let panel=$("asset-diagnostic");if(!panel){panel=document.createElement("div");panel.id="asset-diagnostic";panel.style.cssText="position:fixed;left:8px;right:8px;top:8px;z-index:99999;padding:9px;border:2px solid #ffd34d;border-radius:7px;background:#080006f2;color:#fff;font:11px/1.45 monospace;white-space:pre-wrap;box-shadow:0 3px 18px #000";document.body.appendChild(panel)}panel.style.borderColor=ok?"#56d879":"#ff506f";panel.textContent=lines.join("\n")}
+  async function runAssetDiagnostics(){
+    const imageUrl=ASSET_URL+"rZ2HD2E.png",audioUrl=LOCAL_AUDIO_URL+"kv-bg.mp3";
+    const imageOk=await diagnosticImage(imageUrl);let fetchStatus="HATA";
+    try{const response=await fetch(imageUrl,{cache:"no-store"});fetchStatus=`${response.status} ${response.headers.get("content-type")||"?"}`}catch(error){fetchStatus=error?.name||"HATA"}
+    const audioOk=await diagnosticAudio(audioUrl),ok=imageOk&&fetchStatus.startsWith("200")&&audioOk;
+    if(ASSET_TEST_MODE||!ok)showAssetDiagnostic([`${GAME_VERSION} · ${location.origin}`,`GÖRSEL: ${imageOk?"OK":"BLOKLU"}`,`FETCH: ${fetchStatus}`,`SES: ${audioOk?"OK":"BLOKLU"}`,`SDK: ${typeof PhoneSDK!=="undefined"?"OK":"YOK"}`],ok);
+    return ok;
+  }
 
   let characterManifest=null,characterAssets=[],creatorRenderer=null,creatorConfirmRenderer=null,battleRenderer=null,inventoryRenderer=null,creatorCategory="skin",creatorDraft=null,creatorClassDraft=null,creatorStep="appearance",creatorForcedOpen=false,pendingPrestigeClass=null,detailItemId=null;
   const characterImageCache=new Map();
@@ -634,6 +647,7 @@
   async function startGameIntro(){
     if(introStarted)return;introStarted=true;const button=$("intro-start");button.disabled=true;button.textContent="Hazırlanıyor...";
     sfx.bg.volume=userSettings.music;sfx.bg.play().catch(()=>{});
+    runAssetDiagnostics().catch(()=>{if(ASSET_TEST_MODE)showAssetDiagnostic([`${GAME_VERSION} · TANILAMA HATASI`],false)});
     if(!characterAssets.length)await loadCharacterManifest();
     const starterPaths=startupCharacterPaths();
     await preloadCharacterAssets((done,total)=>{const percent=total?Math.round(done/total*100):100;$("intro-progress-bar").style.width=percent+"%";$("intro-progress-text").textContent=`Karakterler hazırlanıyor: %${percent}`},starterPaths,3);
