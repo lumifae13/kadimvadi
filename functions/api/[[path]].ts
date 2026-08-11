@@ -1,4 +1,4 @@
-import { ApiError, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, utcDayKey } from "../../src/cloud-save-core";
+import { ApiError, isSaveRegression, isoWeekKeyUtc, normalizeUsername, parseSavePayload, sanitizeCosmeticIds, utcDayKey } from "../../src/cloud-save-core";
 
 type Bindings = Env & { DOWNTOWN_SERVICE_KEY?: string };
 type ApiContext = Parameters<PagesFunction<Bindings>>[0];
@@ -13,6 +13,7 @@ type SessionRow = {
   expires_at: number;
 };
 type SaveRow = { revision: number; save_version: string; state_json: string; updated_at: number };
+type SaveProgressRow = { revision: number; updated_at: number; player_class: "mage" | "warrior" | "ranger"; level: number; prestige: number; total_kills: number; unique_count: number };
 type LeaderboardRow = {
   public_id: string;
   username: string;
@@ -248,6 +249,27 @@ async function putSave(context: ApiContext, session: SessionRow): Promise<Respon
       VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(session.character_id, payload.saveVersion, payload.serializedState, summary.playerClass, summary.level, summary.prestige, summary.totalKills, summary.uniqueCount, summary.powerScore, JSON.stringify(summary.portrait), now, now).run();
   } else {
+    const current = await context.env.DB.prepare(`
+      SELECT revision, updated_at, player_class, level, prestige, total_kills, unique_count
+      FROM player_saves WHERE character_id = ?
+    `).bind(session.character_id).first<SaveProgressRow>();
+    if (!current || current.revision !== payload.expectedRevision) {
+      return json({ error: "SAVE_CONFLICT", revision: current?.revision || 0, updatedAt: current?.updated_at || null }, 409);
+    }
+    if (isSaveRegression({
+      playerClass: current.player_class,
+      level: current.level,
+      prestige: current.prestige,
+      totalKills: current.total_kills,
+      uniqueCount: current.unique_count,
+    }, summary)) {
+      return json({
+        error: "SAVE_REGRESSION",
+        message: "Bulut kaydın daha ileride; geriye giden kayıt sıfırlanmaya karşı engellendi.",
+        revision: current.revision,
+        updatedAt: current.updated_at,
+      }, 409);
+    }
     result = await context.env.DB.prepare(`
       UPDATE player_saves SET
         revision = revision + 1, save_version = ?, state_json = ?, player_class = ?, level = ?, prestige = ?,
@@ -271,8 +293,18 @@ async function putSave(context: ApiContext, session: SessionRow): Promise<Respon
 
 async function profile(context: ApiContext): Promise<Response> {
   const session = await requireSession(context.request, context.env);
-  if (context.request.method !== "GET") return json({ error: "METHOD_NOT_ALLOWED" }, 405);
-  return json({ player: publicProfile(session), renamePrice: null });
+  if (context.request.method === "GET") return json({ player: publicProfile(session), renamePrice: null });
+  if (context.request.method !== "DELETE") return json({ error: "METHOD_NOT_ALLOWED" }, 405);
+  const results = await context.env.DB.batch([
+    context.env.DB.prepare("DELETE FROM leaderboard_snapshots WHERE character_id = ?").bind(session.character_id),
+    context.env.DB.prepare("DELETE FROM player_cosmetics WHERE character_id = ?").bind(session.character_id),
+    context.env.DB.prepare("DELETE FROM username_change_intents WHERE character_id = ?").bind(session.character_id),
+    context.env.DB.prepare("DELETE FROM player_saves WHERE character_id = ?").bind(session.character_id),
+    context.env.DB.prepare("DELETE FROM sessions WHERE character_id = ?").bind(session.character_id),
+    context.env.DB.prepare("DELETE FROM players WHERE character_id = ?").bind(session.character_id),
+  ]);
+  if (results[results.length - 1]?.meta.changes !== 1) throw new ApiError(409, "PROFILE_DELETE_CONFLICT", "Oyuncu kaydı zaten silinmiş veya değişmiş.");
+  return json({ deleted: true });
 }
 
 async function createRenameIntent(context: ApiContext): Promise<Response> {

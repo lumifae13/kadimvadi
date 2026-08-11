@@ -494,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v68-alpha";
+  const GAME_VERSION = "v69-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -1039,7 +1039,7 @@
   let currentEnemyHp=5,currentEnemyMaxHp=5,enemyAttack=1;
   let playerHp=50,playerMaxHp=50,playerAtk=5,playerDef=0,playerShield=0,playerMaxShield=0;
   let isDead=false,isMapChanging=false,isCombatActive=false,introStarted=false,activeTabId="main";
-  let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0;
+  let saveChain=Promise.resolve(),saveQueued=false,marketPurchasePending=false,resetArmedUntil=0,hardResetPending=false;
   let phoneContext=null;
   const cloudSync={sessionToken:null,expiresAt:0,revision:0,status:isPhone?"connecting":"local",pendingSnapshot:null,timer:null,flushPromise:null,lastSerialized:null,player:null,cosmeticEntitlements:[],conflictBlocked:false,conflictRemote:null};
   let mgActive=false,mgPos=0,mgDir=1,mgSpeed=2,mgAnim=null,gemInfusionTarget="weapon";
@@ -1147,11 +1147,11 @@
   function mergeCosmeticEntitlements(save,ids=cloudSync.cosmeticEntitlements){if(!save||!Array.isArray(ids)||!ids.length)return save;return {...save,ownedCosmetics:[...new Set([...(Array.isArray(save.ownedCosmetics)?save.ownedCosmetics:[]),...ids])]}}
   async function fetchCloudSave(){if(!isPhone)return null;try{await ensureCloudSession();const data=await cloudApi("save");cloudSync.revision=Number(data.revision)||0;cloudSync.cosmeticEntitlements=Array.isArray(data.cosmetics)?data.cosmetics:[];const merged=mergeCosmeticEntitlements(data.save);cloudSync.lastSerialized=merged?JSON.stringify(merged):null;setCloudStatus("synced");return merged||null}catch(error){console.warn("Cloud save unavailable",error?.message);setCloudStatus("offline");return null}}
   async function syncCosmeticEntitlements(ids){if(!isPhone||!Array.isArray(ids)||!ids.length)return;const data=await cloudApi("cosmetics",{method:"POST",body:JSON.stringify({ids})});cloudSync.cosmeticEntitlements=Array.isArray(data.ids)?data.ids:[...new Set([...cloudSync.cosmeticEntitlements,...ids])]}
-  function scheduleCloudSave(snapshot){if(!isPhone)return;cloudSync.pendingSnapshot=clone(snapshot);clearTimeout(cloudSync.timer);if(cloudSync.conflictBlocked){setCloudStatus("conflict");return}cloudSync.timer=setTimeout(()=>flushCloudSave().catch(error=>{console.warn("Cloud save failed",error?.message);setCloudStatus(error?.code==="SAVE_CONFLICT"?"conflict":"offline")}),4500)}
+  function scheduleCloudSave(snapshot){if(!isPhone||hardResetPending||!snapshot?.gender||!snapshot?.playerClass)return;cloudSync.pendingSnapshot=clone(snapshot);clearTimeout(cloudSync.timer);if(cloudSync.conflictBlocked){setCloudStatus("conflict");return}cloudSync.timer=setTimeout(()=>flushCloudSave().catch(error=>{console.warn("Cloud save failed",error?.message);setCloudStatus(error?.code==="SAVE_CONFLICT"?"conflict":"offline")}),4500)}
   async function performCloudSave(){
     const snapshot=cloudSync.pendingSnapshot;if(!isPhone||!snapshot)return;if(cloudSync.conflictBlocked){setCloudStatus("conflict");return}const serialized=JSON.stringify(snapshot);if(serialized===cloudSync.lastSerialized){cloudSync.pendingSnapshot=null;return}setCloudStatus("saving");
     try{const data=await cloudApi("save",{method:"PUT",body:JSON.stringify({expectedRevision:cloudSync.revision,saveVersion:GAME_VERSION,state:snapshot})});cloudSync.revision=data.revision;cloudSync.lastSerialized=serialized;if(cloudSync.pendingSnapshot&&JSON.stringify(cloudSync.pendingSnapshot)===serialized)cloudSync.pendingSnapshot=null;setCloudStatus("synced")}
-    catch(error){if(error?.status===409){const remote=await cloudApi("save");cloudSync.revision=Number(remote.revision)||0;cloudSync.cosmeticEntitlements=Array.isArray(remote.cosmetics)?remote.cosmetics:cloudSync.cosmeticEntitlements;const remoteSave=mergeCosmeticEntitlements(remote.save);if(remoteSave&&JSON.stringify(remoteSave)===serialized){cloudSync.lastSerialized=serialized;cloudSync.pendingSnapshot=null;setCloudStatus("synced");return}cloudSync.conflictBlocked=true;cloudSync.conflictRemote=remoteSave?clone(remoteSave):null;error.code="SAVE_CONFLICT";setCloudStatus("conflict")}throw error}
+    catch(error){if(error?.status===409){const remote=await cloudApi("save");cloudSync.revision=Number(remote.revision)||0;cloudSync.cosmeticEntitlements=Array.isArray(remote.cosmetics)?remote.cosmetics:cloudSync.cosmeticEntitlements;const remoteSave=mergeCosmeticEntitlements(remote.save);if(remoteSave&&error?.code==="SAVE_REGRESSION"){const protectedSave=sanitizeState(remoteSave),protectedSnap=clone(protectedSave);state=protectedSave;cloudSync.lastSerialized=JSON.stringify(protectedSnap);cloudSync.pendingSnapshot=null;cloudSync.conflictBlocked=false;cloudSync.conflictRemote=null;try{localStorage.setItem(BACKUP_KEY,JSON.stringify(protectedSnap))}catch{}try{await phone.storage.set(SAVE_KEY,protectedSnap)}catch{}setCloudStatus("synced");showToast("Bulut kaydın sıfırlanmaya karşı korundu.");setTimeout(()=>location.reload(),350);return}if(remoteSave&&JSON.stringify(remoteSave)===serialized){cloudSync.lastSerialized=serialized;cloudSync.pendingSnapshot=null;setCloudStatus("synced");return}cloudSync.conflictBlocked=true;cloudSync.conflictRemote=remoteSave?clone(remoteSave):null;error.code="SAVE_CONFLICT";setCloudStatus("conflict")}throw error}
   }
   async function flushCloudSave(){
     if(cloudSync.flushPromise)return cloudSync.flushPromise;
@@ -1805,13 +1805,19 @@
   window.switchTab=switchTab;
 
   async function saveState(){
-    const snap=clone(state);try{localStorage.setItem(BACKUP_KEY,JSON.stringify(snap))}catch{}scheduleCloudSave(snap);
+    if(hardResetPending)return false;const snap=clone(state);try{localStorage.setItem(BACKUP_KEY,JSON.stringify(snap))}catch{}scheduleCloudSave(snap);
     saveChain=saveChain.catch(()=>{}).then(async()=>{let last;for(let i=0;i<3;i++){try{await phone.storage.set(SAVE_KEY,snap);return true}catch(e){last=e;await new Promise(r=>setTimeout(r,250*(i+1)))}}throw last});return saveChain;
   }
-  function queueSave(){if(saveQueued)return;saveQueued=true;setTimeout(()=>{saveQueued=false;saveState().catch(()=>{})},400)}
+  function queueSave(){if(saveQueued||hardResetPending)return;saveQueued=true;setTimeout(()=>{saveQueued=false;if(!hardResetPending)saveState().catch(()=>{})},400)}
   async function hardResetGame(){
-    const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("Sıfırlamak için 4 saniye içinde tekrar bas.");return}
-    state=sanitizeState(clone(defaultState));try{localStorage.removeItem(BACKUP_KEY)}catch{};await saveState().catch(()=>{});location.reload()
+    if(hardResetPending)return;const now=Date.now();if(now>resetArmedUntil){resetArmedUntil=now+4000;showToast("Tüm ilerleme ve kullanıcı adı silinecek. Onaylamak için tekrar bas.");return}
+    hardResetPending=true;resetArmedUntil=0;clearTimeout(cloudSync.timer);cloudSync.pendingSnapshot=null;cloudSync.conflictBlocked=true;setCloudStatus("saving","Tüm kayıtlar siliniyor…");
+    try{
+      await saveChain.catch(()=>{});if(cloudSync.flushPromise)await cloudSync.flushPromise.catch(()=>{});
+      if(isPhone){let storageError;for(let attempt=0;attempt<3;attempt++){try{await phone.storage.set(SAVE_KEY,null);storageError=null;break}catch(error){storageError=error;await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)))}}if(storageError)throw storageError;await cloudApi("profile",{method:"DELETE"})}
+      try{localStorage.removeItem(BACKUP_KEY);localStorage.removeItem(LOCAL_USERNAME_KEY)}catch{}
+      cloudSync.sessionToken=null;cloudSync.expiresAt=0;state=sanitizeState(clone(defaultState));location.reload()
+    }catch(error){hardResetPending=false;cloudSync.conflictBlocked=false;setCloudStatus(isPhone?"offline":"local");showToast(error?.message||"Kayıt silinemedi; sıfırlama iptal edildi.")}
   }
   window.hardResetGame=hardResetGame;
 
