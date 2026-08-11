@@ -288,7 +288,6 @@
       <div class="close" data-bg="c6YwskP.png" onclick="closeModal('leaderboard')"></div>
       <h3 class="center" style="margin:0;color:var(--gold)">Vadi Sıralaması</h3>
       <div id="leaderboard-period" class="tiny center" style="margin:4px 0 8px">Haftalık sıralama · sunucuda günde bir kez yenilenir</div>
-      <button id="leaderboard-refresh" onclick="renderLeaderboard(true)" style="min-height:30px">Yenile</button>
       <div id="leaderboard-list" class="leaderboard-list"><div class="leaderboard-empty">Sıralama yükleniyor…</div></div>
     </div>
   </div>
@@ -495,7 +494,7 @@
   const LOCAL_AUDIO_URL = ASSET_URL+"phone-audio/";
   const RAW_ASSET_URL = ASSET_URL;
   const CHARACTER_ROOT = "character-v54/";
-  const GAME_VERSION = "v67-alpha";
+  const GAME_VERSION = "v68-alpha";
   const SAVE_KEY = "kadim_rpg_v54_alpha";
   const BACKUP_KEY = "kadim_rpg_v54_alpha_backup";
   const LOCAL_USERNAME_KEY = "kadim_rpg_username";
@@ -1176,17 +1175,19 @@
   async function changeUsername(username){
     const current=cloudSync.player||localPlayer();if(!current.canChooseFreeName)throw new Error("Kullanıcı adı yalnızca bir kez seçilebilir.");
     if(!isPhone){const clean=validateLocalUsername(username);try{localStorage.setItem(LOCAL_USERNAME_KEY,clean)}catch{}cloudSync.player={...current,username:clean,generated:false,canChooseFreeName:false,nameChanges:1};setCloudStatus("local");return cloudSync.player}
-    const intent=await cloudApi("profile/rename-intent",{method:"POST",body:JSON.stringify({username})});let result,lastError;for(let attempt=0;attempt<3&&!result;attempt++){try{result=await cloudApi("profile/rename-commit",{method:"POST",body:JSON.stringify({intentId:intent.intentId})})}catch(error){lastError=error;if(attempt<2)await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)))}}if(!result)throw lastError;cloudSync.player=result.player;setCloudStatus("synced");uiCache.market=false;return result.player
+    const intent=await cloudApi("profile/rename-intent",{method:"POST",body:JSON.stringify({username})});let result,lastError;for(let attempt=0;attempt<3&&!result;attempt++){try{result=await cloudApi("profile/rename-commit",{method:"POST",body:JSON.stringify({intentId:intent.intentId})})}catch(error){lastError=error;if(attempt<2)await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)))}}if(!result)throw lastError;cloudSync.player=result.player;setCloudStatus("synced");uiCache.market=false;refreshCachedLeaderboardAfterUsernameChange();return result.player
   }
   function openRenameProfile(){const player=cloudSync.player||localPlayer();if(!player.canChooseFreeName){showToast("Kullanıcı adını daha önce seçtin; yeniden değiştirilemez.");return}$("rename-username").value="";$("rename-profile-note").textContent="Bu seçim hesap başına yalnızca bir kez yapılabilir.";const submit=$("rename-profile-submit");submit.disabled=false;submit.textContent="KALICI OLARAK SEÇ";openModal("rename-profile")}
   async function purchaseUsernameChange(){if(marketPurchasePending)return;const username=$("rename-username").value;marketPurchasePending=true;lockMarket(true);try{const player=await changeUsername(username);closeModal("rename-profile");renderMarket();showToast(`Kalıcı adın: ${player.username}`)}catch(error){showToast(error?.message||"Kullanıcı adı seçilemedi.")}finally{marketPurchasePending=false;lockMarket(false)}}
   function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
+  let leaderboardLoading=false;
+  function refreshCachedLeaderboardAfterUsernameChange(){const list=$("leaderboard-list");if(!isPhone||!list||list.dataset.loaded!=="1")return;delete list.dataset.loaded;renderLeaderboard(true)}
   async function renderLeaderboard(force=false){
-    const list=$("leaderboard-list"),button=$("leaderboard-refresh");if(!list)return;if(!force&&list.dataset.loaded==="1")return;button.disabled=true;list.innerHTML='<div class="leaderboard-empty">Sıralama yükleniyor…</div>';
+    const list=$("leaderboard-list");if(!list||leaderboardLoading)return;if(!force&&list.dataset.loaded==="1")return;leaderboardLoading=true;list.innerHTML='<div class="leaderboard-empty">Sıralama yükleniyor…</div>';
     try{if(!isPhone)throw new Error("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");const data=await cloudApi(`leaderboard?limit=25${force?`&t=${Date.now()}`:""}`);const entries=Array.isArray(data.entries)?data.entries:[],period=$("leaderboard-period");if(period)period.textContent=`Haftalık sıralama · ${data.snapshotDay||"bugün"} tarihinde yenilendi`;list.dataset.loaded="1";list.innerHTML=entries.length?entries.map((entry,index)=>`<div class="leaderboard-row ${entry.name===(cloudSync.player?.username||"")?"me":""}"><span class="leaderboard-rank">${entry.rank}</span><canvas id="lb-portrait-${index}" class="leaderboard-portrait" width="64" height="64"></canvas><div><div class="leaderboard-name">${escapeHtml(entry.name)}</div><div class="tiny">${escapeHtml(CLASS_DEFS[entry.classId]?.name||"Maceracı")} · Sv.${Number(entry.level)||1}${entry.prestige?` · ${entry.prestige} Prestij`:""}</div></div><div class="leaderboard-score">${money(entry.score).toLocaleString("tr-TR")}<small>${money(entry.kills)} av</small></div></div>`).join(""):'<div class="leaderboard-empty">Henüz sıralamaya giren bir maceracı yok.</div>';entries.forEach((entry,index)=>drawStaticCharacterPortrait($(`lb-portrait-${index}`),entry.portrait))}
-    catch(error){list.innerHTML=`<div class="leaderboard-empty">${escapeHtml(error?.message||"Sıralama yüklenemedi.")}</div>`}finally{button.disabled=false}
+    catch(error){list.innerHTML=`<div class="leaderboard-empty">${escapeHtml(error?.message||"Sıralama yüklenemedi.")}</div>`}finally{leaderboardLoading=false}
   }
-  function openLeaderboard(){if(!isPhone){showToast("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");return}openModal("leaderboard");renderLeaderboard(true)}
+  function openLeaderboard(){if(!isPhone){showToast("Vadi Sıralaması yalnızca Downtown telefonlarında kullanılabilir.");return}openModal("leaderboard");renderLeaderboard()}
   Object.assign(window,{openRenameProfile,purchaseUsernameChange,openLeaderboard,renderLeaderboard});
   function openGoddessHub(){isCombatActive=false;renderGoddessHub();openModal("goddess-hub")}
   function closeGoddessHub(){closeModal("goddess-hub");isCombatActive=activeTabId==="main"&&!!state.gender&&introStarted}
