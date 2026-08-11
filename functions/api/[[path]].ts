@@ -455,7 +455,8 @@ async function leaderboard(context: ApiContext): Promise<Response> {
       l.total_kills, l.unique_count, l.power_score, l.portrait_json
     FROM leaderboard_snapshots l
     JOIN players p ON p.character_id = l.character_id
-    WHERE l.period_key = ?
+    JOIN player_saves s ON s.character_id = l.character_id
+    WHERE l.period_key = ? AND s.power_score >= l.power_score
     ORDER BY l.power_score DESC, l.level DESC, l.total_kills DESC, l.character_id ASC
     LIMIT ?
   `).bind(periodKey, limit).all<LeaderboardRow>();
